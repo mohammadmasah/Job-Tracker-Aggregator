@@ -18,12 +18,34 @@ function App() {
           <form className="space-y-7">
             <div>
               <label className="mb-2 block text-lg font-semibold text-slate-300">
-                Nom
+                Prénom et Nom
               </label>
               <input
                 type="text"
-                placeholder="Entrez votre nom"
-                className="w-full rounded-lg border border-slate-600 bg-[#111827] px-4 py-3 text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                placeholder="Entrez votre prénom et votre nom"
+                className="w-full rounded-lg border border-slate-500 bg-[#111827] px-4 py-3 text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-lg font-semibold text-slate-300">
+                Email
+              </label>
+              <input
+                type="text"
+                placeholder="Entrez votre email"
+                className="w-full rounded-lg border border-slate-500 bg-[#111827] px-4 py-3 text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-lg font-semibold text-slate-300">
+                Mot de passe
+              </label>
+              <input
+                type="text"
+                placeholder="Entrez votre mot de passe"
+                className="w-full rounded-lg border border-slate-500 bg-[#111827] px-4 py-3 text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
               />
             </div>
           </form>
