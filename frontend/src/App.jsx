@@ -48,6 +48,15 @@ function App() {
                 className="w-full rounded-lg border border-slate-500 bg-[#111827] px-4 py-3 text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
               />
             </div>
+
+            <div className="flex justify-end">
+              <button 
+                type="submit" 
+                className="rounded-lg bg-sky-500 px-7 py-3 text-lg font-bold text-white hover:bg-sky-400"
+              >
+                S'inscrire
+              </button>
+            </div>
           </form>
         </section>
       </main>
