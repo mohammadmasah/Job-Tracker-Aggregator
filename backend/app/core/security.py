@@ -1,0 +1,14 @@
+# app/core/security.py
+import bcrypt
+
+
+def hash_password(password: str) -> str:
+    pwd_bytes = password.encode("utf-8")[:72] 
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(pwd_bytes, salt)
+    return hashed.decode("utf-8")
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    plain_bytes = plain.encode("utf-8")[:72]
+    return bcrypt.checkpw(plain_bytes, hashed.encode("utf-8"))
