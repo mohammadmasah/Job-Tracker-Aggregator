@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "node": "^26.4.0"
+    "node": "^26.4.0",
+    "react-router-dom": "^7.18.1"
   }
 }
