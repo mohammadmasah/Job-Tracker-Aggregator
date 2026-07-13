@@ -1,4 +1,3 @@
-# app/core/security.py
 import bcrypt
 
 
