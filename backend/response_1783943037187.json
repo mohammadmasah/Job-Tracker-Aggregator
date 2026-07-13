@@ -1,0 +1,1151 @@
+{
+  "totalCount": 625,
+  "values": [
+    {
+      "companyId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1763139640361000,
+      "creatorId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "descriptionPreview": "Description🚀 **Rejoins Mergify en tant que Principal Software Engineer expert Python**  \n  \n**Rémunération brute annuelle : 75k€ à 90k€ en full remote  \nStatut cadre au forfait  \n  \nAvantages : Flexibilité horaire, Full Remote, Tickets Restaurants, BSPCE**  \n  \n  \n🏗️ **L'entreprise : un produit par les techs pour les techs  \n  \nMergify** révolutionne la manière dont les ingénieurs logiciels gère",
+      "mdDescription": "Description🚀 **Rejoins Mergify en tant que Principal Software Engineer expert Python**  \n  \n**Rémunération brute annuelle : 75k€ à 90k€ en full remote  \nStatut cadre au forfait  \n  \nAvantages : Flexibilité horaire, Full Remote, Tickets Restaurants, BSPCE**  \n  \n  \n🏗️ **L'entreprise : un produit par les techs pour les techs  \n  \nMergify** révolutionne la manière dont les ingénieurs logiciels gèrent leurs workflows de développement, en optimisant la CI/CD. Grâce à une plateforme robuste et automatisée basée sur GitHub, Mergify permet à des milliers de développeurs à travers le monde de gagner en productivité. Avec la suite d'outils, tout ce qui est mergé fonctionne !  \nEn résumé Mergify est un écosystème d’outils qui sérénise les développeurs, en leur permettant de passer plus de temps sur la réflexion et la conception.  \n  \nAujourd’hui, l’équipe est formée par 5 ingénieurs en full remote basés en France. Mehdi et Julien, les cofondateurs, on fait le choix il y a 5 ans de monter une startup bootstrap, non diluée et auto-financée. Ainsi, ils ont pu garder leur indépendance économique et produit tout en mettant en place une culture qui leur ressemble.  \nTravailler chez Mergify, c’est rejoindre une équipe qui croit en la puissance de l’autonomie et de l’innovation pour relever les défis les plus complexes. La transparence est capitale. Tout le monde connaît la stratégie et doit apporter sa pierre à l’édifice !  \n  \nLes 3 valeurs fondamentales de la culture Mergify sont :  \n\n*   On a le droit de se tromper, tant qu’on en parle ouvertement. Il faut savoir donner et recevoir des feedbacks dans la bienveillance.\n*   L’organisation est basée sur la liberté et l’autonomie. Il faut les mettre au service du collectif, grâce à une communication parfaite et à la proactivité.\n*   Il est important de s’intéresser au produit et au business. Pour être épanoui dans son travail, donnons un sens concret au quotidien.\n\n  \n  \n🎯 **Ta mission en tant que Principal Software Engineer**  \n  \nEn tant que pilier de l’équipe technique, tu joueras un rôle clé dans :  \n\n*   La conception et l’amélioration de notre architecture logicielle pour garantir scalabilité et performances.\n*   Le développement de nouvelles fonctionnalités innovantes sur notre moteur principal et notre tableau de bord.\n*   La collaboration étroite avec notre CTO et l’équipe Product&Tech pour définir la roadmap et assurer des livraisons fiables et rapides.\n*   L’intégration de meilleures pratiques de développement, notamment autour de la qualité de code, de l’automatisation (CI/CD) et des tests.\n*   Le mentorat de l’équipe sur 15% de ton temps, avec des code review, du pair programming, de l’accompagnement technique.\n\n  \n  \n🔍 **Tes responsabilités**  \n  \n\n*   **Software Engineering et architecture** : Créer des solutions techniques robustes et maintenables en Python, tout en optimisant nos bases de données (PostgreSQL, Redis).\n*   **Automatisation et déploiements** : Concevoir et maintenir des pipelines ",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "places": {
+          "ChIJMVd4MymgVA0R99lHx5Y__Ws": {
+            "position": 0
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "frequency": "fullTime"
+        },
+        "requiredExperience": 8,
+        "start": "asap",
+        "salary": {
+          "currency": "€",
+          "max": 90,
+          "min": 75,
+          "recurrence": "year",
+          "maxPerYear": 90
+        }
+      },
+      "helmetHandle": "rA5LnimjSC1P2ALADUTQ",
+      "id": "hiresweet+T6VOGG4G26NE",
+      "lastUpdate": 1763139664160000,
+      "publishDate": 1783844652947000,
+      "premium": "2025-11-14T17:01:03.661Z",
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "principal-software-engineer-python-en-startup-full-remote-k-le-cab-by-welovedevs",
+      "skillsList": [
+        {
+          "name": "Python",
+          "value": 50
+        },
+        {
+          "name": "Typescript",
+          "value": 50
+        },
+        {
+          "name": "Bootstrap",
+          "value": 50
+        },
+        {
+          "name": "Docker",
+          "value": 50
+        },
+        {
+          "name": "Github",
+          "value": 50
+        },
+        {
+          "name": "PostgreSQL",
+          "value": 50
+        },
+        {
+          "name": "React",
+          "value": 50
+        },
+        {
+          "name": "Redis",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Principal Software Engineer Python en startup - Full remote 75/90K",
+      "smallCompany": {
+        "companyName": "Le Cab by WeLoveDevs",
+        "handle": "m0NAno1RySjksFiwIdhQ",
+        "id": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+        "seoAlias": "le-cab-by-welovedevs",
+        "gallery": {
+          "handle": "3J8DugLzSiSHx1PoiFnO"
+        },
+        "companyType": 6,
+        "companyTypeExplicit": "consultiung_company",
+        "sectors": [
+          "B_B",
+          "SAAS",
+          "Human_Resources"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/Qb9fiodKQ18/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/le-cab-by-welovedevs"
+      },
+      "_geoloc": [
+        {
+          "lat": 46.227638,
+          "lng": 2.213749
+        }
+      ],
+      "objectID": "hiresweet+T6VOGG4G26NE",
+      "formattedPlaces": [
+        "France"
+      ],
+      "type": "company_job",
+      "reference": "T6VOGG4G26NE",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/principal-software-engineer-python-en-startup-full-remote-k-le-cab-by-welovedevs"
+    },
+    {
+      "companyId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1763139655060000,
+      "creatorId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "descriptionPreview": "🎯L'entrepriseCYIM fondée en 2001, se positionne à l'avant-garde du numérique au service des sociétés savantes de spécialité médicale. Notre mission est d'accompagner ces institutions prestigieuses dans leur transition numérique, en leur fournissant des services informatiques adaptés à leurs besoins spécifiques.  \n**Nos Services Clés :****Gestion d'Événements :** Nous fournissons des plateformes c",
+      "mdDescription": "🎯L'entrepriseCYIM fondée en 2001, se positionne à l'avant-garde du numérique au service des sociétés savantes de spécialité médicale. Notre mission est d'accompagner ces institutions prestigieuses dans leur transition numérique, en leur fournissant des services informatiques adaptés à leurs besoins spécifiques.  \n**Nos Services Clés :****Gestion d'Événements :** Nous fournissons des plateformes complètes pour organiser avec succès des congrès et des séminaires, simplifiant l'inscription, la soumission d'abstracts et la logistique.  \n  \n**Diffusion de la Science :** Nos plateformes web et mobiles, alliées à l’utilisation des réseaux sociaux, étendent la visibilité de la recherche et des bonnes pratiques médicales, favorisant ainsi l'échange d'informations fiables en renforçant la cohésion au sein de la communauté médicale.  \n**Gestion des Adhésions :** Nos outils simplifient la gestion des adhésions et des cotisations, optimisant les processus administratifs pour les sociétés savantes.  \n**E-Learning et Certification :** Nous accompagnons nos clients dans la mise en place de solutions dédiées à la formation, mais aussi de systèmes spécialisés pour l'organisation d'examens médicaux, adaptés tant au présentiel qu'au distanciel. Ces dispositifs assurent des certifications reconnues, valorisant ainsi l'expertise professionnelle.  \nChez CYIM, nous sommes fiers de contribuer au progrès médical en facilitant l'accès à l'information scientifique et en soutenant la formation continue des professionnels de santé.  \nNotre expertise en solutions numériques innovantes et notre engagement envers l'excellence nous positionnent comme le partenaire de référence des sociétés savantes désireuses de se projeter dans l'ère numérique.  \nNous sommes 72 collaborateurs, environ 30 développeuses et développeurs et sommes axés sur l’innovation.  \n🎯Ta MissionEn tant que Lead Développeur, tu seras un pilier de notre équipe technique, en charge de moderniser nos processus et méthodes de développement tout en assurant la stabilité et la performance de nos produits. Tu joueras un rôle clé dans la direction technique de l'entreprise, en apportant ton expertise en Vue et Node.js et ta culture tech, avec une maîtrise des modèles de données et de l'architecture microservices.  \n  \nRattaché à l’Engineering Manager, tu participeras aux choix technologiques et stratégiques.  \n🔍Tes Responsabilités**● Innovation et optimisation technique :** Diriger les efforts pour améliorer continuellement notre stack technologique, en mettant l'accent sur la performance, la scalabilité et la sécurité.  \n**● Leadership technique :** Prendre le lead sur des projets clés, en mentorant les membres de l'équipe et en favorisant un environnement de travail collaboratif et innovant. Tu as une solide expertise en modèles de données, et devra être un moteur de la montée en compétences de tes collaborateurs sur ce point.  \n**● Stratégie de développement :** Collaborer étroitement avec les équipes produit et tech pour définir et exécuter la roadmap technique, alignée sur les objectifs stratégiques de l'entreprise. Travailler en synergie avec le CTO, le PO et l’Engineering Manager pour intégrer et diffuser les objectifs techniques et stratégiques.  \n**● Communication et collaboration :** Assurer une communication fluide avec toutes les parties prenantes, en favorisant l'intégration des meilleures pratiques de développement au sein des équipes.  \n🎓Profil RecherchéNous recherchons un expert technique chevronné, doté d'une expérience de 5 ans ou plus en développement backend, spécifiquement en Node.js, et d'une solide compréhension des architectures microservices. Nous avons également besoins de solides connaissances côté front en Vue.  \n  \nTu devras être capable de guider et de développer une équipe, en apportant une vision technique claire et un leadership inspirant. Tu auras la responsabilité du code, et devra maintenir un haut niveau d’exigence au sein de l’équipe.  \n🛠️Les Compétences Clés Attendues**● Expertise en Node.js et architecture microservices :** Compétence démontrée dans le développement de solutions backend complexes sur une stack JS dans un environnement innovant et en perpétuel évolution.  \n**● Leadership et mentorat :** Expérience avérée dans le leadership technique et/ou le management d'équipe.  \n**● Gestion de projet et innovation :** Aptitude à mener des projets du concept à la livraison, avec un esprit d'innovation constant. Capacité à comprendre les besoins et les specs, pour établir avec le PO une backlog cohérente en respectant les deadlines.  \n**● Communication efficace :** Excellentes capacités de communication, essentielles pour travailler en équipe et interagir avec diverses parties prenantes, en français et en anglais.  \n**● Adaptabilité et passion pour la mission :** Flexibilité pour s'adapter à un environnement dynamique et engagement envers la mission de CYIM. Avoir conscience de l’impact de son travail et de son sens.",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "places": {
+          "ChIJhZDWpy_eDkgRMKvkNs2lDAQ": {
+            "position": 0
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "daysPerWeek": 2,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 6,
+        "start": "asap",
+        "salary": {
+          "currency": "€",
+          "max": 60,
+          "min": 55,
+          "recurrence": "year",
+          "maxPerYear": 60
+        }
+      },
+      "helmetHandle": "4zhDKCHlQAMy4ATcwDJA",
+      "id": "hiresweet+5TT9BP12ECDO",
+      "lastUpdate": 1770397233193000,
+      "publishDate": 1783844652947000,
+      "premium": "2025-11-14T17:01:28.260Z",
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "lead-software-engineer-fullstack-node-vue-k-hybride-a-rennes-le-cab-by-welovedevs",
+      "skillsList": [
+        {
+          "name": "NodeJS",
+          "value": 50
+        },
+        {
+          "name": "Anglais",
+          "value": 50
+        },
+        {
+          "name": "Gestion de projet",
+          "value": 50
+        },
+        {
+          "name": "Management",
+          "value": 50
+        },
+        {
+          "name": "React",
+          "value": 50
+        },
+        {
+          "name": "Typescript",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Lead Software Engineer Fullstack (Node & Vue) 45/60K hybride à Rennes",
+      "smallCompany": {
+        "companyName": "Le Cab by WeLoveDevs",
+        "handle": "m0NAno1RySjksFiwIdhQ",
+        "id": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+        "seoAlias": "le-cab-by-welovedevs",
+        "gallery": {
+          "handle": "3J8DugLzSiSHx1PoiFnO"
+        },
+        "companyType": 6,
+        "companyTypeExplicit": "consultiung_company",
+        "sectors": [
+          "B_B",
+          "SAAS",
+          "Human_Resources"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/Qb9fiodKQ18/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/le-cab-by-welovedevs"
+      },
+      "_geoloc": [
+        {
+          "lat": 48.117266,
+          "lng": -1.6777926
+        }
+      ],
+      "objectID": "hiresweet+5TT9BP12ECDO",
+      "formattedPlaces": [
+        "Rennes, France"
+      ],
+      "type": "company_job",
+      "reference": "5TT9BP12ECDO",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/lead-software-engineer-fullstack-node-vue-k-hybride-a-rennes-le-cab-by-welovedevs"
+    },
+    {
+      "companyId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1763139637260000,
+      "creatorId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "descriptionPreview": "Description**🚀Rejoins Octorenov pour donner du sens à ta carrière !**  \n  \nOctorenov, une jeune pousse dynamique, qui a vu le jour il y a un an. Filiale de la société NeedHelp, qui opère depuis 2014, Octorenov s'appuie sur son expertise dans le développement d'applications SaaS pour être rapidement opérationnelle.  \n  \nLe produit est un outil de suivi dédié au suivi des prestations d'installation",
+      "mdDescription": "Description**🚀Rejoins Octorenov pour donner du sens à ta carrière !**  \n  \nOctorenov, une jeune pousse dynamique, qui a vu le jour il y a un an. Filiale de la société NeedHelp, qui opère depuis 2014, Octorenov s'appuie sur son expertise dans le développement d'applications SaaS pour être rapidement opérationnelle.  \n  \nLe produit est un outil de suivi dédié au suivi des prestations d'installation à domicile. A la base c'est un outil interne que nous utilisons. Nous commercialisons désormais, car la demande est là ! Aujourd'hui, nous collaborons principalement avec les géants du retail de bricolage. Nous visons les plus petits retailers dans un second temps.  \n  \nAvec une équipe dédiée Octorénov de 3 développeurs passionnés, pilotés par le CTO de NeedHelp, nous avons pour ambition de nous installer durablement sur le marché, après avoir signé nos premiers clients. Nous avons donc besoin de faire grandir notre équipe tech pour atteindre cet objectif. À l'horizon des douze mois, nous souhaitons scaler le produit d'une version custom à une version plug and play.  \n  \nChez Octorenov, nous valorisons l'ouverture d'esprit. Chaque membre de l'équipe a la possibilité de partager ses idées. Nous croyons fermement en l'importance du feedback et de la communication, encourageant chacun à échanger et à se féliciter pour les réussites communes. La collaboration est au cœur de notre fonctionnement. Nous formons une seule et même équipe sans divisions strictes entre les métiers, avec une hiérarchie plate qui stimule la créativité collective.  \n  \nTravailler chez Octorenov, c'est bénéficier d'un environnement de travail flexible et moderne. Nous fonctionnons en full remote, avec des réunions à Paris trois à quatre jours par mois. Pour assurer une collaboration fluide et une gestion efficace de nos projets, nous utilisons des outils tels que Jira, Slack, Google Workspace, Notion et GitHub.  \n  \n  \n**🎯 Notre besoin : développeur.euse Fullstack Symfony/React**  \n  \n**Profil attendu pour ce poste :**  \n\\- Expérience attendue de minimum 4 ans (hors stage et alternance) sur des produit Saas  \n\\- Maîtrise technique de PHP Symfony et connaissance de React côté front  \n\\- Croire en le DDD mais savoir s'adapter avec intelligence  \n\\- Utilisation fluide de GitLab et AWS  \n\\- Lieu de résidence en France métropolitaine (les candidatures nécessitant un VISA ne sont pas acceptées)  \n\\- Avoir déjà géré des features de A à Z en full autonomie et en distanciel  \n  \n**Votre mission, si vous l'acceptez :**  \n\n*   **Déployer votre ingéniosité** : Gérez des features de A à Z avec autonomie et responsabilité.\n*   **Résoudre des énigmes** : Adoptez un esprit ingénieur pour proposer des solutions innovantes.\n*   **Apprendre et évoluer** : Montrez votre soif de connaissance et votre désir de vous former continuellement.\n\n  \n**Les compétences que nous recherchons :**  \n\n*   **Autonomie et responsabilité** : Capable de prendre des initiatives et de gérer des projets en toute indépendance.\n*   **Esprit ingénieur** : Vous avez l'état d'esprit d'un solution provider, cherchant constamment à améliorer et à innover.\n*   **Travail d'équipe** : Vous pensez que la réussite passe par la force du collectif et la collaboration.\n\n  \n  \n**🛠️ Stack technique**  \n  \n**Profil attendu pour ce poste :**\\- Expérience attendue de minimum 4 ans (hors stage et alternance) sur des produit Saas - Maîtrise technique de PHP Symfony et connaissance de React côté front - Croire en le DDD mais savoir s'adapter avec intelligence - Utilisation fluide de GitLab et AWS - Lieu de résidence en France métropolitaine (les candidatures nécessitant un VISA ne sont pas acceptées) - Avoir déjà géré des features de A à Z en full autonomie et en distanciel  \n**Votre mission, si vous l'acceptez :**  \n\n*   **Déployer votre ingéniosité** : Gérez des features de A à Z avec autonomie et responsabilité.\n*   **Résoudre des énigmes** : Adoptez un esprit ingénieur pour proposer des solutions innovantes.\n*   **Apprendre et évoluer** : Montrez votre soif de connaissance et votre désir de vous former continuellement.\n\n**Les compétences que nous recherchons :**  \n\n*   **Autonomie et responsabilité** : Capable de prendre des initiatives et de gérer des projets en toute indépendance.\n*   **Esprit ingénieur** : Vous avez l'état d'esprit d'un solution provider, cherchant constamment à améliorer et à innover.\n*   **Travail d'équipe** : Vous pensez que la réussite passe par la force du collectif et la collaboration.\n\n  \n  \n**🛠️ Stack technique**  \n  \n**Back-end** : PHP Symfony, avec des contributions majeures au framework Ecotone (event sourcing, DDD).  \n**Front-end** : React Next.  \n**Base de données** : PostgreSQL  \n**Infrastructure** : AWS Lambda, avec une architecture monolithe évoluant vers des microservices.  \n**Outils** : GitHub pour la gestion du code.  \n  \n  \n**❓Comment valider votre période d'essai ?**  \n  \n\n*   **2 mois** : Intégration humaine dans l’équipe.\n*   **4 mois** : Compréhension du métier et livraison de fonctionnalités avec autonomie.\n*   **8 mois** : Maîtrise du poste en autonomie complète sur la conception des features.\n\n  \n**🔍Description du process de recrutement**  \n  \n\\- Call de préqualification avec Alexandre, le recruteur de WeLoveDevs  \n\\- Entretien de validation de compétences avec Alexandre de WeLoveDevs  \n\\- Test technique et débriefing avec le Team Lead de Octorenov  \n\\- Entretien final avec la direction et la RH de Octorenov  \n  \n  \n**Si tu te reconnais dans ce projet, ce profil et cette manière de travailler, alors n'hésite pas et postule !**",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "places": {
+          "ChIJD7fiBh9u5kcRYJSMaMOCCwQ": {
+            "position": 0
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "daysPerWeek": 3,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 8,
+        "start": "asap",
+        "salary": {
+          "currency": "€",
+          "max": 65,
+          "min": 50,
+          "recurrence": "year",
+          "maxPerYear": 65
+        }
+      },
+      "helmetHandle": "gS6i8QvBS2uyRndrVBHa",
+      "id": "hiresweet+1727QYQVOGIJ",
+      "lastUpdate": 1763139658459000,
+      "publishDate": 1783844652947000,
+      "premium": "2025-11-14T17:00:57.460Z",
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "fullstack-software-engineer-saas-symfony-react-k-full-remote-le-cab-by-welovedevs",
+      "skillsList": [
+        {
+          "name": "Symfony",
+          "value": 50
+        },
+        {
+          "name": "DDD",
+          "value": 50
+        },
+        {
+          "name": "PHP",
+          "value": 50
+        },
+        {
+          "name": "React",
+          "value": 50
+        },
+        {
+          "name": "Github",
+          "value": 50
+        },
+        {
+          "name": "Gitlab",
+          "value": 50
+        },
+        {
+          "name": "Docker",
+          "value": 50
+        },
+        {
+          "name": "Javascript",
+          "value": 50
+        },
+        {
+          "name": "Jira",
+          "value": 50
+        },
+        {
+          "name": "Notion",
+          "value": 50
+        },
+        {
+          "name": "PostgreSQL",
+          "value": 50
+        },
+        {
+          "name": "Slack",
+          "value": 50
+        },
+        {
+          "name": "Typescript",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Fullstack Software Engineer Saas (Symfony & React) 50/65K full remote",
+      "smallCompany": {
+        "companyName": "Le Cab by WeLoveDevs",
+        "handle": "m0NAno1RySjksFiwIdhQ",
+        "id": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+        "seoAlias": "le-cab-by-welovedevs",
+        "gallery": {
+          "handle": "3J8DugLzSiSHx1PoiFnO"
+        },
+        "companyType": 6,
+        "companyTypeExplicit": "consultiung_company",
+        "sectors": [
+          "B_B",
+          "SAAS",
+          "Human_Resources"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/Qb9fiodKQ18/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/le-cab-by-welovedevs"
+      },
+      "_geoloc": [
+        {
+          "lat": 48.85661400000001,
+          "lng": 2.3522219
+        }
+      ],
+      "objectID": "hiresweet+1727QYQVOGIJ",
+      "formattedPlaces": [
+        "Paris, France"
+      ],
+      "type": "company_job",
+      "reference": "1727QYQVOGIJ",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/fullstack-software-engineer-saas-symfony-react-k-full-remote-le-cab-by-welovedevs"
+    },
+    {
+      "companyId": "m0Dr8Bk7dIbuIFyNNMj0z61xgvq2",
+      "contractTypes": [
+        "freelance"
+      ],
+      "createdAt": 1783694082161000,
+      "creatorId": "m0Dr8Bk7dIbuIFyNNMj0z61xgvq2",
+      "descriptionPreview": "Développeur·euse Backend SaaS\nPython/FastAPI\nOrientation backend et BFF, prise en charge partielle DevOps et sécurité applicative\n\nAccompagnement freelance 2 jours par semaine (3 mois)\nDémarrage au plus tôt\nLocalisation sur site à Lille, quartier Euralille (TT possible)\n\nContexte\nOryjin lance le MVP de sa plateforme SaaS IA fin septembre 2026. Le socle backend Python / FastAPI et la persistance Po",
+      "mdDescription": "**Développeur·euse Backend SaaS**\n**Python/FastAPI**\nOrientation backend et BFF, prise en charge partielle DevOps et sécurité applicative\n\n* Accompagnement freelance 2 jours par semaine (3 mois)\n* Démarrage au plus tôt\n* Localisation sur site à Lille, quartier Euralille (TT possible)\n\n**Contexte**\n\nOryjin lance le MVP de sa plateforme SaaS IA fin septembre 2026. Le socle backend Python / FastAPI et la persistance PostgreSQL sont posés en interne. Les agents IA sont en production.\nRestent à construire les modules applicatifs structurants qui conditionnent la mise en vente B2B :\n\n1. **espace d'administration**\n2. **gestion des abonnements** (Stripe)\n3. **gestion des paiements**,\n4. **sécurité de la couche de données**.\n\nCes modules sont à la fois côté backend (API, logique métier) et côté frontend (interfaces clients et admin).\n\n**Compétences indispensables**\n\n1. **Expérience SaaS B2B** : avoir construit ou maintenu un module admin, un système d'abonnements et un tunnel de paiement sur une plateforme en production\n2. **Frontend** : React (ou équivalent moderne) — interfaces admin, onboarding, portail client\n3. **Python backend** (FastAPI ou équivalent) avec **ORM** (SQLAlchemy ou équivalent)\n4. **Stripe** (ou équivalent) : abonnements, webhooks, gestion des événements de facturation, idempotence, cas d'échec\n5. **PostgreSQL** : modélisation relationnelle, contraintes, Row-Level Security native\n6. **Auth0 / IdP** : intégration Management API, provisioning programmatique d'organisations, mapping claims JWT → entités applicatives\n7. **Sécurité applicative** : autorisation, filtrage multi-tenant, validation d'entrée\n\n**Compétences appréciées**\n\n1. **Pydantic v2**, Alembic (migrations versionnées)\n2. **Stockage blob cloud** (Azure Blob Storage) : isolation par tenant, jetons SAS\n3. **CI/CD** : GitHub Actions, Docker\n4. Contexte multi-agents IA (**LangGraph**)\n5. Observabilité / error-tracking (Sentry ou équivalent)\n\n**Ce que nous proposons**\n\n1. Socle backend et modèle de données **posés en interne** : vous construisez les modules applicatifs par-dessus, sans repartir de zéro. Backlog cadré et priorisé pour la mise sur le marché de septembre 2026. Stack moderne, levier IA encouragé (Claude Code disponible).\n2. **Rémunération** : TJM 500/700€ selon profil et expérience",
+      "details": {
+        "contracts": {},
+        "locale": "fr",
+        "places": {
+          "ChIJpwzfIfTVwkcR9lL_emUonEE": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1783358639328
+          }
+        },
+        "professionId": "-Mx44QoDU81SRDJrb13z",
+        "remotePolicy": {
+          "daysPerWeek": 1,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 3,
+        "salary": {
+          "currency": "€",
+          "max": 700,
+          "min": 500,
+          "recurrence": "day",
+          "maxPerYear": 140
+        }
+      },
+      "helmetHandle": "ittSxcmVSnWiRZLGZ8cM",
+      "id": "-Ox4yM2G_M6G8-b5GGg-",
+      "lastUpdate": 1783694082383000,
+      "publishDate": 1783694082383000,
+      "premium": "2026-07-10T14:34:42.383Z",
+      "profession": {
+        "algoliaKeyword": "backend",
+        "langContent": {
+          "en": {
+            "displayName": "Back-end developer",
+            "name": "Back-end developer"
+          },
+          "fr": {
+            "displayName": "Développeur·euse Back-end",
+            "name": "Développeur Back-end"
+          }
+        }
+      },
+      "seoAlias": "freelance-dev-backend-saas-pythonfastapi-oryjin",
+      "skillsList": [
+        {
+          "name": "Github",
+          "value": 50
+        },
+        {
+          "name": "Python",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Freelance Dev Backend SaaS - Python/FastAPI",
+      "smallCompany": {
+        "companyName": "ORYJIN",
+        "handle": "2TcSFipbQvugUBsW9x5r",
+        "id": "m0Dr8Bk7dIbuIFyNNMj0z61xgvq2",
+        "seoAlias": "oryjin",
+        "companyType": 5,
+        "companyTypeExplicit": "startup",
+        "sectors": [
+          "Communications",
+          "Marketing_Advertising",
+          "SAAS"
+        ],
+        "url": "https://welovedevs.com/app/fr/company/oryjin"
+      },
+      "_geoloc": [
+        {
+          "lat": 50.6352577,
+          "lng": 3.0801214
+        }
+      ],
+      "objectID": "-Ox4yM2G_M6G8-b5GGg-",
+      "formattedPlaces": [
+        "Lille, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "0726MVPfreelance",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/freelance-dev-backend-saas-pythonfastapi-oryjin"
+    },
+    {
+      "companyId": "1guiwDZBkLhPuA4Se2Z4ZeOxtHY2",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1764668819145000,
+      "creatorId": "1guiwDZBkLhPuA4Se2Z4ZeOxtHY2",
+      "descriptionPreview": "Mission\nEn véritable talent clé de la startup, vous interagirez directement avec le fondateur pour prendre en charge la partie technique.\nVotre mission, si vous l'acceptez, sera :\n\nConstruire et Manager une équipe technique (recrutement, développement des talents…)\nAnalyser et définir les besoins des utilisateurs en partenariat avec le Product Owner\nDéfinir et contrôler l'application des procédure",
+      "mdDescription": "**Mission**\nEn véritable talent clé de la startup, vous interagirez directement avec le fondateur pour prendre en charge la partie technique.\nVotre mission, si vous l'acceptez, sera :\n\n* Construire et Manager une équipe technique (recrutement, développement des talents…)\n* Analyser et définir les besoins des utilisateurs en partenariat avec le Product Owner\n* Définir et contrôler l'application des procédures qualité et sécurité des systèmes d'information\n* Superviser les projets d'études et développements\n* Concevoir des APIs pour les utilisateurs\n* Réaliser de nouvelles fonctionnalités sur les techno React.js et Node.js\n* Développer et intégrer de nouveaux produits\n\n**Profil recherché**\n\n* Vous justifiez d’une expérience comme développeur ?\n* Vous êtes rigoureux, méthodique, organisé et vous savez faire preuve d’autonomie et de réactivité ?\n* Vous êtes à l’aise à l’écrit comme à l’oral ?\n* Vous maîtrisez les périmètres techniques avec les niveaux adéquats ?\n* Vous aimez évoluer dans un univers où l’autonomie, la prise d’initiatives, le partage et le travail en équipe sont porteurs de la réussite collective ?\n* Vous pensez que votre profil pourrait correspondre ?\n\nAlors, rejoignez l'aventure !\nOn vous attend pour accélérer et écrire la suite de l'histoire.",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "locale": "fr",
+        "places": {
+          "EiFBdmVudWUgZGUgQnJldGFnbmUsIExpbGxlLCBGcmFuY2UiLiosChQKEgl9NuwoXNXCRxFtRfLizMNv8hIUChIJEW4ls3nVwkcRYGNkgT7xCgQ": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1764668477033
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "daysPerWeek": 1,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 1,
+        "salary": {
+          "currency": "€",
+          "max": 45,
+          "min": 35,
+          "recurrence": "year",
+          "maxPerYear": 45
+        }
+      },
+      "helmetHandle": "ApMUSZ5ZRWqep7OuOLZR",
+      "id": "-OfTQoSbEuyJQuzrW-z1",
+      "lastUpdate": 1783672086699000,
+      "publishDate": 1783672086699000,
+      "premium": 1782222321173,
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "developpeur-full-stack-cald-excreche-a-la-demande",
+      "skillsList": [
+        {
+          "name": "NodeJS",
+          "value": 85
+        },
+        {
+          "name": "React",
+          "value": 85
+        },
+        {
+          "name": "Typescript",
+          "value": 85
+        },
+        {
+          "name": "ESLint",
+          "value": 85
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Développeur Full Stack ",
+      "smallCompany": {
+        "companyName": "CALD (Ex-Crèche A La Demande)",
+        "handle": "or2FE6wyTSK2OLWbKMRw",
+        "id": "1guiwDZBkLhPuA4Se2Z4ZeOxtHY2",
+        "seoAlias": "creche-a-la-demande",
+        "gallery": {
+          "handle": "ooKCqIqRH6TT043EMEgL"
+        },
+        "companyType": 5,
+        "companyTypeExplicit": "startup",
+        "sectors": [
+          "Family_Services",
+          "B_B",
+          "SAAS"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/NPGP5TtMmKw/hqdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/creche-a-la-demande"
+      },
+      "_geoloc": [
+        {
+          "lat": 50.6348733,
+          "lng": 3.0229001
+        }
+      ],
+      "objectID": "-OfTQoSbEuyJQuzrW-z1",
+      "formattedPlaces": [
+        "Lille, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "OZF1TQOS",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/developpeur-full-stack-cald-excreche-a-la-demande"
+    },
+    {
+      "companyId": "2pVbC9v5z8UTLMqET6PABhWn40s1",
+      "contractTypes": [
+        "apprenticeship"
+      ],
+      "createdAt": 1669719046702000,
+      "creatorId": "9G9CqmvUFTgdE3i3LDvhMsiFEsr1",
+      "descriptionPreview": "Nous recherchons un(e) Proxy Product Owner en alternance pour un des projets d'application mobile le plus stratégique chez Rakuten DX pour en définir son scope et ce qui devra être délivré. Par la suite, l’idée sera d’évoluer sur d’autres projets dans l'équipe Data.\nCe poste est stratégique et indispensable pour le développement du produit et les futurs projets à l’avenir.\nEn tant que Proxy Produc",
+      "mdDescription": "Nous recherchons un(e) Proxy Product Owner en alternance pour un des projets d'application mobile le plus stratégique chez Rakuten DX pour en définir son scope et ce qui devra être délivré. Par la suite, l’idée sera d’évoluer sur d’autres projets dans l'équipe Data.\n\nCe poste est stratégique et indispensable pour le développement du produit et les futurs projets à l’avenir. \n\nEn tant que Proxy Product Owner, vos principales missions seront de : \n\n* Gérer le backlog en traduisant la roadmap produit et en créant les users stories \n* Développer et mettre à jour un suivi et un reporting sur la performance du produit \n* Travailler de façon transverse avec les autres équipes internes et internationales et les parties prenantes \n\n\n<br>\n**HARD SKILLS**\nMandatory \n\n* Anglais \n\nNice to have \n\n* Avoir travaillé sur un ou plusieurs projets en formation ou autre \n* Jira \n* Confluence \n* Connaissances dans le Low Code / No Code et sur les applications mobiles est un plus \n* Bonne compréhension des métiers de la data (Collecte de données, Big Data, Business Intelligence, Data Science, Machine Learning, IA)\n* Bonne compréhension des process de la data (API, connecteurs, accès, GDPR, transformation des données, scheduling, triggers, mapping, ETL, Modélisation des données, données brutes/agrégées...)\n\n \n**SOFT SKILLS**\n\n* Force de proposition : Gérer le backlog en traduisant la roadmap en user stories \n* Organisé : Suivi et reporting de la performance de la roadmap \n* Team Player : Travailler en transverse avec les équipes sur site et à l’international\n* Bon communicant : Sur la vision et la stratégie produit \n* Synthétique : Échanger avec les équipes avec esprit de synthèse et pédagogie \n* Grande capacité rédactionnelle pour les spécificités fonctionnelles \n* Responsable : S’assurer que les engagements envers les users et les partenaires sont respectés \n\n\n**VALEURS RAKUTEN : SHUGIS, les 5 principes du succès**\n \n1\\. Toujours progresser\\, toujours aller de l’avant \n2\\. Passionnément professionnel \n3\\. Élaborer des hypothèses\\, les mettre en pratique\\, les valider\\, Shikumika \n4\\. Améliorer la satisfaction des clients \n5\\. Vite \\! Vite \\! Vite \\! \n\nRakuten DX s'engage à lutter contre toute forme de discrimination. Le poste est ouvert à tous les profils. \n\n**ÉLÉMENTS À CONNAÎTRE**\n\n* Alternance \n* Localisation : Montpellier (télétravail partiel possible) \n* Rémunération légale \n* Tickets restaurant \n* Équipe : 15 personnes (Scrum Master, Développeurs, UX/UI Designers...) \n* Durée: 1 ou 2 ans \n* Des activités régulières proposées au bureau (ateliers cuisine, massages, stretching…) ",
+      "details": {
+        "contracts": {},
+        "locale": "fr",
+        "places": {
+          "Ei1QYXJjIENsdWIgZHUgTWlsbMOpbmFpcmUsIE1vbnRwZWxsaWVyLCBGcmFuY2UiLiosChQKEgmjSVFTnaW2EhFxS_GMupvy4hIUChIJsZ3dJQevthIRAuiUKHRWh60": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1669718768429
+          }
+        },
+        "professionId": "-Mx43U1M8a1mAI9SIRbY",
+        "remotePolicy": {
+          "daysPerWeek": 3,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 1,
+        "salary": {
+          "max": 21,
+          "min": 20,
+          "maxPerYear": 21
+        }
+      },
+      "helmetHandle": "2THYmFBSTE2EwmPHfHom",
+      "id": "-NI1yLBOnzuaxbhd5atE",
+      "lastUpdate": 1783413119502000,
+      "publishDate": 1783413119502000,
+      "premium": true,
+      "profession": {
+        "algoliaKeyword": "product owner",
+        "langContent": {
+          "en": {
+            "displayName": "Product Owner",
+            "name": "Product Owner"
+          },
+          "fr": {
+            "displayName": "Product Owner",
+            "name": "Product Owner"
+          }
+        }
+      },
+      "seoAlias": "proxy-product-owner-alternance-rakuten-dx",
+      "skillsList": [
+        {
+          "name": "Jira",
+          "value": 50
+        },
+        {
+          "name": "Confluence",
+          "value": 50
+        },
+        {
+          "name": "SCRUM",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Proxy Product Owner (alternance)",
+      "smallCompany": {
+        "companyName": "Rakuten DX",
+        "handle": "9UYWdl5T7uHnnqMH6doR",
+        "id": "2pVbC9v5z8UTLMqET6PABhWn40s1",
+        "seoAlias": "rakuten-dx",
+        "gallery": {
+          "handle": "48jkeaKCTaCYSU0V9I5R"
+        },
+        "companyType": 4,
+        "companyTypeExplicit": "software_publisher",
+        "sectors": [
+          "Telecommunications",
+          "B_B"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/woXenfv8Mp4/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/rakuten-dx"
+      },
+      "_geoloc": [
+        {
+          "lat": 43.6093199,
+          "lng": 3.917098999999999
+        }
+      ],
+      "objectID": "-NI1yLBOnzuaxbhd5atE",
+      "formattedPlaces": [
+        "Montpellier, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "NI1YLBON",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/proxy-product-owner-alternance-rakuten-dx"
+    },
+    {
+      "companyId": "yiQl8Z6AVFOe89QfaIF4niiz5Fw1",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1783326379585000,
+      "creatorId": "hFR6nnoohobtmyE8CVKwOtayO7p2",
+      "descriptionPreview": "Et si ton prochain projet tech te permettait aussi de grandir humainement ?\nChez Zenika, on ne te propose pas juste une mission. On te challenge sur des projets à fort impact : modernisation d'architecture, développement de produits from scratch, mission long terme, clients avec une vraie culture tech au service du produit.\n\n**🧭 Ton quotidien en mission ?**\n\nTu interviens là où ton expertise a un",
+      "mdDescription": "**Et si ton prochain projet tech te permettait aussi de grandir humainement ?**\nChez Zenika, on ne te propose pas juste une mission. On te challenge sur des **projets à fort impact** : modernisation d'architecture, développement de produits from scratch, mission long terme, clients avec une **vraie culture tech au service du produit**.\n\n<br>\n**🧭 Ton quotidien en mission ?**\n\n**Tu interviens là où ton expertise a un vrai impact :**\n\n* Refonte d’architecture, développement from scratch, modernisation d’un SI public ou plateforme B2B...\n* En équipe client ou sur un projet interne.\n* Toujours dans un environnement qui valorise la qualité logicielle, l’échange, et la co-construction\n\n**Tu codes avec :**\n\n* **Java 17 et plus (Spring Boot, JPA, REST)**\n* Et dans un cadre maîtrisé : GitLab, CI/CD, Docker, Kubernetes…\n\n**Et tu ne fais pas \"que coder\" :**\n\n* Tu participes aux choix techniques, à la vision produit, à la **culture craft** (TDD, DDD, Clean Archi…),\n* Tu mentores, tu expliques, tu fais évoluer les équipes et les idées.\n* Tu intègres l'IA générative dans ton quotidien pour automatiser le répétitif et te focaliser sur la conception et l'architecture.\n\n\n**🧑‍💻 Des projets qui parlent**\n\n* Un portail public santé repensé de A à Z (Java 17, Angular 16, K8s.)\n* Une plateforme B2B dans l’énergie, microservices et front responsive.\n* Un accompagnement DevEx sur-mesure pour une DSI en transformation.\n\n\n**🌱 Ce qui rend l’aventure Zenika différente**\n\n* **Tu n’es jamais seul·e** : guildes internes, binômage, partages entre pairs.\n* **Tu grandis** à ton rythme : lead dev, archi, speaker, formateur…\n* **Tu codes, tu questionnes**, tu comprends le “pourquoi” métier derrière le “comment” technique.\n* **Pratiques de dev augmentée** : Tu explores l'**usage raisonné et efficace de l'IA** (Copilot, LLMs) pour booster ta productivité tout en gardant ton esprit critique.\n\n\n**🌍 Un cadre qui fait du bien**\n\n* Stack à jour (Java 17+, GitLab CI, PostgreSQL, Cypress…)\n* Agile pragmatique (Scrum ou Kanban), équipes mixtes client/Zenika\n* Des talks, formations, projets open source : tu choisis ton terrain de jeu\n* Télétravail flexible, vrai respect du temps perso, rémunération transparente\n\n**Et en plus :**\n\n* Un modèle d’entreprise responsable : inclusion, égalité pro, sobriété numérique.\n* Un environnement où tu peux être toi-même, avec écoute et équité.\n<br>\n\n**🎯 Un process clair, humain et rapide**\n\n**3 étapes en 3 semaines maximum**\n\n1. Échange pour comprendre ton parcours et tes envies\n2. Entretien tech (live coding ou archi, avec 1 dev Zenika)\n3. Discussion conseil & culture avec un·e manager\n\nNous parlerons de ta rémunération et de notre fonctionnement interne dès le premier échange.\n\n<br>\n**✉️ Et maintenant ?**\n\nTu te reconnais dans **notre approche du développement orientée qualité et produit** ?\nTu as déjà pu te construire **une expérience sur plusieurs écosystèmes techniques et fonctionnels** ?\n\nTu cherches de la **montée en compétence sans bullshit** et tu veux bosser dans une équipe où ton avis compte vraiment ?\n\nAlors viens voir ce qu’on construit ensemble.\nÀ bientôt ?\n\n*Chez Zenika, la RSE a une place centrale dans toutes nos décisions, c’est pourquoi nous nous engageons à garantir l’égalité de traitement pour chaque candidature. Nous sommes convaincus que la diversité apporte de la valeur, et l’expérience candidat est au cœur de nos préoccupations. Si tu as des besoins spécifiques, nous adapterons ton processus de recrutement et ton intégration en conséquence.*",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "locale": "fr",
+        "places": {
+          "EjJBdmVudWUgZGUgbGEgUsOpcHVibGlxdWUsIE1hcmNxLWVuLUJhcsWTdWwsIEZyYW5jZSIuKiwKFAoSCSUyNG8XKsNHERghtAnHAdJ5EhQKEgnfeqlJKSrDRxHW9h2_4l56qA": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1783326007196
+          }
+        },
+        "professionId": "-Mx44QoDU81SRDJrb13z",
+        "remotePolicy": {
+          "daysPerWeek": 3,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 3,
+        "salary": {
+          "currency": "€",
+          "max": 58,
+          "min": 40,
+          "recurrence": "year",
+          "maxPerYear": 58
+        }
+      },
+      "helmetHandle": "KzYPlaVHTcetfgO5537B",
+      "id": "-OwqVNlkzzb4i45XUkyH",
+      "lastUpdate": 1783327109017000,
+      "publishDate": 1783326385518000,
+      "premium": "2026-07-06T08:26:25.518Z",
+      "profession": {
+        "algoliaKeyword": "backend",
+        "langContent": {
+          "en": {
+            "displayName": "Back-end developer",
+            "name": "Back-end developer"
+          },
+          "fr": {
+            "displayName": "Développeur·euse Back-end",
+            "name": "Développeur Back-end"
+          }
+        }
+      },
+      "seoAlias": "developpeur-backend-java-hfx-zenika",
+      "skillsList": [
+        {
+          "name": "Java",
+          "value": 50
+        },
+        {
+          "name": "Spring Boot",
+          "value": 50
+        },
+        {
+          "name": "Kafka",
+          "value": 50
+        },
+        {
+          "name": "Google Cloud",
+          "value": 50
+        },
+        {
+          "name": "DDD",
+          "value": 50
+        },
+        {
+          "name": "Agile",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Consultant Développeur backend Java H/F/X",
+      "smallCompany": {
+        "companyName": "Zenika",
+        "handle": "2jlqmaSfRgip6ks2Epfa",
+        "id": "yiQl8Z6AVFOe89QfaIF4niiz5Fw1",
+        "seoAlias": "zenika",
+        "gallery": {
+          "handle": "wMqNorRARuynRfFFfDaN"
+        },
+        "companyType": 3,
+        "companyTypeExplicit": "service_company",
+        "sectors": [
+          "Consulting_Professional_Services",
+          "B_B",
+          "SAAS"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/6PM6QofLJPc/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/zenika"
+      },
+      "_geoloc": [
+        {
+          "lat": 50.6596855,
+          "lng": 3.0928426
+        }
+      ],
+      "objectID": "-OwqVNlkzzb4i45XUkyH",
+      "formattedPlaces": [
+        "Marcq-en-Barœul, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "OWQVNLKZ",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/developpeur-backend-java-hfx-zenika"
+    },
+    {
+      "companyId": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1677061618269000,
+      "creatorId": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+      "descriptionPreview": "“Jetdev c’est tout ce que vous m’aviez vendu”, “La co-construction et le bien-être des collabs ce n’est pas du bullshit”, “On est une famille”, “Quand on est Jetdev et qu’on arrive chez un client, on a l’impression d’être un super-héros” … Et ce n’est qu’une infime partie des retours des JetDevelopers ! Beaucoup d’ESN vont vous vendre “une boite à taille humaine” qui met “le collaborateur au coeur",
+      "mdDescription": "“Jetdev c’est tout ce que vous m’aviez vendu”, “La co-construction et le bien-être des collabs ce n’est pas du bullshit”, “On est une famille”, “Quand on est Jetdev et qu’on arrive chez un client, on a l’impression d’être un super-héros” … Et ce n’est qu’une infime partie des retours des JetDevelopers ! Beaucoup d’ESN vont vous vendre “une boite à taille humaine” qui met “le collaborateur au coeur de ses enjeux” où “règne le bien-être”. Chez Jetdev on a eu un départ en 6 ans.\n\nTu fais partie de ceux qui pensent que le JDK 8 a tout changé ? Es-tu capable d'expliquer l'IoC sans sourciller ? Connais-tu tous les composants de Spring, de Spring Security à Spring Data, comme si c'étaient tes meilleurs potes ? Tu es content de lire craftsmanship dans cette annonce et tu te demandes à partir de quand je vais parler de clean code ou de clean architecture ? Pour toi, un bon code c’est un code simple, compréhensible et sécurisé ? Si en plus de ça tu as le mindset Agile, c’est bien toi qu’on recherche. Si certains de ces concepts te sont inconnus, tu auras l’occasion de te former chez nous dans une équipe de n°10.\nMais avant tout, tu dois pouvoir devenir un membre à part entière de la famille Jetdev. Ça veut dire aimer passer du bon temps avec ses collègues. Il faut aussi avoir une grande conscience professionnelle et être un team player.\n\nTu seras l’image et le porte parole de Jetdev chez nos clients à travers tes missions de développeurs. Tu apporteras ton expertise afin de conseiller au mieux nos clients dans le développement de leurs solutions. Tu sauras lui dire “Non” quand il le faudra, tu sauras donner de ta personne dans les moments difficiles mais aussi et surtout, tu distribueras ta bonne humeur et ton savoir vivre afin de rendre leurs journées meilleures.",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "locale": "fr",
+        "places": {
+          "ChIJkcr8qr3XwkcRk4243VlZBAA": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1677061521618
+          }
+        },
+        "professionId": "-Mx44QoDU81SRDJrb13z",
+        "remotePolicy": {
+          "daysPerWeek": 3,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 2,
+        "salary": {
+          "max": 55,
+          "min": 36,
+          "recurrence": "year",
+          "maxPerYear": 55
+        }
+      },
+      "helmetHandle": "KnQSNQu9SSy0gUTaRsax",
+      "id": "-NOsdk1DFMfRtXznXGJ6",
+      "lastUpdate": 1741768929492000,
+      "publishDate": 1782721446933000,
+      "premium": 1733914622707,
+      "profession": {
+        "algoliaKeyword": "backend",
+        "langContent": {
+          "en": {
+            "displayName": "Back-end developer",
+            "name": "Back-end developer"
+          },
+          "fr": {
+            "displayName": "Développeur·euse Back-end",
+            "name": "Développeur Back-end"
+          }
+        }
+      },
+      "seoAlias": "developpeur-java-spring-jetdev",
+      "skillsList": [
+        {
+          "name": "Spring",
+          "value": 50
+        },
+        {
+          "name": "Spring Boot",
+          "value": 50
+        },
+        {
+          "name": "Java",
+          "value": 50
+        },
+        {
+          "name": "PostgreSQL",
+          "value": 50
+        },
+        {
+          "name": "MongoDB",
+          "value": 50
+        },
+        {
+          "name": "Google Cloud",
+          "value": 50
+        },
+        {
+          "name": "Git",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Développeur Java / Spring",
+      "smallCompany": {
+        "companyName": "Jetdev",
+        "handle": "1g94NdaS12ZAfq6Y37jQ",
+        "id": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+        "seoAlias": "jetdev",
+        "gallery": {
+          "handle": "bZqc5CsXSGS3gI9eYwAE"
+        },
+        "companyType": 3,
+        "companyTypeExplicit": "service_company",
+        "sectors": [
+          "B_B"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/utT1OGWCiiQ/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/jetdev"
+      },
+      "_geoloc": [
+        {
+          "lat": 50.60800649999999,
+          "lng": 3.1661191
+        }
+      ],
+      "objectID": "-NOsdk1DFMfRtXznXGJ6",
+      "formattedPlaces": [
+        "Villeneuve-d'Ascq, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "NOSDK1DF",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/developpeur-java-spring-jetdev"
+    },
+    {
+      "companyId": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1675938763967000,
+      "creatorId": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+      "descriptionPreview": "“Jetdev c’est tout ce que vous m’aviez vendu”, “La co-construction et le bien-être des collabs ce n’est pas du bullshit”, “On est une famille”, “Quand on est Jetdev et qu’on arrive chez un client, on a l’impression d’être un super-héros” … Et ce n’est qu’une infime partie des retours des JetDevelopers ! Beaucoup d’ESN vont vous vendre “une boite à taille humaine” qui met “le collaborateur au coeur",
+      "mdDescription": "“Jetdev c’est tout ce que vous m’aviez vendu”, “La co-construction et le bien-être des collabs ce n’est pas du bullshit”, “On est une famille”, “Quand on est Jetdev et qu’on arrive chez un client, on a l’impression d’être un super-héros” … Et ce n’est qu’une infime partie des retours des JetDevelopers ! Beaucoup d’ESN vont vous vendre “une boite à taille humaine” qui met “le collaborateur au coeur de ses enjeux” où “règne le bien-être”. Chez Jetdev on a eu un départ en 6 ans.\n\nTu es une personne polyvalente et à l’aise aussi sur bien des technologies back que front. Tu es content de lire craftsmanship dans cette annonce et tu te demandes à partir de quand je vais parler de clean code ou de clean architecture ? Pour toi, un bon code c’est un code simple, compréhensible et sécurisé ? Si en plus de ça tu as le mindset Agile, c’est bien toi qu’on recherche. Si certains de ces concepts te sont inconnus, tu auras l’occasion de te former chez nous dans une équipe de n°10.\nMais avant tout, tu dois pouvoir devenir un membre à part entière de la famille Jetdev. Ça veut dire aimer passer du bon temps avec ses collègues. Il faut aussi avoir une grande conscience professionnelle et être un team player.\n\nTu seras l’image et le porte parole de Jetdev chez nos clients à travers tes missions de développeurs. Tu apporteras ton expertise afin de conseiller au mieux nos clients dans le développement de leurs solutions. Tu sauras lui dire “Non” quand il le faudra, tu sauras donner de ta personne dans les moments difficiles mais aussi et surtout, tu distribueras ta bonne humeur et ton savoir vivre afin de rendre leurs journées meilleures.\n\n<br>\n<br>\n",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "locale": "fr",
+        "places": {
+          "ChIJkcr8qr3XwkcRk4243VlZBAA": {
+            "position": 0,
+            "precise": true,
+            "updatedAt": 1675938433257
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "daysPerWeek": 3,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 2,
+        "salary": {
+          "max": 55,
+          "min": 36,
+          "recurrence": "year",
+          "maxPerYear": 55
+        }
+      },
+      "helmetHandle": "mHTD6sNrSzGHkOOQX4dg",
+      "id": "-NNphP9b7V0BFCLag5Qn",
+      "lastUpdate": 1741768929741000,
+      "publishDate": 1782721446933000,
+      "premium": 1733914621762,
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "developpeur-fullstack-jetdev",
+      "skillsList": [
+        {
+          "name": "React",
+          "value": 50
+        },
+        {
+          "name": "VueJS",
+          "value": 50
+        },
+        {
+          "name": "Angular",
+          "value": 50
+        },
+        {
+          "name": "Spring Boot",
+          "value": 50
+        },
+        {
+          "name": "Kubernetes",
+          "value": 50
+        },
+        {
+          "name": "Nest",
+          "value": 50
+        },
+        {
+          "name": "Docker",
+          "value": 50
+        },
+        {
+          "name": "Blockchain",
+          "value": 50
+        },
+        {
+          "name": "Agile",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Développeur Fullstack",
+      "smallCompany": {
+        "companyName": "Jetdev",
+        "handle": "1g94NdaS12ZAfq6Y37jQ",
+        "id": "RuLqSXVa5qeFSOcTrDGVxmjpbZW2",
+        "seoAlias": "jetdev",
+        "gallery": {
+          "handle": "bZqc5CsXSGS3gI9eYwAE"
+        },
+        "companyType": 3,
+        "companyTypeExplicit": "service_company",
+        "sectors": [
+          "B_B"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/utT1OGWCiiQ/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/jetdev"
+      },
+      "_geoloc": [
+        {
+          "lat": 50.60800649999999,
+          "lng": 3.1661191
+        }
+      ],
+      "objectID": "-NNphP9b7V0BFCLag5Qn",
+      "formattedPlaces": [
+        "Villeneuve-d'Ascq, France"
+      ],
+      "type": "company_job",
+      "application30Days": true,
+      "reference": "NNPHP9B7",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/developpeur-fullstack-jetdev"
+    },
+    {
+      "companyId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "contractTypes": [
+        "permanent"
+      ],
+      "createdAt": 1738916721721000,
+      "creatorId": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+      "descriptionPreview": "🎯L'entrepriseCYIM fondée en 2001, se positionne à l'avant-garde du numérique au service des sociétés savantes de spécialité médicale. Notre mission est d'accompagner ces institutions prestigieuses dans leur transition numérique, en leur fournissant des services informatiques adaptés à leurs besoins spécifiques.  \n\n##### **Nos Services Clés :**\n\n**Gestion d'Événements :** Nous fournissons des plat",
+      "mdDescription": "🎯L'entrepriseCYIM fondée en 2001, se positionne à l'avant-garde du numérique au service des sociétés savantes de spécialité médicale. Notre mission est d'accompagner ces institutions prestigieuses dans leur transition numérique, en leur fournissant des services informatiques adaptés à leurs besoins spécifiques.  \n\n****Nos Services Clés :****\n\n**Gestion d'Événements :** Nous fournissons des plateformes complètes pour organiser avec succès des congrès et des séminaires, simplifiant l'inscription, la soumission d'abstracts et la logistique.  \n  \n**Diffusion de la Science :** Nos plateformes web et mobiles, alliées à l’utilisation des réseaux sociaux, étendent la visibilité de la recherche et des bonnes pratiques médicales, favorisant ainsi l'échange d'informations fiables en renforçant la cohésion au sein de la communauté médicale.  \n**Gestion des Adhésions :** Nos outils simplifient la gestion des adhésions et des cotisations, optimisant les processus administratifs pour les sociétés savantes.  \n**E-Learning et Certification :** Nous accompagnons nos clients dans la mise en place de solutions dédiées à la formation, mais aussi de systèmes spécialisés pour l'organisation d'examens médicaux, adaptés tant au présentiel qu'au distanciel. Ces dispositifs assurent des certifications reconnues, valorisant ainsi l'expertise professionnelle.  \nChez CYIM, nous sommes fiers de contribuer au progrès médical en facilitant l'accès à l'information scientifique et en soutenant la formation continue des professionnels de santé.  \nNotre expertise en solutions numériques innovantes et notre engagement envers l'excellence nous positionnent comme le partenaire de référence des sociétés savantes désireuses de se projeter dans l'ère numérique.  \nNous sommes 72 collaborateurs, environ 30 développeuses et développeurs et sommes axés sur l’innovation.  \n🎯Ta MissionEn tant que Lead Développeur, tu seras un pilier de notre équipe technique, en charge de moderniser nos processus et méthodes de développement tout en assurant la stabilité et la performance de nos produits. Tu joueras un rôle clé dans la direction technique de l'entreprise, en apportant ton expertise en Vue et Node.js et ta culture tech, avec une maîtrise des modèles de données et de l'architecture microservices.  \n  \nRattaché à l’Engineering Manager, tu participeras aux choix technologiques et stratégiques.  \n🔍Tes Responsabilités**● Innovation et optimisation technique :** Diriger les efforts pour améliorer continuellement notre stack technologique, en mettant l'accent sur la performance, la scalabilité et la sécurité.  \n**● Leadership technique :** Prendre le lead sur des projets clés, en mentorant les membres de l'équipe et en favorisant un environnement de travail collaboratif et innovant. Tu as une solide expertise en modèles de données, et devra être un moteur de la montée en compétences de tes collaborateurs sur ce point.  \n**● Stratégie de développement :** Collaborer étroitement avec les équipes produit et tech pour définir et exécuter la roadmap technique, alignée sur les objectifs stratégiques de l'entreprise. Travailler en synergie avec le CTO, le PO et l’Engineering Manager pour intégrer et diffuser les objectifs techniques et stratégiques.  \n**● Communication et collaboration :** Assurer une communication fluide avec toutes les parties prenantes, en favorisant l'intégration des meilleures pratiques de développement au sein des équipes.  \n🎓Profil RecherchéNous recherchons un expert technique chevronné, doté d'une expérience de 5 ans ou plus en développement backend, spécifiquement en Node.js, et d'une solide compréhension des architectures microservices. Nous avons également besoins de solides connaissances côté front en Vue.  \n  \nTu devras être capable de guider et de développer une équipe, en apportant une vision technique claire et un leadership inspirant. Tu auras la responsabilité du code, et devra maintenir un haut niveau d’exigence au sein de l’équipe.  \n🛠️Les Compétences Clés Attendues**● Expertise en Node.js et architecture microservices :** Compétence démontrée dans le développement de solutions backend complexes sur une stack JS dans un environnement innovant et en perpétuel évolution.  \n**● Leadership et mentorat :** Expérience avérée dans le leadership technique et/ou le management d'équipe.  \n**● Gestion de projet et innovation :** Aptitude à mener des projets du concept à la livraison, avec un esprit d'innovation constant. Capacité à comprendre les besoins et les specs, pour établir avec le PO une backlog cohérente en respectant les deadlines.  \n**● Communication efficace :** Excellentes capacités de communication, essentielles pour travailler en équipe et interagir avec diverses parties prenantes, en français et en anglais.  \n**● Adaptabilité et passion pour la mission :** Flexibilité pour s'adapter à un environnement dynamique et engagement envers la mission de CYIM. Avoir conscience de l’impact de son travail et de son sens.",
+      "details": {
+        "contracts": {
+          "permanent": true
+        },
+        "places": {
+          "ChIJhZDWpy_eDkgRMKvkNs2lDAQ": {
+            "position": 0
+          }
+        },
+        "professionId": "-Mx3kkb13fZejNbGASKP",
+        "remotePolicy": {
+          "daysPerWeek": 2,
+          "frequency": "hybrid"
+        },
+        "requiredExperience": 6,
+        "start": "asap",
+        "salary": {
+          "currency": "€",
+          "max": 60,
+          "min": 55,
+          "recurrence": "year",
+          "maxPerYear": 60
+        }
+      },
+      "helmetHandle": "kWBgdmQFRUycVQCTPKyQ",
+      "id": "hiresweet+5TT9BP12ECDO",
+      "lastUpdate": 1759856425758000,
+      "publishDate": 1758874392260000,
+      "premium": "2025-07-29T17:00:26.118Z",
+      "profession": {
+        "algoliaKeyword": "fullstack",
+        "langContent": {
+          "en": {
+            "displayName": "Fullstack developer",
+            "name": "Full stack developer"
+          },
+          "fr": {
+            "displayName": "Développeur.euse Full stack",
+            "name": "Développeur Full stack"
+          }
+        }
+      },
+      "seoAlias": "lead-software-engineer-fullstack-node-vue-k-hybride-a-rennes-le-cab-by-welovedevs",
+      "skillsList": [
+        {
+          "name": "NodeJS",
+          "value": 50
+        },
+        {
+          "name": "Anglais",
+          "value": 50
+        },
+        {
+          "name": "Gestion de projet",
+          "value": 50
+        },
+        {
+          "name": "Management",
+          "value": 50
+        },
+        {
+          "name": "React",
+          "value": 50
+        },
+        {
+          "name": "Typescript",
+          "value": 50
+        }
+      ],
+      "status": "JOB_PUBLISHED",
+      "title": "Lead Software Engineer Fullstack (Node & Vue) 45/60K hybride à Rennes",
+      "smallCompany": {
+        "companyName": "Le Cab by WeLoveDevs",
+        "handle": "m0NAno1RySjksFiwIdhQ",
+        "id": "qzoUORv54tPiZ8yQBlFU0zIMrq12",
+        "seoAlias": "le-cab-by-welovedevs",
+        "gallery": {
+          "handle": "3J8DugLzSiSHx1PoiFnO"
+        },
+        "companyType": 6,
+        "companyTypeExplicit": "consultiung_company",
+        "sectors": [
+          "B_B",
+          "SAAS",
+          "Human_Resources"
+        ],
+        "fallbackGalleryUrl": "https://i.ytimg.com/vi/Qb9fiodKQ18/maxresdefault.jpg",
+        "url": "https://welovedevs.com/app/fr/company/le-cab-by-welovedevs"
+      },
+      "_geoloc": [
+        {
+          "lat": 48.117266,
+          "lng": -1.6777926
+        }
+      ],
+      "objectID": "hiresweet 5TT9BP12ECDO",
+      "formattedPlaces": [
+        "Rennes, France"
+      ],
+      "type": "company_job",
+      "reference": "5TT9BP12ECDO",
+      "ranking": 10,
+      "url": "https://welovedevs.com/fr/app/job/lead-software-engineer-fullstack-node-vue-k-hybride-a-rennes-le-cab-by-welovedevs"
+    }
+  ]
+}

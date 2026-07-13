@@ -3,7 +3,7 @@ from fastapi import FastAPI
 # from fastapi.middleware.cors import CORSMiddleware
 from .database import create_db_and_tables
 # from .routes import applications, contacts, contact_method, documents, scraper, chatbot
-from .routes import user, weLoveDevs
+from .routes import user, weLoveDevs, scraper
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,5 +34,5 @@ app.include_router(weLoveDevs.router)
 # app.include_router(contacts.router)
 # app.include_router(contact_method.router)
 # app.include_router(documents.router)
-# app.include_router(scraper.router)
+app.include_router(scraper.router)
 # app.include_router(chatbot.router)
