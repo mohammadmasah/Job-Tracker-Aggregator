@@ -5,7 +5,7 @@ from ..database import get_session
 from ..models import Offer, CreateOffer, ReadOffer
 from ..services import fetch_offers
 
-router = APIRouter(prefix="/api/offer", tags=["offer"])
+router = APIRouter(prefix="/api/offers", tags=["offers"])
 
 
 @router.post("")
