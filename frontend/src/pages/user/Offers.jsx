@@ -1,51 +1,65 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { fetchOffers, scrapeOffers } from "../../api/offers"
-import OffersBySource from "../../components/OffersBySource";
+import OffersList from "../../components/offers/OffersList";
+import { fetchOffers, scrapeOffers } from "../../api/offers";
 
 export default function Offers() {
     const [offers, setOffers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [scraping, setScraping] = useState(false);
 
     const loadOffers = async () => {
-        const res = await fetchOffers();
-        setOffers(res.data)
-    }
+        setLoading(true);
+        try {
+            const res = await fetchOffers();
+            setOffers(res.data);
+        } catch (e) {
+            console.error("Erreur chargement offres", e);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleScraping = async () => {
-        await scrapeOffers();
-        await loadOffers();
-    }
+        setScraping(true);
+        try {
+            await scrapeOffers();
+            await loadOffers();
+        } catch (e) {
+            console.error("Erreur scraping", e);
+        } finally {
+            setScraping(false);
+        }
+    };
 
     useEffect(() => {
         loadOffers();
-    }, [])
+    }, []);
 
-    const navigate = useNavigate()
-    const button = "px-5 py-2.5 text-[11px] font-bold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase rounded-[4px] transition-colors"
+    if (loading) {
+        return <p className="text-text-2 font-mono text-[12px] p-10">Chargement...</p>;
+    }
+
     return (
-        <div>
-
-            {/* HEADER */}
-            <div className="flex justify-between h-[100px] border-b border-border-soft items-center px-8">
+        <div className="h-full bg-bg font-mono flex flex-col">
+            {/* HEADER — aligné avec le reste du site */}
+            <div className="flex items-center justify-between px-8 h-[100px] border-b border-border-soft shrink-0">
                 <div>
-                    <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Offres</h1>
+                    <h1 className="text-2xl font-extrabold uppercase text-text tracking-wide">Offres</h1>
+                    <p className="text-[11px] text-text-3 mt-1">{offers.length} au total</p>
                 </div>
-
                 <button
-                    type="button"
-                    className={button}
-                    onClick={() => navigate("/offers/all")}>Toutes les Offres</button>
-                <button
-                    type="button"
-                    className={button}
-                    onClick={handleScraping}>SCRAPER + </button>
+                    onClick={handleScraping}
+                    disabled={scraping}
+                    className="text-[11px] text-bg bg-accent hover:bg-accent-2 px-5 py-2.5 rounded-[4px] tracking-wider uppercase transition-colors font-bold disabled:opacity-50"
+                >
+                    {scraping ? "Scraping..." : "Scraper +"}
+                </button>
             </div>
 
-            <div className="max-h-[85vh] overflow-y-auto custom-scroll">
-                <OffersBySource offers={offers} />
+            {/* MAÎTRE-DÉTAIL */}
+            <div className="flex-1 min-h-0">
+                <OffersList offers={offers} />
             </div>
         </div>
-
-    )
+    );
 }

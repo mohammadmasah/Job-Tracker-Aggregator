@@ -74,10 +74,8 @@ export default function Nav() {
 
                 <nav className="flex flex-col mt-8 min-w-60">
                     <NavLink to="/" end className={linkClass}>Tableau de bord</NavLink>
-
-                    <NavLink to="/offers" className={linkClass}>Offres</NavLink>
-
                     <NavLink to="/applications" className={linkClass}>Applications</NavLink>
+                    <NavLink to="/offers" className={linkClass}>Offres</NavLink>
                     <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
 
                     <NavLink to="/settings" end className={settingsParentClass}>Paramètres</NavLink>

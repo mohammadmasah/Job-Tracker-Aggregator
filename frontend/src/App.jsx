@@ -5,6 +5,7 @@ import { useTheme } from "./hooks/useTheme";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/user/Dashboard";
+import Offers from "./pages/user/Offers";
 import Applications from "./pages/user/Applications";
 import Contacts from "./pages/user/Contacts";
 import SettingsLayout, {
@@ -12,10 +13,6 @@ import SettingsLayout, {
     SettingsNotifications,
     SettingsApparence,
 } from "./pages/user/Settings";
-import Offers from "./pages/user/Offers";
-import AllOffers from "./pages/user/AllOffers";
-import OffersLayout from "./components/OffersLayout";
-import OffersBySourceView from "./components/OffersBySourceView";
 
 export default function App() {
     useTheme();
@@ -27,12 +24,7 @@ export default function App() {
 
                 <Route element={<Layout />}>
                     <Route path="/" element={<Dashboard />} />
-
-                    <Route path="/offers" element={<OffersLayout />}>
-                        <Route path="source" element={<OffersBySourceView />} />  
-                        <Route index element={<AllOffers />} />      
-                    </Route>
-
+                    <Route path="/offers" element={<Offers />} />
                     <Route path="/applications" element={<Applications />} />
                     <Route path="/contacts" element={<Contacts />} />
 

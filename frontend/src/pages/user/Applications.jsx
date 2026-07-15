@@ -157,7 +157,10 @@ export default function Applications() {
         <div ref={scrollRef} className="h-full overflow-y-auto custom-scroll bg-bg font-mono">
             {/* HEADER */}
             <div className="flex justify-between h-[100px] border-b border-border-soft items-center px-8">
-                <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Tableau</h1>
+                <div>
+                <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Mes candidatures</h1>
+                <p className="text-[11px] text-text-3 mt-1">{applications.length} au total</p>
+                </div>
                 <button
                     onClick={() => setIsAddFormOpen(true)}
                     className="px-5 py-2.5 text-[11px] font-bold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase rounded-[4px] transition-colors"
@@ -346,9 +349,8 @@ function ScrollToTop({ scrollRef }) {
     return (
         <button
             onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-            className={`fixed bottom-24 right-6 z-40 w-11 h-11 flex items-center justify-center bg-panel border border-border rounded-full text-text hover:border-accent hover:text-accent transition-all shadow-lg ${
-                show ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+            className={`fixed bottom-24 right-6 z-40 w-11 h-11 flex items-center justify-center bg-panel border border-border rounded-full text-text hover:border-accent hover:text-accent transition-all shadow-lg ${show ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
             title="Retour en haut"
             aria-label="Retour en haut"
         >
