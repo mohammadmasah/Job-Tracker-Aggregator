@@ -6,14 +6,13 @@ class User(SQLModel, table=True):
     lastname: str 
     email: str = Field (index=True, unique=True)
     hashed_password: str 
-    role: str
+    role: str = Field(default="user")
     
 class UserCreate(SQLModel):
     name: str
     lastname: str
     email: str
     password: str
-    role: str
 
 class UserLogin(SQLModel):
     email: str
