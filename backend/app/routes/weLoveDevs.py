@@ -10,45 +10,53 @@ router = APIRouter(prefix="/api/offers", tags=["offers"])
 
 @router.post("")
 async def offers(session: Session = Depends(get_session)):
-    row_data = fetch_offers()
-    offers_list = row_data.get("values", [])
+    raw = fetch_offers()
+    source = raw.get("source", "welovedevs")
+    offers_list = raw["data"].get("values", [])
 
+    added = 0
     for offer in offers_list:
+        ref = offer.get("reference")
+        # anti-doublon (voir note plus bas)
+        if (
+            ref
+            and session.exec(
+                select(Offer).where(Offer.source == source, Offer.reference == ref)
+            ).first()
+        ):
+            continue
+
         details_info = offer.get("details", {})
         salary_info = details_info.get("salary", {})
-        
-        skills_list = offer.get("skillsList", {})
-        skills = ", ".join(s.get("name", "") for s in skills_list)
-        
+        skills_list = offer.get("skillsList", [])
         company_info = offer.get("smallCompany", {})
-        company_name = company_info.get("companyName")
-        salary_currency = salary_info.get("currency")
-        salary_min = salary_info.get("min")
-        salary_max = salary_info.get("max")
 
         new_offer = Offer(
+            source=source,
+            reference=ref,
             title=offer.get("title"),
-            company=company_name,
+            company=company_info.get("companyName"),
             description=offer.get("mdDescription"),
             descriptionPreview=offer.get("descriptionPreview"),
             localisation=offer.get("formattedPlaces", []),
             createdAt=offer.get("createdAt"),
             start=details_info.get("start"),
             sectors=company_info.get("sectors", []),
-            
-            skills=skills,
-            
-            salary_currency=salary_currency,
-            salary_min=salary_min,
-            salary_max=salary_max,
+            skills=[s.get("name", "") for s in skills_list],
+            salary_currency=salary_info.get("currency"),
+            salary_min=salary_info.get("min"),
+            salary_max=salary_info.get("max"),
         )
-
         session.add(new_offer)
+        added += 1
 
     session.commit()
-    return offers_list
+    return {"message": f"{added} offres ajoutées", "source": source}
 
 
 @router.get("")
-def read_offers(session: Session = Depends(get_session)):
-    return session.exec(select(Offer)).all()
+def read_offers(source: str | None = None, session: Session = Depends(get_session)):
+    query = select(Offer)
+    if source:
+        query = query.where(Offer.source == source)
+    return session.exec(query).all()

@@ -7,6 +7,7 @@ import TodayDate from "./TodayDate";
 export default function Nav() {
     const location = useLocation();
     const isSettings = location.pathname.startsWith("/settings");
+    const isOffers = location.pathname.startsWith("/offers")
 
     // Ouverte par défaut sur desktop ; l'état est persisté
     const [open, setOpen] = useState(() => localStorage.getItem("nav-open") !== "0");
@@ -28,10 +29,15 @@ export default function Nav() {
     const subLinkClass = ({ isActive }) =>
         `pl-8 pr-4 py-2 text-[11px] transition-colors border-l whitespace-nowrap ${isActive
             ? "text-accent-2/70 bg-bg/40 border-accent-2/40"
-            : "text-accent-2/20 hover:text-accent-2/70 hover:bg-bg/30 hover:border-accent-2/30 border-transparent"
+            : "text-accent-2/30 hover:text-accent-2/70 hover:bg-bg/30 hover:border-accent-2/30 border-transparent"
         }`;
 
     const settingsParentClass = `px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isSettings
+        ? "text-accent bg-bg border-accent/70"
+        : "text-text-2 hover:text-accent/70 hover:bg-card/50 border-transparent"
+        }`;
+
+    const offersParentClass = `px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isOffers
         ? "text-accent bg-bg border-accent/70"
         : "text-text-2 hover:text-accent/70 hover:bg-card/50 border-transparent"
         }`;
@@ -68,12 +74,13 @@ export default function Nav() {
 
                 <nav className="flex flex-col mt-8 min-w-60">
                     <NavLink to="/" end className={linkClass}>Tableau de bord</NavLink>
-                    <NavLink to="/offers" end className={linkClass}>Offres</NavLink>
+
+                    <NavLink to="/offers" className={linkClass}>Offres</NavLink>
+
                     <NavLink to="/applications" className={linkClass}>Applications</NavLink>
                     <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
 
                     <NavLink to="/settings" end className={settingsParentClass}>Paramètres</NavLink>
-
                     {isSettings && (
                         <div className="flex flex-col border-b border-border-soft pb-1">
                             <NavLink to="/settings/statistiques" className={subLinkClass}>Statistiques</NavLink>

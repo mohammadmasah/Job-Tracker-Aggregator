@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import ThemeSwitcher from "../components/ThemeSwitcher";
-import StatCardsConfig from "../components/StatCardsConfig";
-import TodayDate from "../components/TodayDate";
-import { useClockSettings } from "../hooks/useClockSettings";
+import ThemeSwitcher from "../../components/ThemeSwitcher";
+import StatCardsConfig from "../../components/StatCardsConfig";
+import TodayDate from "../../components/TodayDate";
+import { useClockSettings } from "../../hooks/useClockSettings";
 
 function SettingsLayout() {
     const location = useLocation();

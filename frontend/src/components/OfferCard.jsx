@@ -28,8 +28,7 @@ function formatSalary(min, max, currency) {
 export default function OfferCard({ offer }) {
     const salary = formatSalary(offer.salary_min, offer.salary_max, offer.salary_currency);
     const date = formatDate(offer.createdAt);
-    const skills = (offer.skills || "").split(",").map((s) => s.trim()).filter(Boolean);
-
+    const skills = Array.isArray(offer.skills) ? offer.skills : [];
     return (
         <div
             className="group flex flex-col bg-panel border border-border-soft rounded-[8px] overflow-hidden transition-all hover:border-border hover:shadow-lg hover:-translate-y-0.5 font-mono"

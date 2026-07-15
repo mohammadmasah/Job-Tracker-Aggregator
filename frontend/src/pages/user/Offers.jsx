@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { fetchOffers, scrapeOffers } from "../../api/offers"
-import OfferCard from "../../components/OfferCard";
+import OffersBySource from "../../components/OffersBySource";
 
 export default function Offers() {
     const [offers, setOffers] = useState([]);
@@ -20,8 +21,8 @@ export default function Offers() {
         loadOffers();
     }, [])
 
-
-    const button = "w-full rounded-lg border border-blue-800 bg-blue-800/20 p-2.5 text-white placeholder-slate-400 hover:bg-blue-800 hover:border-blue-800";
+    const navigate = useNavigate()
+    const button = "px-5 py-2.5 text-[11px] font-bold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase rounded-[4px] transition-colors"
     return (
         <div>
 
@@ -33,14 +34,16 @@ export default function Offers() {
 
                 <button
                     type="button"
-                    className="px-5 py-2.5 text-[11px] font-bold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase rounded-[4px] transition-colors"
-                        onClick={handleScraping}>SCRAPER + </button>
+                    className={button}
+                    onClick={() => navigate("/offers/all")}>Toutes les Offres</button>
+                <button
+                    type="button"
+                    className={button}
+                    onClick={handleScraping}>SCRAPER + </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-5 max-h-[85vh]  overflow-y-auto custom-scroll">
-                {offers.map((offer) => (
-                    <OfferCard key={offer.id} offer={offer} />
-                ))}
+            <div className="max-h-[85vh] overflow-y-auto custom-scroll">
+                <OffersBySource offers={offers} />
             </div>
         </div>
 

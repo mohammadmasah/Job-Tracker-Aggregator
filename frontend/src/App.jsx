@@ -11,8 +11,11 @@ import SettingsLayout, {
     SettingsStatistiques,
     SettingsNotifications,
     SettingsApparence,
-} from "./pages/Settings";
+} from "./pages/user/Settings";
 import Offers from "./pages/user/Offers";
+import AllOffers from "./pages/user/AllOffers";
+import OffersLayout from "./components/OffersLayout";
+import OffersBySourceView from "./components/OffersBySourceView";
 
 export default function App() {
     useTheme();
@@ -24,9 +27,15 @@ export default function App() {
 
                 <Route element={<Layout />}>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/offers" element={<Offers />} />
+
+                    <Route path="/offers" element={<OffersLayout />}>
+                        <Route path="source" element={<OffersBySourceView />} />  
+                        <Route index element={<AllOffers />} />      
+                    </Route>
+
                     <Route path="/applications" element={<Applications />} />
                     <Route path="/contacts" element={<Contacts />} />
+
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route path="statistiques" element={<SettingsStatistiques />} />
                         <Route path="notifications" element={<SettingsNotifications />} />
