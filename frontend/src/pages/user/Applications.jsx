@@ -1,17 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { IoGridOutline, IoListOutline, IoStar } from "react-icons/io5";
-import { useApplications } from "../hooks/useApplications";
-import { useContacts } from "../hooks/useContacts";
-import ApplicationForm from "../components/ApplicationForm";
-import { createApplication } from "../api/application";
-import ApplicationCard from "../components/ApplicationCard";
-import ApplicationRow from "../components/ApplicationRow";
-import { createContact } from "../api/contacts";
-import { createContactMethod } from "../api/contactMethod";
-import { uploadDocument } from "../api/document";
-import ApplicationDetail from "../components/ApplicationDetail";
-import { STATUS_OPTIONS, STATUS_ORDER, STATUS_META, RELANCE_COLOR, needsRelance } from "../constants/status";
+import { useApplications } from "../../hooks/useApplications";
+import { useContacts } from "../../hooks/useContacts";
+import ApplicationForm from "../../components/ApplicationForm";
+import { createApplication } from "../../api/application";
+import ApplicationCard from "../../components/ApplicationCard";
+import ApplicationRow from "../../components/ApplicationRow";
+import { createContact } from "../../api/contacts";
+import { createContactMethod } from "../../api/contactMethod";
+import { uploadDocument } from "../../api/document";
+import ApplicationDetail from "../../components/ApplicationDetail";
+import { STATUS_OPTIONS, STATUS_ORDER, STATUS_META, RELANCE_COLOR, needsRelance } from "../../constants/status";
 
 const CARD_GRID = "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3";
 

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useApplications } from "../hooks/useApplications";
-import { useContacts } from "../hooks/useContacts";
-import ApplicationForm from "../components/ApplicationForm";
-import StatsCards from "../components/StatsCards";
-import { createApplication } from "../api/application";
-import { createContact } from "../api/contacts";
-import { createContactMethod } from "../api/contactMethod";
-import { uploadDocument } from "../api/document";
+import { useApplications } from "../../hooks/useApplications";
+import { useContacts } from "../../hooks/useContacts";
+import ApplicationForm from "../../components/ApplicationForm";
+import StatsCards from "../../components/StatsCards";
+import { createApplication } from "../../api/application";
+import { createContact } from "../../api/contacts";
+import { createContactMethod } from "../../api/contactMethod";
+import { uploadDocument } from "../../api/document";
 
 const statusLabels = {
     to_apply: "À postuler",

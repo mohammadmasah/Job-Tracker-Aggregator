@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import ContactList from "../components/ContactList";
-import { getContacts } from "../api/contacts";
-import { useApplications } from "../hooks/useApplications";
+import ContactList from "../../components/ContactList";
+import { getContacts } from "../../api/contacts";
+import { useApplications } from "../../hooks/useApplications";
 
 export default function Contacts() {
     const { applications } = useApplications();
