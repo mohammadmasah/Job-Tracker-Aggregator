@@ -1,0 +1,12 @@
+/* ============================================================
+   POLICES DE L'HORLOGE
+   Variables réutilisées par le composant TodayDate via la
+   classe .clock-font-xxx posée sur l'élément de l'heure.
+   (À coller dans index.css, après le bloc @theme ou à la fin)
+   ============================================================ */
+.clock-font-share    { font-family: 'Share Tech Mono', monospace; }
+.clock-font-orbitron { font-family: 'Orbitron', sans-serif; }
+.clock-font-vt323    { font-family: 'VT323', monospace; }
+.clock-font-mono     { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+.clock-font-doto     { font-family: 'Doto', sans-serif; }
+.clock-font-system   { font-family: system-ui, sans-serif; }

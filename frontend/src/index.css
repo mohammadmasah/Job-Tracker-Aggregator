@@ -1,0 +1,869 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SYSTÈME DE THÈMES TRACKIT
+   @theme pointe vers des variables redéfinies par classe sur
+   <html> (.theme-xxx). Changer la classe change tout le thème.
+
+   --bg, --bg-2, --panel, --card  : fonds
+   --border, --border-soft        : bordures
+   --text, --text-2, --text-3     : textes (3 niveaux)
+   --accent, --accent-2           : accents principaux
+   --c1..c4                       : palette multi-couleurs
+   ============================================================ */
+@theme {
+    --color-bg: var(--bg);
+    --color-bg-2: var(--bg-2);
+    --color-panel: var(--panel);
+    --color-card: var(--card);
+    --color-border: var(--border);
+    --color-border-soft: var(--border-soft);
+    --color-text: var(--text);
+    --color-text-2: var(--text-2);
+    --color-text-3: var(--text-3);
+    --color-accent: var(--accent);
+    --color-accent-2: var(--accent-2);
+    --color-c1: var(--c1);
+    --color-c2: var(--c2);
+    --color-c3: var(--c3);
+    --color-c4: var(--c4);
+}
+
+/* ============================================================
+
+   BASE
+
+   ============================================================ */
+
+body {
+
+    background-color: var(--color-bg);
+
+    color: var(--color-text);
+
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+
+}
+
+*::-webkit-scrollbar {
+
+    width: 8px;
+
+    height: 8px;
+
+}
+
+*::-webkit-scrollbar-track {
+
+    background: transparent;
+
+}
+
+*::-webkit-scrollbar-thumb {
+
+    background: var(--color-border);
+
+    border-radius: 4px;
+
+}
+
+*::-webkit-scrollbar-thumb:hover {
+
+    background: var(--color-text-3);
+
+}
+
+* {
+
+    scrollbar-width: thin;
+
+    scrollbar-color: var(--color-border) transparent;
+
+}
+
+@keyframes pulse-border {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 1px #f43f5e33;
+    }
+
+    50% {
+        box-shadow: 0 0 0 2px #f43f5e88;
+    }
+}
+
+/* .animate-pulse-border {
+    animation: pulse-border 2s ease-in-out infinite;
+} */
+
+
+/* Défaut = Blue nuit */
+:root {
+    --bg: #06080d;
+    --bg-2: #080a11;
+    --panel: #0c0f17;
+    --card: #0b0e16;
+    --border: rgba(255, 255, 255, 0.15);
+    --border-soft: rgba(255, 255, 255, 0.09);
+    --text: #e8ecf2;
+    --text-2: #8b93a3;
+    --text-3: #5a6272;
+    --accent: #d6dde8;
+    --accent-2: #ffffff;
+    --c1: #5a7fe0;
+    --c2: #97c459;
+    --c3: #e8a33d;
+    --c4: #d96f6f;
+}
+
+/* ============================================================
+   SOMBRES MONOCHROMES
+   ============================================================ */
+
+/* Bleu nuit */
+.theme-blue {
+    --bg: #0d0606;
+    --bg-2: #080a11;
+    --panel: #0c0f17;
+    --card: #0b0e16;
+    --border: rgba(255, 255, 255, 0.15);
+    --border-soft: rgba(255, 255, 255, 0.09);
+    --text: #e8ecf2;
+    --text-2: #8b93a3;
+    --text-3: #5a6272;
+    --accent: #d6dde8;
+    --accent-2: #ffffff;
+    --c1: #5a7fe0;
+    --c2: #97c459;
+    --c3: #e8a33d;
+    --c4: #d96f6f;
+}
+
+/* Violet nuit */
+.theme-violet {
+    --bg: #0a0712;
+    --bg-2: #0d0917;
+    --panel: #110d1f;
+    --card: #0f0b1b;
+    --border: rgba(183, 148, 246, 0.16);
+    --border-soft: rgba(183, 148, 246, 0.09);
+    --text: #ece8f6;
+    --text-2: #9b8db8;
+    --text-3: #645a7a;
+    --accent: #b794f6;
+    --accent-2: #d4b8ff;
+    --c1: #b794f6;
+    --c2: #6f9eff;
+    --c3: #5cd6a8;
+    --c4: #ffc861;
+}
+
+/* Noir pur (OLED) */
+.theme-oled {
+    --bg: #000000;
+    --bg-2: #060606;
+    --panel: #0c0c0c;
+    --card: #090909;
+    --border: rgba(255, 255, 255, 0.18);
+    --border-soft: rgba(255, 255, 255, 0.10);
+    --text: #fafafa;
+    --text-2: #8f8f8f;
+    --text-3: #5a5a5a;
+    --accent: #ffffff;
+    --accent-2: #d4d4d4;
+    --c1: #ffffff;
+    --c2: #a8a8a8;
+    --c3: #6f6f6f;
+    --c4: #c8c8c8;
+}
+
+/* Gris ardoise */
+.theme-slate {
+    --bg: #0f1218;
+    --bg-2: #141823;
+    --panel: #1a1f2b;
+    --card: #171b26;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.07);
+    --text: #eceef4;
+    --text-2: #9aa1b3;
+    --text-3: #636a7d;
+    --accent: #7dd3fc;
+    --accent-2: #a5e3fd;
+    --c1: #7dd3fc;
+    --c2: #86efac;
+    --c3: #fcd34d;
+    --c4: #fca5a5;
+}
+
+/* Vert nuit */
+.theme-forest {
+    --bg: #04100a;
+    --bg-2: #061610;
+    --panel: #091e15;
+    --card: #081a12;
+    --border: rgba(74, 222, 128, 0.18);
+    --border-soft: rgba(74, 222, 128, 0.10);
+    --text: #e2f5e9;
+    --text-2: #6fae87;
+    --text-3: #4a7a5e;
+    --accent: #4ade80;
+    --accent-2: #86efac;
+    --c1: #4ade80;
+    --c2: #fbbf24;
+    --c3: #38bdf8;
+    --c4: #fb923c;
+}
+
+/* Hacker fluo */
+.theme-hacker {
+    --bg: #010a04;
+    --bg-2: #031206;
+    --panel: #051a09;
+    --card: #041607;
+    --border: rgba(0, 255, 102, 0.20);
+    --border-soft: rgba(0, 255, 102, 0.11);
+    --text: #b8ffc8;
+    --text-2: #4f9a5e;
+    --text-3: #2f6539;
+    --accent: #00ff66;
+    --accent-2: #5fff95;
+    --c1: #00ff66;
+    --c2: #00e5ff;
+    --c3: #faff00;
+    --c4: #ff2e97;
+}
+
+/* Cyberpunk */
+.theme-cyberpunk {
+    --bg: #0a0614;
+    --bg-2: #0f0a1f;
+    --panel: #150e29;
+    --card: #120b23;
+    --border: rgba(255, 46, 151, 0.20);
+    --border-soft: rgba(0, 229, 255, 0.14);
+    --text: #f4e8ff;
+    --text-2: #9a7ac0;
+    --text-3: #5e4680;
+    --accent: #ff2e97;
+    --accent-2: #00e5ff;
+    --c1: #ff2e97;
+    --c2: #00e5ff;
+    --c3: #faff00;
+    --c4: #b14dff;
+}
+
+/* Ambre terminal */
+.theme-amber {
+    --bg: #0e0a02;
+    --bg-2: #151003;
+    --panel: #1c1505;
+    --card: #181204;
+    --border: rgba(255, 176, 0, 0.20);
+    --border-soft: rgba(255, 176, 0, 0.11);
+    --text: #ffe9c0;
+    --text-2: #b08840;
+    --text-3: #6e5526;
+    --accent: #ffb000;
+    --accent-2: #ffd166;
+    --c1: #ffb000;
+    --c2: #ff7a18;
+    --c3: #facc15;
+    --c4: #fb6a4a;
+}
+
+/* Rouge sang */
+.theme-blood {
+    --bg: #0e0306;
+    --bg-2: #15060a;
+    --panel: #1c0a0e;
+    --card: #18080c;
+    --border: rgba(248, 113, 113, 0.20);
+    --border-soft: rgba(248, 113, 113, 0.11);
+    --text: #ffd6d6;
+    --text-2: #b05a5e;
+    --text-3: #6e353a;
+    --accent: #ff4d57;
+    --accent-2: #ff8087;
+    --c1: #ff4d57;
+    --c2: #fb923c;
+    --c3: #facc15;
+    --c4: #f472b6;
+}
+
+/* Nord (gris-bleu doux) */
+.theme-nord {
+    --bg: #2e3440;
+    --bg-2: #343c4a;
+    --panel: #3b4454;
+    --card: #38404f;
+    --border: rgba(236, 239, 244, 0.14);
+    --border-soft: rgba(236, 239, 244, 0.08);
+    --text: #eceff4;
+    --text-2: #abb6c9;
+    --text-3: #7b889c;
+    --accent: #88c0d0;
+    --accent-2: #a3d4e0;
+    --c1: #88c0d0;
+    --c2: #a3be8c;
+    --c3: #ebcb8b;
+    --c4: #bf616a;
+}
+
+/* ============================================================
+   SOMBRES MULTI-COULEURS (fonds teintés)
+   ============================================================ */
+
+/* Sunset — fond prune */
+.theme-sunset {
+    --bg: #1a0e1f;
+    --bg-2: #211228;
+    --panel: #2a1733;
+    --card: #25142d;
+    --border: rgba(255, 143, 171, 0.18);
+    --border-soft: rgba(255, 143, 171, 0.10);
+    --text: #f7e6f0;
+    --text-2: #b885a8;
+    --text-3: #875a78;
+    --accent: #ff8fab;
+    --accent-2: #ffc861;
+    --c1: #ff8fab;
+    --c2: #ffc861;
+    --c3: #5ce0c0;
+    --c4: #c89bff;
+}
+
+/* Ocean — fond bleu profond */
+.theme-ocean {
+    --bg: #061826;
+    --bg-2: #082033;
+    --panel: #0b2a42;
+    --card: #0a263b;
+    --border: rgba(56, 189, 248, 0.18);
+    --border-soft: rgba(56, 189, 248, 0.10);
+    --text: #d6eafc;
+    --text-2: #6a9ac0;
+    --text-3: #4a7290;
+    --accent: #38bdf8;
+    --accent-2: #5cd6e0;
+    --c1: #38bdf8;
+    --c2: #2dd4bf;
+    --c3: #a3e635;
+    --c4: #f472b6;
+}
+
+/* Forest — fond vert profond */
+.theme-forestmulti {
+    --bg: #0c1a12;
+    --bg-2: #0f2016;
+    --panel: #11251a;
+    --card: #102217;
+    --border: rgba(255, 255, 255, 0.12);
+    --border-soft: rgba(255, 255, 255, 0.07);
+    --text: #e0f0e6;
+    --text-2: #6a9a7a;
+    --text-3: #5a8a6a;
+    --accent-2: #4ade80;
+    --accent: #fbbf24;
+}
+
+
+/* Candy — fond indigo */
+.theme-candy {
+    --bg: #120e2e;
+    --bg-2: #181339;
+    --panel: #1f1947;
+    --card: #1b1640;
+    --border: rgba(244, 114, 182, 0.18);
+    --border-soft: rgba(34, 211, 238, 0.13);
+    --text: #efe9ff;
+    --text-2: #968ad0;
+    --text-3: #6a5fa0;
+    --accent: #f472b6;
+    --accent-2: #22d3ee;
+    --c1: #f472b6;
+    --c2: #22d3ee;
+    --c3: #fde047;
+    --c4: #a78bfa;
+}
+
+/* Autumn — fond brun chaud */
+.theme-autumn {
+    --bg: #1c1109;
+    --bg-2: #23160c;
+    --panel: #2c1d11;
+    --card: #27190e;
+    --border: rgba(251, 146, 60, 0.18);
+    --border-soft: rgba(251, 146, 60, 0.10);
+    --text: #f7e6d2;
+    --text-2: #b89068;
+    --text-3: #8a6440;
+    --accent: #fb923c;
+    --accent-2: #facc15;
+    --c1: #fb923c;
+    --c2: #facc15;
+    --c3: #9bbf6a;
+    --c4: #e0604d;
+}
+
+/* Neon — synthwave */
+.theme-neon {
+    --bg: #0c0820;
+    --bg-2: #110b2a;
+    --panel: #170f36;
+    --card: #140d30;
+    --border: rgba(255, 46, 151, 0.20);
+    --border-soft: rgba(0, 229, 255, 0.13);
+    --text: #f0e8ff;
+    --text-2: #8f7ac0;
+    --text-3: #5e4a90;
+    --accent: #ff2e97;
+    --accent-2: #00e5ff;
+    --c1: #ff2e97;
+    --c2: #00e5ff;
+    --c3: #faff00;
+    --c4: #b14dff;
+}
+
+/* ============================================================
+   VIFS (base neutre, accent qui claque)
+   ============================================================ */
+/* Neon — synthwave */
+.theme-neon {
+    --bg: #0d0a1a;
+    --bg-2: #110d22;
+    --panel: #150f28;
+    --card: #130d24;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #ece6ff;
+    --text-2: #8a7ab0;
+    --text-3: #6a5a9a;
+    --accent: #ff2e97;
+    --accent-2: #00e5ff;
+    --c1: #ff2e97;
+    --c2: #00e5ff;
+    --c3: #faff00;
+    --c4: #a855f7;
+}
+
+/* ============================================================
+   SOMBRES NEUTRES + ACCENT VIF
+   (base gris-noir identique, accent qui claque)
+   ============================================================ */
+
+.theme-lime {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #a3e635;
+    --accent-2: #bef264;
+    --c1: #a3e635;
+    --c2: #38bdf8;
+    --c3: #f472b6;
+    --c4: #fbbf24;
+}
+
+.theme-orange {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #ff7a18;
+    --accent-2: #ff9a4d;
+    --c1: #ff7a18;
+    --c2: #22d3ee;
+    --c3: #a3e635;
+    --c4: #f472b6;
+}
+
+.theme-pink {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #ff4d8d;
+    --accent-2: #ff7aa8;
+    --c1: #ff4d8d;
+    --c2: #22d3ee;
+    --c3: #fbbf24;
+    --c4: #a855f7;
+}
+
+.theme-cyan {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #22d3ee;
+    --accent-2: #67e8f9;
+    --c1: #22d3ee;
+    --c2: #a3e635;
+    --c3: #f472b6;
+    --c4: #fbbf24;
+}
+
+.theme-grape {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #a855f7;
+    --accent-2: #c084fc;
+    --c1: #a855f7;
+    --c2: #22d3ee;
+    --c3: #fbbf24;
+    --c4: #f472b6;
+}
+
+.theme-sun {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #fbbf24;
+    --accent-2: #fcd34d;
+    --c1: #fbbf24;
+    --c2: #38bdf8;
+    --c3: #f472b6;
+    --c4: #4ade80;
+}
+
+.theme-coral {
+    --bg: #0e0e11;
+    --bg-2: #121216;
+    --panel: #16161a;
+    --card: #141418;
+    --border: rgba(255, 255, 255, 0.13);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ec;
+    --text-2: #9a9aa5;
+    --text-3: #6b6b75;
+    --accent: #f43f5e;
+    --accent-2: #fb7185;
+    --c1: #f43f5e;
+    --c2: #22d3ee;
+    --c3: #fbbf24;
+    --c4: #a855f7;
+}
+
+/* ============================================================
+   CLAIRS MONOCHROMES
+   ============================================================ */
+
+/* Papier */
+.theme-paper {
+    --bg: #f7f5f0;
+    --bg-2: #efece4;
+    --panel: #ffffff;
+    --card: #fbf9f5;
+    --border: rgba(0, 0, 0, 0.14);
+    --border-soft: rgba(0, 0, 0, 0.08);
+    --text: #1a1814;
+    --text-2: #6b6356;
+    --text-3: #9a9286;
+    --accent: #6d4aff;
+    --accent-2: #8f6fff;
+    --c1: #6d4aff;
+    --c2: #e0567b;
+    --c3: #2a9d8f;
+    --c4: #e89b2f;
+}
+
+/* Solarized clair */
+.theme-solarized {
+    --bg: #fdf6e3;
+    --bg-2: #f4ecd2;
+    --panel: #efe8d2;
+    --card: #f5eed9;
+    --border: rgba(0, 0, 0, 0.12);
+    --border-soft: rgba(0, 0, 0, 0.07);
+    --text: #073642;
+    --text-2: #5d6f72;
+    --text-3: #93a1a1;
+    --accent: #268bd2;
+    --accent-2: #2aa198;
+    --c1: #268bd2;
+    --c2: #859900;
+    --c3: #cb4b16;
+    --c4: #d33682;
+}
+
+/* Sépia vintage */
+.theme-sepia {
+    --bg: #e6dac2;
+    --bg-2: #ded0b4;
+    --panel: #f0e6d2;
+    --card: #ebe0c9;
+    --border: rgba(0, 0, 0, 0.15);
+    --border-soft: rgba(0, 0, 0, 0.08);
+    --text: #3d2f1c;
+    --text-2: #7a6948;
+    --text-3: #9a8763;
+    --accent: #b5651d;
+    --accent-2: #8a4f17;
+    --c1: #b5651d;
+    --c2: #5e8c61;
+    --c3: #c98a1e;
+    --c4: #a14336;
+}
+
+/* ============================================================
+   CLAIRS MULTI-COULEURS
+   ============================================================ */
+
+/* Papier vif */
+.theme-paperbright {
+    --bg: #f7f4ee;
+    --bg-2: #efeae0;
+    --panel: #ffffff;
+    --card: #faf7f1;
+    --border: rgba(0, 0, 0, 0.13);
+    --border-soft: rgba(0, 0, 0, 0.07);
+    --text: #28241e;
+    --text-2: #786f62;
+    --text-3: #a89f90;
+    --accent: #e0567b;
+    --accent-2: #2a9d8f;
+    --c1: #e0567b;
+    --c2: #f2920f;
+    --c3: #1aa896;
+    --c4: #4f7fd4;
+}
+
+/* Café */
+.theme-coffee {
+    --bg: #e6dac6;
+    --bg-2: #ddcfb8;
+    --panel: #f2e9d8;
+    --card: #ece1cd;
+    --border: rgba(0, 0, 0, 0.13);
+    --border-soft: rgba(0, 0, 0, 0.07);
+    --text: #362718;
+    --text-2: #786448;
+    --text-3: #9c876a;
+    --accent: #c0532a;
+    --accent-2: #5e8c61;
+    --c1: #c0532a;
+    --c2: #d18f16;
+    --c3: #5e8c61;
+    --c4: #9c6b4a;
+}
+
+/* Menthe pastel */
+.theme-mintpastel {
+    --bg: #e4f2eb;
+    --bg-2: #d8ece1;
+    --panel: #f1faf5;
+    --card: #e9f5ef;
+    --border: rgba(0, 0, 0, 0.11);
+    --border-soft: rgba(0, 0, 0, 0.06);
+    --text: #123028;
+    --text-2: #557a6a;
+    --text-3: #7a9a8a;
+    --accent: #0ca596;
+    --accent-2: #e0608a;
+    --c1: #0ca596;
+    --c2: #e88c2a;
+    --c3: #e0608a;
+    --c4: #4f8ef0;
+}
+
+/* Lavande pastel */
+.theme-lavenderpastel {
+    --bg: #efeaf8;
+    --bg-2: #e6dff4;
+    --panel: #f8f5fe;
+    --card: #f1ecfb;
+    --border: rgba(0, 0, 0, 0.11);
+    --border-soft: rgba(0, 0, 0, 0.06);
+    --text: #251f3a;
+    --text-2: #685f88;
+    --text-3: #8e85a8;
+    --accent: #8b5cf6;
+    --accent-2: #ec4899;
+    --c1: #8b5cf6;
+    --c2: #ec4899;
+    --c3: #06b6a4;
+    --c4: #f59e0b;
+}
+
+/* Sorbet */
+.theme-sorbet {
+    --bg: #fdece2;
+    --bg-2: #fbe2d3;
+    --panel: #fff5ee;
+    --card: #fdeee4;
+    --border: rgba(0, 0, 0, 0.11);
+    --border-soft: rgba(0, 0, 0, 0.06);
+    --text: #3a2218;
+    --text-2: #9a6e58;
+    --text-3: #b89484;
+    --accent: #f0617e;
+    --accent-2: #06b6d4;
+    --c1: #f0617e;
+    --c2: #f59e0b;
+    --c3: #06b6d4;
+    --c4: #8b5cf6;
+}
+
+/* Ardoise claire */
+.theme-lightslate {
+    --bg: #e4e7ec;
+    --bg-2: #dadee5;
+    --panel: #f1f3f6;
+    --card: #e9ecf0;
+    --border: rgba(0, 0, 0, 0.12);
+    --border-soft: rgba(0, 0, 0, 0.07);
+    --text: #1a2230;
+    --text-2: #56607a;
+    --text-3: #7a8394;
+    --accent: #2563eb;
+    --accent-2: #db2777;
+    --c1: #2563eb;
+    --c2: #16a34a;
+    --c3: #db2777;
+    --c4: #ea580c;
+}
+
+/* ============================================================
+   ★ SPÉCIAUX
+   ============================================================ */
+
+/* Poulpie — violet + bleu (mascotte) */
+.theme-poulpie {
+    --bg: #0a0820;
+    --bg-2: #0e0b2a;
+    --panel: #16113c;
+    --card: #130e34;
+    --border: rgba(183, 148, 246, 0.24);
+    --border-soft: rgba(183, 148, 246, 0.13);
+    --text: #ece8ff;
+    --text-2: #9a8ed8;
+    --text-3: #6a5fb0;
+    --accent: #b794f6;
+    --accent-2: #5a7fe0;
+    --c1: #b794f6;
+    --c2: #5a7fe0;
+    --c3: #f6a6c8;
+    --c4: #5ce0c0;
+}
+
+/* Epitech — bleu officiel */
+.theme-epitech {
+    --bg: #e4e7ec;
+    --bg-2: #dce0e620;
+    --panel: #f1f3f650;
+    --card: #e9ecf042;
+    --border: rgba(0, 0, 0, 0.12);
+    --border-soft: rgba(0, 0, 0, 0.07);
+    --text: #1a2230;
+    --text-2: #23262c;
+    --text-3: #292e36;
+    --accent: #2563eb;
+    --accent-2: #db2777;
+    --c1: #2563eb;
+    --c2: #16a34a;
+    --c3: #db2777;
+    --c4: #ea580c;
+}
+
+/* ============================================================
+
+   POLICES DE L'HORLOGE
+
+   Variables réutilisées par le composant TodayDate via la
+
+   classe .clock-font-xxx posée sur l'élément de l'heure.
+
+   (À coller dans index.css, après le bloc @theme ou à la fin)
+
+   ============================================================ */
+
+.clock-font-audiowide {
+
+    font-family: 'Audiowide', sans-serif;
+
+}
+
+.clock-font-doto {
+
+    font-family: 'Doto', sans-serif;
+
+    font-weight: 700;
+
+}
+
+.clock-font-wallpoet {
+
+    font-family: 'Wallpoet', sans-serif;
+
+}
+
+.clock-font-tektur {
+
+    font-family: 'Tektur', sans-serif;
+
+    font-weight: 700;
+
+}
+
+.clock-font-majormono {
+
+    font-family: 'Major Mono Display', monospace;
+
+}
+
+.clock-font-quantico {
+
+    font-family: 'Quantico', sans-serif;
+
+    font-weight: 700;
+
+}
+
+.clock-font-turret {
+
+    font-family: 'Turret Road', sans-serif;
+
+    font-weight: 700;
+
+}
+
+.clock-font-mono {
+
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+
+}

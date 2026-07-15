@@ -1,0 +1,10 @@
+beautifulsoup4==4.15.0
+fastapi==0.139.0
+httpx==0.28.1
+langchain_core==1.4.9
+langchain_ollama==1.1.0
+pydantic==2.13.4
+python-dotenv==1.2.2
+python_bcrypt==0.3.2
+SQLAlchemy==2.0.51
+sqlmodel==0.0.39
