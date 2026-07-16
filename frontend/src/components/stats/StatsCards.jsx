@@ -6,8 +6,8 @@ import {
     IoAlarmOutline,
     IoSpeedometerOutline,
 } from "react-icons/io5";
-import { useStats } from "../hooks/useStats";
-import { useStatCards } from "../hooks/useStatCards";
+import { useStats } from "../../hooks/useStats";
+import { useStatCards } from "../../hooks/useStatCards";
 
 // map nom -> composant icône
 const ICONS = {

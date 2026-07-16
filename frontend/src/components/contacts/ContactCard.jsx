@@ -51,6 +51,12 @@ export default function ContactCard({ contact, onChange, onRemove }) {
                     )}
                 </div>
             ))}
+            <textarea
+                placeholder="Notes"
+                value={contact.notes || ""}
+                onChange={(e) => onChange("notes", e.target.value)}
+                className="w-full bg-card border border-border-soft rounded-[3px] px-2 py-1.5 text-[11px] text-text placeholder-text-3 focus:outline-none focus:border-border font-mono"
+            ></textarea>
         </div>
     );
 }

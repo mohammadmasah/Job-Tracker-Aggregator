@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useApplications } from "../../hooks/useApplications";
 import { useContacts } from "../../hooks/useContacts";
-import ApplicationForm from "../../components/ApplicationForm";
-import StatsCards from "../../components/StatsCards";
+import ApplicationForm from "../../components/applications/ApplicationForm";
+import StatsCards from "../../components/stats/StatsCards";
 import { createApplication } from "../../api/application";
 import { createContact } from "../../api/contacts";
 import { createContactMethod } from "../../api/contactMethod";
@@ -37,7 +37,8 @@ export default function Dashboard() {
         for (const contact of data.contacts) {
             const contactRes = await createContact({
                 name: contact.name,
-                application_id: applicationId,
+                notes: contact.notes,
+                application_id: applicationId
             });
             const contactId = contactRes.data.id;
 

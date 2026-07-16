@@ -1,11 +1,11 @@
     import { useState, useEffect } from "react";
-    import { activeApplicationStore } from "../stores/activeApplication";
+    import { activeApplicationStore } from "../../stores/activeApplication";
     import { IoStar, IoStarOutline, IoPencil, IoOpenOutline, IoTrashOutline, IoBusinessOutline, IoBriefcaseOutline } from "react-icons/io5";
-    import { STATUS_META, METHOD_COLORS, needsRelance, daysSince, RELANCE_COLOR } from "../constants/status";
-    import { getApplicationById, updateApplication } from "../api/application";
-    import { createContact, updateContact, deleteContact } from "../api/contacts";
-    import { createContactMethod, updateContactMethod, deleteContactMethod } from "../api/contactMethod";
-    import { uploadDocument, deleteDocument } from "../api/document";
+    import { STATUS_META, METHOD_COLORS, needsRelance, daysSince, RELANCE_COLOR } from "../../constants/status";
+    import { getApplicationById, updateApplication } from "../../api/application";
+    import { createContact, updateContact, deleteContact } from "../../api/contacts";
+    import { createContactMethod, updateContactMethod, deleteContactMethod } from "../../api/contactMethod";
+    import { uploadDocument, deleteDocument } from "../../api/document";
 
     const detectType = (value) => {
         if (value.includes("@")) return "email";

@@ -13,11 +13,13 @@ class Contact(SQLModel, table=True):
     name: str
     application: Optional["Application"] = Relationship(back_populates="contacts")
     methods: list["ContactMethod"] = Relationship(back_populates="contact")
+    notes: str | None = Field(default=None)
 
 
 class ContactUpdate(SQLModel):
     name: str | None = None
     application_id: int | None = None
+    notes: str | None = None
 
 
 class ContactRead(SQLModel):
@@ -25,3 +27,4 @@ class ContactRead(SQLModel):
     name: str
     application_id: int | None = None
     methods: list[ContactMethodRead] = []
+    notes: str | None = None

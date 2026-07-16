@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import ThemeSwitcher from "../../components/ThemeSwitcher";
-import StatCardsConfig from "../../components/StatCardsConfig";
+import StatCardsConfig from "../../components/stats/StatCardsConfig";
 import TodayDate from "../../components/TodayDate";
 import { useClockSettings } from "../../hooks/useClockSettings";
 

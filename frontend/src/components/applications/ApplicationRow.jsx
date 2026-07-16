@@ -4,7 +4,7 @@ import {
     IoStarOutline,
     IoTrashOutline,
 } from "react-icons/io5";
-import { STATUS_META, needsRelance, daysSince, RELANCE_COLOR } from "../constants/status";
+import { STATUS_META, needsRelance, daysSince, RELANCE_COLOR } from "../../constants/status";
 
 const TYPE_LABELS = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd: "CDD" };
 

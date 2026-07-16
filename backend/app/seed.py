@@ -2453,8 +2453,8 @@ def seed():
 
         # ---- CONTACTS (liés à une candidature) ----
         contacts = [
-            Contact(name="Sophie Martin", application_id=applications[0].id),
-            Contact(name="Thomas Dubois", application_id=applications[0].id),
+            Contact(name="Sophie Martin", notes="qdqsdsqdsqdsqdsqdsqdsqdsqdq", application_id=applications[0].id),
+            Contact(name="Thomas Dubois", notes="sqdsqdqsdsqd", application_id=applications[0].id),
             Contact(name="Julie Bernard", application_id=applications[1].id),
             Contact(name="Marc Petit", application_id=applications[4].id),
             # Contact libre (sans candidature)

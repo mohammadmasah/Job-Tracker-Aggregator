@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ContactCard from "./ContactCard";
-import { scrapeUrl } from "../api/scraper";
+import ContactCard from "../contacts/ContactCard";
+import { scrapeUrl } from "../../api/scraper";
 
 export default function ApplicationForm({ onSubmit, onCancel, initial }) {
     const isEdit = Boolean(initial);
@@ -43,7 +43,7 @@ export default function ApplicationForm({ onSubmit, onCancel, initial }) {
     };
 
     // Contacts
-    const addContact = () => setContacts([...contacts, { name: "", infos: [""] }]);
+    const addContact = () => setContacts([...contacts, { name: "", infos: [""], notes: "" }]);
     const updateContact = (index, field, value) => {
         const updated = [...contacts];
         updated[index][field] = value;

@@ -5,9 +5,9 @@ import {
     IoSearchOutline, IoBusinessOutline, IoPersonOutline, IoAddOutline,
     IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward,
 } from "react-icons/io5";
-import { METHOD_COLORS, STATUS_META } from "../constants/status";
-import { updateContact, deleteContact } from "../api/contacts";
-import { createContactMethod, deleteContactMethod } from "../api/contactMethod";
+import { METHOD_COLORS, STATUS_META } from "../../constants/status";
+import { updateContact, deleteContact } from "../../api/contacts";
+import { createContactMethod, deleteContactMethod } from "../../api/contactMethod";
 
 function getInitials(name) {
     if (!name) return "?";
@@ -89,7 +89,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
     return (
         <div className="h-full flex min-h-0 relative">
             {/* ================= LISTE (gauche) ================= */}
-            <div className={`md:shrink-0 border-r border-border-soft flex flex-col min-h-0 ${showDetailMobile ? "hidden md:flex" : "flex"}`}>
+            <div className={`md:shrink-0 w-1/3 border-r border-border-soft flex flex-col min-h-0 ${showDetailMobile ? "hidden md:flex" : "flex"}`}>
 
                 {/* Barre de recherche + filtres */}
                 <div className="px-6 py-5 border-b border-border-soft shrink-0 flex flex-col gap-3.5">
@@ -205,9 +205,8 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                                     key={letter}
                                     onClick={() => present && scrollToLetter(letter)}
                                     disabled={!present}
-                                    className={`text-[9px] leading-none py-px w-full transition-colors ${
-                                        present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
-                                    }`}
+                                    className={`text-[9px] leading-none py-px w-full transition-colors ${present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
+                                        }`}
                                 >
                                     {letter}
                                 </button>
@@ -218,7 +217,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
             </div>
 
             {/* ================= FICHE DÉTAIL (droite) ================= */}
-            <div className={`flex-1 overflow-y-auto custom-scroll min-h-0 bg-bg ${showDetailMobile ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
+            <div className={`flex-1 w-full overflow-y-auto custom-scroll min-h-0 bg-bg ${showDetailMobile ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
                 {!selected ? (
                     <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne un contact.</div>
                 ) : (
@@ -246,6 +245,8 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
     const [name, setName] = useState(contact.name);
     const [busy, setBusy] = useState(false);
     const [newMethod, setNewMethod] = useState("");
+    const [editingNote, setEditingNote] = useState(false);
+    const [noteDraft, setNoteDraft] = useState("");
 
     const detectType = (v) => {
         if (v.includes("@")) return "email";
@@ -287,8 +288,29 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
         } finally { setBusy(false); }
     };
 
+    const saveNote = async () => {
+        setBusy(true);
+        try {
+            await updateContact(contact.id, { notes: noteDraft.trim() });
+            setEditingNote(false);
+            await onRefresh();
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const deleteNote = async () => {
+        setBusy(true);
+        try {
+            await updateContact(contact.id, { notes: null });   // vide la note
+            await onRefresh();
+        } finally {
+            setBusy(false);
+        }
+    };
+
     return (
-        <div className="px-6 md:px-12 py-10 max-w-5xl">
+        <div className="px-6 md:px-12 py-10">
             {/* Retour (mobile) */}
             <button onClick={onBack} className="md:hidden flex items-center gap-1.5 text-[12px] text-text-3 hover:text-text mb-5 transition-colors">
                 <IoArrowBack className="text-[15px]" /> Retour
@@ -366,9 +388,9 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
                                 onChange={(e) => setNewMethod(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && addMethod()}
                                 placeholder="Email / téléphone / LinkedIn..."
-                                className="flex-1 bg-card border border-border-soft rounded-[6px] px-3 py-2.5 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent"
-                            />
-                            <button onClick={addMethod} disabled={busy || !newMethod.trim()} className="shrink-0 w-9 h-9 flex items-center justify-center bg-accent text-bg rounded-[6px] hover:bg-accent-2 disabled:opacity-50 transition-colors">
+                                className="border w-full border-dashed border-border-soft rounded-[6px] p-4 flex items-center justify-center">
+                            </input>
+                            <button onClick={addMethod} disabled={busy || !newMethod.trim()} className="">
                                 <IoAddOutline className="text-[18px]" />
                             </button>
                         </div>
@@ -426,10 +448,67 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
 
                 {/* Notes */}
                 <section>
-                    <p className="text-text-3 uppercase text-[10px] tracking-wider mb-3">Notes</p>
-                    <p className="text-[12px] text-text-3">Les notes par contact ne sont pas encore disponibles.</p>
+                    <p className="text-text-3 uppercase text-sm tracking-wider mb-3">Notes</p>
+
+                    {editingNote ? (
+                        // --- MODE ÉDITION ---
+                        <div className="flex flex-col gap-2">
+                            <textarea
+                                value={noteDraft}
+                                onChange={(e) => setNoteDraft(e.target.value)}
+                                autoFocus
+                                rows={4}
+                                placeholder="Écris une note..."
+                                className="w-full bg-card border border-border-soft rounded-[6px] p-4 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent resize-none font-mono"
+                            />
+                            <div className="flex items-center gap-2 justify-end">
+                                <button
+                                    onClick={() => setEditingNote(false)}
+                                    className="text-[11px] text-text-3 hover:text-text px-3 py-1.5 transition-colors"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={saveNote}
+                                    disabled={busy}
+                                    className="text-[11px] text-bg bg-accent hover:bg-accent-2 px-3 py-1.5 rounded-[4px] uppercase tracking-wide font-bold transition-colors disabled:opacity-50"
+                                >
+                                    Enregistrer
+                                </button>
+                            </div>
+                        </div>
+                    ) : contact.notes ? (
+                        // --- NOTE EXISTANTE : affichage + modifier / supprimer ---
+                        <div className="group border border-border-soft rounded-[6px] p-4 flex flex-col gap-3">
+                            <p className="text-[12px] text-text-2 whitespace-pre-wrap">{contact.notes}</p>
+                            <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    onClick={() => { setNoteDraft(contact.notes); setEditingNote(true); }}
+                                    className="flex items-center gap-1 text-[11px] text-text-3 hover:text-accent transition-colors"
+                                >
+                                    <IoPencil className="text-[13px]" /> Modifier
+                                </button>
+                                <button
+                                    onClick={deleteNote}
+                                    disabled={busy}
+                                    className="flex items-center gap-1 text-[11px] text-text-3 hover:text-[#f43f5e] transition-colors"
+                                >
+                                    <IoTrashOutline className="text-[13px]" /> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        // --- VIDE : bouton + pour ajouter ---
+                        <button
+                            onClick={() => { setNoteDraft(""); setEditingNote(true); }}
+                            className="w-full border border-dashed border-border-soft rounded-[6px] p-4 flex items-center justify-center gap-2 text-text-3/60 hover:text-accent hover:border-accent transition-colors"
+                        >
+                            <IoAddOutline className="text-[18px]" />
+                            <span className="text-[12px]">Ajouter une note</span>
+                        </button>
+                    )}
                 </section>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

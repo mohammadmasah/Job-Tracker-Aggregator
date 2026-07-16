@@ -10,7 +10,7 @@ import {
     IoBriefcaseOutline,
     IoArrowForward,
 } from "react-icons/io5";
-import { updateContact } from "../api/contacts";
+import { updateContact } from "../../api/contacts";
 
 function getInitials(name) {
     if (!name) return "?";

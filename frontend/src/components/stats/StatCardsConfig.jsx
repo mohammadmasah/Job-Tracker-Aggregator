@@ -1,4 +1,4 @@
-import { useStatCards } from "../hooks/useStatCards";
+import { useStatCards } from "../../hooks/useStatCards";
 
 export default function StatCardsConfig() {
     const { isVisible, toggleCard, allCards } = useStatCards();

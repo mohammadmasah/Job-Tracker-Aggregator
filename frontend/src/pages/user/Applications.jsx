@@ -3,14 +3,14 @@ import { useSearchParams } from "react-router-dom";
 import { IoGridOutline, IoListOutline, IoStar } from "react-icons/io5";
 import { useApplications } from "../../hooks/useApplications";
 import { useContacts } from "../../hooks/useContacts";
-import ApplicationForm from "../../components/ApplicationForm";
+import ApplicationForm from "../../components/applications/ApplicationForm";
 import { createApplication } from "../../api/application";
-import ApplicationCard from "../../components/ApplicationCard";
-import ApplicationRow from "../../components/ApplicationRow";
+import ApplicationCard from "../../components/applications/ApplicationCard";
+import ApplicationRow from "../../components/applications/ApplicationRow";
 import { createContact } from "../../api/contacts";
 import { createContactMethod } from "../../api/contactMethod";
 import { uploadDocument } from "../../api/document";
-import ApplicationDetail from "../../components/ApplicationDetail";
+import ApplicationDetail from "../../components/applications/ApplicationDetail";
 import { STATUS_OPTIONS, STATUS_ORDER, STATUS_META, RELANCE_COLOR, needsRelance } from "../../constants/status";
 
 const CARD_GRID = "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3";
@@ -158,8 +158,8 @@ export default function Applications() {
             {/* HEADER */}
             <div className="flex justify-between h-[100px] border-b border-border-soft items-center px-8">
                 <div>
-                <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Mes candidatures</h1>
-                <p className="text-[11px] text-text-3 mt-1">{applications.length} au total</p>
+                    <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Mes candidatures</h1>
+                    <p className="text-[11px] text-text-3 mt-1">{applications.length} au total</p>
                 </div>
                 <button
                     onClick={() => setIsAddFormOpen(true)}
@@ -172,9 +172,12 @@ export default function Applications() {
             {/* MODAL création */}
             {isAddFormOpen && (
                 <div className="fixed inset-0 bg-bg/90 flex items-center justify-center z-50">
-                    <div className="bg-panel border border-border rounded-[6px] w-full max-w-3xl max-h-[85vh] overflow-y-auto custom-scroll">
+                    <div className="bg-panel border border-border rounded-[6px] w-full max-w-3/4 max-h-[85vh] overflow-y-auto custom-scroll">
                         <div className="p-6">
-                            <ApplicationForm onSubmit={handleCreate} onCancel={() => setIsAddFormOpen(false)} />
+                            <ApplicationForm
+                                onSubmit={handleCreate}
+                                onCancel={() => setIsAddFormOpen(false)}
+                            />
                         </div>
                     </div>
                 </div>
