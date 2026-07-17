@@ -1,13 +1,14 @@
-import { useMemo, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState, useRef, useEffect } from "react";
 import {
     IoMailOutline, IoCallOutline, IoLogoLinkedin, IoLinkOutline,
     IoSearchOutline, IoBusinessOutline, IoPersonOutline, IoAddOutline,
-    IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward,
+    IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward, IoClose,
 } from "react-icons/io5";
 import { METHOD_COLORS, STATUS_META } from "../../constants/status";
 import { updateContact, deleteContact } from "../../api/contacts";
 import { createContactMethod, deleteContactMethod } from "../../api/contactMethod";
+import { activeApplicationStore } from "../../stores/activeApplication";
+import ApplicationDetail from "./../applications/ApplicationDetail";
 
 function getInitials(name) {
     if (!name) return "?";
@@ -34,11 +35,14 @@ const METHOD_FILTERS = [
     { value: "other", label: "Autre", color: "var(--c4)" },
 ];
 
+const PANEL_SLIDE_CSS = `@keyframes panel-slide-in { from { transform: translateX(100%); opacity: 0.4; } to { transform: translateX(0); opacity: 1; } } .panel-slide { animation: panel-slide-in 0.22s ease-out; }`;
+
 export default function ContactList({ contacts, applications, onUpdated }) {
     const [search, setSearch] = useState("");
     const [selectedId, setSelectedId] = useState(null);
     const [linkFilter, setLinkFilter] = useState("all"); // all | linked | free
     const [methodFilter, setMethodFilter] = useState("all");
+    const [viewingApp, setViewingApp] = useState(null);   // candidature affichée inline
     const listRef = useRef(null);
 
     const appOf = (contact) =>
@@ -75,7 +79,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
         return groups;
     }, [filtered]);
 
-    const selected = filtered.find((c) => c.id === selectedId) || filtered[0] || null;
+    const selected = selectedId ? filtered.find((c) => c.id === selectedId) || null : null;
 
     const presentLetters = new Set(Object.keys(grouped));
     const scrollToLetter = (letter) => {
@@ -84,12 +88,20 @@ export default function ContactList({ contacts, applications, onUpdated }) {
     };
 
     // Sur mobile : si un contact est sélectionné, on montre la fiche (retour possible)
-    const showDetailMobile = Boolean(selectedId);
+    const showDetailMobile = Boolean(selected);
+
+    // Focus Poulpie "en attente" quand aucun contact ni candidature n'est ouvert
+    useEffect(() => {
+        if (!selected && !viewingApp) {
+            activeApplicationStore.setWaiting();
+        }
+    }, [selected, viewingApp]);
 
     return (
         <div className="h-full flex min-h-0 relative">
+            <style>{PANEL_SLIDE_CSS}</style>
             {/* ================= LISTE (gauche) ================= */}
-            <div className={`md:shrink-0 w-1/3 border-r border-border-soft flex flex-col min-h-0 ${showDetailMobile ? "hidden md:flex" : "flex"}`}>
+            <div className={`w-full md:w-1/3 md:shrink-0 border-r border-border-soft flex flex-col min-h-0 ${showDetailMobile ? "hidden md:flex" : "flex"}`}>
 
                 {/* Barre de recherche + filtres */}
                 <div className="px-6 py-5 border-b border-border-soft shrink-0 flex flex-col gap-3.5">
@@ -169,7 +181,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                                     return (
                                         <button
                                             key={c.id}
-                                            onClick={() => setSelectedId(c.id)}
+                                            onClick={() => setSelectedId((cur) => (cur === c.id ? null : c.id))}
                                             className="w-full flex items-center gap-3.5 px-6 py-3.5 text-left transition-colors hover:bg-card/60"
                                             style={active
                                                 ? { backgroundColor: "var(--card)", boxShadow: "inset 3px 0 0 0 var(--accent)" }
@@ -205,8 +217,9 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                                     key={letter}
                                     onClick={() => present && scrollToLetter(letter)}
                                     disabled={!present}
-                                    className={`text-[9px] leading-none py-px w-full transition-colors ${present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
-                                        }`}
+                                    className={`text-[9px] leading-none py-px w-full transition-colors ${
+                                        present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
+                                    }`}
                                 >
                                     {letter}
                                 </button>
@@ -216,27 +229,56 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                 </div>
             </div>
 
-            {/* ================= FICHE DÉTAIL (droite) ================= */}
-            <div className={`flex-1 w-full overflow-y-auto custom-scroll min-h-0 bg-bg ${showDetailMobile ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
-                {!selected ? (
-                    <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne un contact.</div>
-                ) : (
-                    <ContactDetail
-                        key={selected.id}
-                        contact={selected}
-                        app={appOf(selected)}
-                        onRefresh={onUpdated}
-                        onDeleted={() => { setSelectedId(null); onUpdated(); }}
-                        onBack={() => setSelectedId(null)}
-                    />
-                )}
+            {/* ================= PANNEAU DROITE (2/3) ================= */}
+            <div className={`relative flex-1 min-h-0 bg-bg ${showDetailMobile || viewingApp ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
+                {/* Fiche contact (toujours rendue en fond) */}
+                <div className="h-full overflow-y-auto custom-scroll">
+                    {!selected ? (
+                        <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne un contact.</div>
+                    ) : (
+                        <ContactDetail
+                            key={selected.id}
+                            contact={selected}
+                            app={appOf(selected)}
+                            onRefresh={onUpdated}
+                            onDeleted={() => { setSelectedId(null); onUpdated(); }}
+                            onBack={() => setSelectedId(null)}
+                            onViewApp={(a) => setViewingApp(a)}
+                        />
+                    )}
+                </div>
+
             </div>
+
+            {/* FENÊTRE candidature — le vrai panneau ApplicationDetail (glisse depuis la droite) */}
+            {viewingApp && (
+                <ApplicationDetail
+                    application={viewingApp}
+                    onClose={() => {
+                        setViewingApp(null);
+                        // reprendre le focus contact (halo couleur contact)
+                        if (selected) activeApplicationStore.setContact(selected);
+                    }}
+                    onDelete={() => {
+                        setViewingApp(null);
+                        if (selected) activeApplicationStore.setContact(selected);
+                    }}
+                    onRefresh={onUpdated}
+                    favorite={false}
+                    onToggleFavorite={() => {}}
+                />
+            )}
         </div>
     );
 }
 
-function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
-    const navigate = useNavigate();
+function ContactDetail({ contact, app, onRefresh, onDeleted, onBack, onViewApp }) {
+
+    // Focus chatbot : Poulpie se met en contexte sur le CONTACT ouvert (halo couleur contact).
+    useEffect(() => {
+        activeApplicationStore.setContact(contact);
+        return () => activeApplicationStore.clear();
+    }, [contact]);
     const isLinked = Boolean(app);
     const methods = contact.methods || [];
     const methodColor = (type) => METHOD_COLORS[type] || "var(--text-3)";
@@ -245,8 +287,6 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
     const [name, setName] = useState(contact.name);
     const [busy, setBusy] = useState(false);
     const [newMethod, setNewMethod] = useState("");
-    const [editingNote, setEditingNote] = useState(false);
-    const [noteDraft, setNoteDraft] = useState("");
 
     const detectType = (v) => {
         if (v.includes("@")) return "email";
@@ -288,29 +328,8 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
         } finally { setBusy(false); }
     };
 
-    const saveNote = async () => {
-        setBusy(true);
-        try {
-            await updateContact(contact.id, { notes: noteDraft.trim() });
-            setEditingNote(false);
-            await onRefresh();
-        } finally {
-            setBusy(false);
-        }
-    };
-
-    const deleteNote = async () => {
-        setBusy(true);
-        try {
-            await updateContact(contact.id, { notes: null });   // vide la note
-            await onRefresh();
-        } finally {
-            setBusy(false);
-        }
-    };
-
     return (
-        <div className="px-6 md:px-12 py-10">
+        <div className="px-6 md:px-12 py-10 ">
             {/* Retour (mobile) */}
             <button onClick={onBack} className="md:hidden flex items-center gap-1.5 text-[12px] text-text-3 hover:text-text mb-5 transition-colors">
                 <IoArrowBack className="text-[15px]" /> Retour
@@ -351,14 +370,24 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
                         </div>
                     </div>
                 </div>
-                <button
-                    onClick={handleDelete}
-                    disabled={busy}
-                    className="shrink-0 flex items-center gap-1.5 text-[11px] uppercase tracking-wide px-3 py-2 rounded-[5px] transition-colors disabled:opacity-50"
-                    style={{ color: "#f43f5e", border: "1px solid #f43f5e66" }}
-                >
-                    <IoTrashOutline className="text-[13px]" />Supprimer
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                    <button
+                        onClick={handleDelete}
+                        disabled={busy}
+                        className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide px-3 py-2 rounded-[5px] transition-colors disabled:opacity-50"
+                        style={{ color: "#f43f5e", border: "1px solid #f43f5e66" }}
+                    >
+                        <IoTrashOutline className="text-[13px]" />Supprimer
+                    </button>
+                    {/* Fermer / désélectionner le contact */}
+                    <button
+                        onClick={onBack}
+                        title="Fermer"
+                        className="w-9 h-9 flex items-center justify-center rounded-[5px] border border-border-soft text-text-3 hover:text-text hover:border-border transition-colors"
+                    >
+                        <IoClose className="text-[18px]" />
+                    </button>
+                </div>
             </div>
 
             {/* SECTIONS — grille 2 colonnes pour occuper l'espace */}
@@ -388,9 +417,9 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
                                 onChange={(e) => setNewMethod(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && addMethod()}
                                 placeholder="Email / téléphone / LinkedIn..."
-                                className="border w-full border-dashed border-border-soft rounded-[6px] p-4 flex items-center justify-center">
-                            </input>
-                            <button onClick={addMethod} disabled={busy || !newMethod.trim()} className="">
+                                className="flex-1 bg-card border border-border-soft rounded-[6px] px-3 py-2.5 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent"
+                            />
+                            <button onClick={addMethod} disabled={busy || !newMethod.trim()} className="shrink-0 w-9 h-9 flex items-center justify-center bg-accent text-bg rounded-[6px] hover:bg-accent-2 disabled:opacity-50 transition-colors">
                                 <IoAddOutline className="text-[18px]" />
                             </button>
                         </div>
@@ -414,12 +443,21 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
                             <div className="flex items-center gap-2 text-[12px] text-text-2">
                                 <IoBriefcaseOutline className="text-text-3" />{app.position}
                             </div>
-                            {app.location && <div className="text-[11px] text-text-3">{app.remote ? "Remote" : app.location}</div>}
+
+                            {/* Détails supplémentaires de la candidature */}
+                            <div className="grid grid-cols-2 gap-2 pt-1">
+                                {app.location && (
+                                    <DetailChip label="Lieu">{app.remote ? "Télétravail" : app.location}</DetailChip>
+                                )}
+                                {app.type && <DetailChip label="Type">{app.type}</DetailChip>}
+                                {app.salary && <DetailChip label="Salaire" accent="#4ade80">{app.salary}</DetailChip>}
+                                {app.sector && <DetailChip label="Secteur">{app.sector}</DetailChip>}
+                            </div>
 
                             {/* Liens */}
                             <div className="flex flex-wrap items-center gap-2 pt-2 mt-1 border-t border-border-soft/60">
                                 <button
-                                    onClick={() => navigate(`/applications?open=${app.id}`)}
+                                    onClick={() => onViewApp?.(app)}
                                     className="inline-flex items-center gap-1.5 text-[11px] text-accent hover:text-accent-2 transition-colors"
                                 >
                                     <IoArrowForward className="text-[13px]" />
@@ -448,67 +486,19 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack }) {
 
                 {/* Notes */}
                 <section>
-                    <p className="text-text-3 uppercase text-sm tracking-wider mb-3">Notes</p>
-
-                    {editingNote ? (
-                        // --- MODE ÉDITION ---
-                        <div className="flex flex-col gap-2">
-                            <textarea
-                                value={noteDraft}
-                                onChange={(e) => setNoteDraft(e.target.value)}
-                                autoFocus
-                                rows={4}
-                                placeholder="Écris une note..."
-                                className="w-full bg-card border border-border-soft rounded-[6px] p-4 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent resize-none font-mono"
-                            />
-                            <div className="flex items-center gap-2 justify-end">
-                                <button
-                                    onClick={() => setEditingNote(false)}
-                                    className="text-[11px] text-text-3 hover:text-text px-3 py-1.5 transition-colors"
-                                >
-                                    Annuler
-                                </button>
-                                <button
-                                    onClick={saveNote}
-                                    disabled={busy}
-                                    className="text-[11px] text-bg bg-accent hover:bg-accent-2 px-3 py-1.5 rounded-[4px] uppercase tracking-wide font-bold transition-colors disabled:opacity-50"
-                                >
-                                    Enregistrer
-                                </button>
-                            </div>
-                        </div>
-                    ) : contact.notes ? (
-                        // --- NOTE EXISTANTE : affichage + modifier / supprimer ---
-                        <div className="group border border-border-soft rounded-[6px] p-4 flex flex-col gap-3">
-                            <p className="text-[12px] text-text-2 whitespace-pre-wrap">{contact.notes}</p>
-                            <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    onClick={() => { setNoteDraft(contact.notes); setEditingNote(true); }}
-                                    className="flex items-center gap-1 text-[11px] text-text-3 hover:text-accent transition-colors"
-                                >
-                                    <IoPencil className="text-[13px]" /> Modifier
-                                </button>
-                                <button
-                                    onClick={deleteNote}
-                                    disabled={busy}
-                                    className="flex items-center gap-1 text-[11px] text-text-3 hover:text-[#f43f5e] transition-colors"
-                                >
-                                    <IoTrashOutline className="text-[13px]" /> Supprimer
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        // --- VIDE : bouton + pour ajouter ---
-                        <button
-                            onClick={() => { setNoteDraft(""); setEditingNote(true); }}
-                            className="w-full border border-dashed border-border-soft rounded-[6px] p-4 flex items-center justify-center gap-2 text-text-3/60 hover:text-accent hover:border-accent transition-colors"
-                        >
-                            <IoAddOutline className="text-[18px]" />
-                            <span className="text-[12px]">Ajouter une note</span>
-                        </button>
-                    )}
+                    <p className="text-text-3 uppercase text-[10px] tracking-wider mb-3">Notes</p>
+                    <p className="text-[12px] text-text-3">Les notes par contact ne sont pas encore disponibles.</p>
                 </section>
-            </div >
-        </div >
+            </div>
+        </div>
+    );
+}
+
+function DetailChip({ label, children, accent }) {
+    return (
+        <div className="bg-bg border border-border-soft rounded-[5px] px-2.5 py-1.5">
+            <div className="text-[8px] uppercase tracking-wider text-text-3">{label}</div>
+            <div className="text-[11px] truncate" style={{ color: accent || "var(--text)" }}>{children}</div>
+        </div>
     );
 }

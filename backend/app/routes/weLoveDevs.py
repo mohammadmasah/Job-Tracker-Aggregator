@@ -34,6 +34,7 @@ async def offers(session: Session = Depends(get_session)):
         new_offer = Offer(
             source=source,
             reference=ref,
+            url=offer.get("url"),
             title=offer.get("title"),
             company=company_info.get("companyName"),
             description=offer.get("mdDescription"),

@@ -24,10 +24,10 @@ export default function ApplicationRow({ application, onDelete, onSelect, favori
             <button
                 onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(application.id); }}
                 className="shrink-0 ml-3 transition-colors"
-                style={{ color: favorite ? "#fbbf24" : "var(--text-3)" }}
+                style={{ color: favorite ? "var(--c3)" : "var(--text-3)" }}
                 title={favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
             >
-                {favorite ? <IoStar className="text-[15px]" /> : <IoStarOutline className="text-[15px] hover:text-[#fbbf24]" />}
+                {favorite ? <IoStar className="text-[15px]" /> : <IoStarOutline className="text-[15px] hover:text-[var(--c3)]" />}
             </button>
 
             {/* Statut (pastille) */}
@@ -65,7 +65,7 @@ export default function ApplicationRow({ application, onDelete, onSelect, favori
             </span>
 
             {/* Salaire */}
-            <span className="hidden xl:block text-[11px] shrink-0 w-24 truncate" style={{ color: application.salary ? "#4ade80" : "var(--text-3)" }}>
+            <span className="hidden xl:block text-[11px] shrink-0 w-24 truncate" style={{ color: application.salary ? "var(--c2)" : "var(--text-3)" }}>
                 {application.salary || "—"}
             </span>
 
@@ -77,7 +77,7 @@ export default function ApplicationRow({ application, onDelete, onSelect, favori
             {/* Supprimer */}
             <button
                 onClick={(e) => { e.stopPropagation(); onDelete(application.id); }}
-                className="shrink-0 text-text-3 hover:text-[#f43f5e] opacity-0 group-hover:opacity-100 transition-all"
+                className="shrink-0 text-text-3 hover:text-[var(--c4)] opacity-0 group-hover:opacity-100 transition-all"
                 title="Supprimer"
             >
                 <IoTrashOutline className="text-[14px]" />

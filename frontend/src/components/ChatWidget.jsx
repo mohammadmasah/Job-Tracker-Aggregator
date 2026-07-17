@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import axios from "axios";
 import Poulpie from "./Poulpie";
-import { IoBusinessOutline, IoBriefcaseOutline } from "react-icons/io5";
+import { IoBusinessOutline, IoBriefcaseOutline, IoPersonOutline, IoDocumentTextOutline } from "react-icons/io5";
 import { STATUS_META } from "../constants/status";
 import { activeApplicationStore } from "../stores/activeApplication";
 
@@ -13,8 +13,33 @@ const WELCOME = {
 };
 
 // Contexte injecté au LLM quand une candidature est ouverte
-function buildContext(app) {
+function buildContext(app, kind = "application") {
     if (!app) return "";
+    if (kind === "contact") {
+        const methods = (app.methods || []).map((m) => `${m.type}: ${m.value}`).join(", ");
+        return (
+            "Contexte — l'utilisateur consulte ce contact :\n" +
+            `Nom: ${app.name || "—"}\n` +
+            `Coordonnées: ${methods || "—"}\n` +
+            `Notes: ${app.notes || "—"}\n\n`
+        );
+    }
+    if (kind === "offer") {
+        const arr = (v) => Array.isArray(v) ? v.join(", ") : (v || "—");
+        const salaire = app.salary_min || app.salary_max
+            ? `${app.salary_min || ""}${app.salary_max ? " - " + app.salary_max : ""} ${app.salary_currency || "€"}`
+            : "—";
+        return (
+            "Contexte — l'utilisateur consulte cette offre d'emploi :\n" +
+            `Titre: ${app.title || "—"}\n` +
+            `Entreprise: ${app.company || "—"}\n` +
+            `Localisation: ${arr(app.localisation)}\n` +
+            `Compétences: ${arr(app.skills)}\n` +
+            `Secteurs: ${arr(app.sectors)}\n` +
+            `Salaire: ${salaire}\n` +
+            `Source: ${app.source || "—"}\n\n`
+        );
+    }
     const statut = STATUS_META[app.status]?.label || app.status;
     return (
         "Contexte — l'utilisateur consulte cette candidature :\n" +
@@ -97,6 +122,18 @@ export default function ChatWidget() {
         activeApplicationStore.subscribe,
         activeApplicationStore.get
     );
+    const focusKind = useSyncExternalStore(
+        activeApplicationStore.subscribe,
+        activeApplicationStore.getKind
+    );
+    const focusColor = useSyncExternalStore(
+        activeApplicationStore.subscribe,
+        activeApplicationStore.getColor
+    );
+    const isContact = focusKind === "contact";
+    const isOffer = focusKind === "offer";
+    const isWaiting = focusKind === "waiting";
+    const hasFocus = Boolean(activeApp) || isWaiting;   // waiting = focus léger sans données
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -123,7 +160,7 @@ export default function ChatWidget() {
         // 2) Sinon → LLM. On transforme la commande en consigne, on injecte le contexte.
         setTyping(true);
         const instruction = commandToPrompt(text, activeApp);
-        const payload = buildContext(activeApp) + instruction;
+        const payload = buildContext(activeApp, focusKind) + instruction;
 
         try {
             const res = await axios.post(CHAT_URL, { message: payload });
@@ -185,14 +222,26 @@ export default function ChatWidget() {
                 <button
                     onClick={openChat}
                     aria-label="Ouvrir le chat"
-                    className={`fixed bottom-6 right-6 z-50 w-16 h-16 flex items-center justify-center bg-panel rounded-full transition-colors shadow-lg border-2 ${activeApp ? "halo-ring" : ""}`}
-                    style={{ borderColor: activeApp ? "var(--accent)" : "var(--border)" }}
-                    title={activeApp ? `En contexte : ${activeApp.company}` : "Ouvrir le chat"}
+                    className={`fixed bottom-6 right-6 z-50 w-16 h-16 flex items-center justify-center bg-panel rounded-full transition-colors shadow-lg border-2 ${hasFocus ? "halo-ring" : ""}`}
+                    style={{ borderColor: hasFocus ? focusColor : "var(--border)", "--halo-color": focusColor }}
+                    title={activeApp ? `En contexte : ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company}` : "Ouvrir le chat"}
                 >
-                    <Poulpie size={36} focused={Boolean(activeApp)} />
+                    <Poulpie size={36} thinking={hasFocus} />
+
+                    {/* Bulle de focus : montre CE sur quoi Poulpie réfléchit */}
+                    {activeApp && (
+                        <span
+                            className="focus-bubble absolute -top-2 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2"
+                            style={{ backgroundColor: "var(--panel)", borderColor: focusColor, color: focusColor }}
+                            title={isContact ? "Focus : contact" : isOffer ? "Focus : offre" : "Focus : candidature"}
+                        >
+                            {isContact ? <IoPersonOutline className="text-[12px]" /> : isOffer ? <IoDocumentTextOutline className="text-[12px]" /> : <IoBriefcaseOutline className="text-[12px]" />}
+                        </span>
+                    )}
+
                     {/* Pastille : Poulpie a répondu pendant que le chat était fermé */}
                     {unread && (
-                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#f43f5e] border-2 border-bg animate-pulse" title="Nouvelle réponse" />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#f43f5e] border-2 border-bg animate-pulse" title="Nouvelle réponse" />
                     )}
                 </button>
             )}
@@ -202,7 +251,7 @@ export default function ChatWidget() {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border-soft bg-bg-2">
                         <div className="flex items-center gap-2.5">
                             <div className="w-9 h-9 flex items-center justify-center border border-border-soft rounded-[4px] bg-card">
-                                <Poulpie size={28} talking={typing} focused={Boolean(activeApp) && !typing} />
+                                <Poulpie size={28} talking={typing} thinking={Boolean(activeApp) && !typing} />
                             </div>
                             <div className="leading-tight">
                                 <p className="text-[13px] font-bold text-text">Poulpie</p>
@@ -214,17 +263,42 @@ export default function ChatWidget() {
 
                     {activeApp && (
                         <div className="flex items-center gap-2.5 px-4 py-2.5 bg-card border-b border-border-soft">
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: STATUS_META[activeApp.status]?.color || "var(--accent)" }} />
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: focusColor }} />
                             <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-                                <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
-                                    <IoBusinessOutline className="text-[12px] text-text-3 shrink-0" />
-                                    {activeApp.company}
-                                </span>
-                                {activeApp.position && (
-                                    <span className="flex items-center gap-1.5 text-[10px] text-text-2 truncate">
-                                        <IoBriefcaseOutline className="text-[11px] text-text-3 shrink-0" />
-                                        {activeApp.position}
-                                    </span>
+                                {isContact ? (
+                                    <>
+                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
+                                            <IoPersonOutline className="text-[12px] text-text-3 shrink-0" />
+                                            {activeApp.name}
+                                        </span>
+                                        <span className="text-[10px] text-text-3 truncate pl-[18px]">Contact</span>
+                                    </>
+                                ) : isOffer ? (
+                                    <>
+                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
+                                            <IoDocumentTextOutline className="text-[12px] text-text-3 shrink-0" />
+                                            {activeApp.title}
+                                        </span>
+                                        {activeApp.company && (
+                                            <span className="flex items-center gap-1.5 text-[10px] text-text-2 truncate">
+                                                <IoBusinessOutline className="text-[11px] text-text-3 shrink-0" />
+                                                {activeApp.company}
+                                            </span>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
+                                            <IoBusinessOutline className="text-[12px] text-text-3 shrink-0" />
+                                            {activeApp.company}
+                                        </span>
+                                        {activeApp.position && (
+                                            <span className="flex items-center gap-1.5 text-[10px] text-text-2 truncate">
+                                                <IoBriefcaseOutline className="text-[11px] text-text-3 shrink-0" />
+                                                {activeApp.position}
+                                            </span>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>
@@ -282,7 +356,7 @@ export default function ChatWidget() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={onKeyDown}
-                            placeholder={activeApp ? `Une question sur ${activeApp.company} ?` : "Pose une question ou tape /help"}
+                            placeholder={activeApp ? `Une question sur ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company} ?` : "Pose une question ou tape /help"}
                             className="flex-1 bg-bg border border-border-soft rounded-[4px] px-3 py-2 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent transition-colors font-mono"
                         />
                         <button onClick={() => sendMessage()} aria-label="Envoyer" className="shrink-0 w-9 h-9 flex items-center justify-center bg-accent text-bg rounded-[4px] hover:bg-accent-2 transition-colors">↑</button>

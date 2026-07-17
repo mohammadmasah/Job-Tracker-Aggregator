@@ -49,7 +49,7 @@ export default function Nav() {
                 onClick={toggle}
                 aria-label={open ? "Masquer le menu" : "Afficher le menu"}
                 title={open ? "Masquer le menu" : "Afficher le menu"}
-                className="fixed top-2 left-2 z-50 w-5 h-5 flex items-center justify-center bg-panel border border-border rounded text-text-2 hover:text-accent hover:border-accent shadow-md transition-colors"
+                className="fixed top-2 left-1 z-50 w-5 h-5 flex items-center justify-center text-text-2 hover:text-accent hover:border-accent shadow-md transition-colors"
             >
                 {open ? <IoMenu className="text-[18px]" /> : <IoMenu className="text-[18px]" />}
             </button>
@@ -74,7 +74,7 @@ export default function Nav() {
 
                 <nav className="flex flex-col mt-8 min-w-60">
                     <NavLink to="/" end className={linkClass}>Tableau de bord</NavLink>
-                    <NavLink to="/applications" className={linkClass}>Applications</NavLink>
+                    <NavLink to="/applications" className={linkClass}>Candidatures</NavLink>
                     <NavLink to="/offers" className={linkClass}>Offres</NavLink>
                     <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
 

@@ -67,10 +67,10 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                     <button
                         onClick={toggleFav}
                         className="shrink-0 transition-colors"
-                        style={{ color: favorite ? "#fbbf24" : "var(--text-3)" }}
+                        style={{ color: favorite ? "var(--c3)" : "var(--text-3)" }}
                         title={favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
                     >
-                        {favorite ? <IoStar className="text-[16px]" /> : <IoStarOutline className="text-[16px] hover:text-[#fbbf24]" />}
+                        {favorite ? <IoStar className="text-[16px]" /> : <IoStarOutline className="text-[16px] hover:text-[var(--c3)]" />}
                     </button>
                 </div>
 
@@ -82,7 +82,7 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                 <div className="flex flex-col gap-1.5">
                     <InfoLine icon={IoLocationOutline} color="var(--text-3)">{application.location || "—"}</InfoLine>
                     {application.sector && <InfoLine icon={IoBusinessOutline} color="var(--text-3)">{application.sector}</InfoLine>}
-                    {application.salary && <InfoLine icon={IoWalletOutline} color="#4ade80">{application.salary}</InfoLine>}
+                    {application.salary && <InfoLine icon={IoWalletOutline} color="var(--c2)">{application.salary}</InfoLine>}
                 </div>
 
                 <div className="flex items-center justify-between pt-2 mt-auto border-t border-border-soft/50">
@@ -97,7 +97,7 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
 
             <button
                 onClick={(e) => { e.stopPropagation(); onDelete(application.id); }}
-                className="absolute bottom-2 right-2 w-5 h-5 flex items-center justify-center rounded-[4px] text-[11px] text-text-3 hover:text-white hover:bg-[#f43f5e] opacity-0 group-hover:opacity-100 transition-all"
+                className="absolute bottom-2 right-2 w-5 h-5 flex items-center justify-center rounded-[4px] text-[11px] text-text-3 hover:text-white hover:bg-[var(--c4)] opacity-0 group-hover:opacity-100 transition-all"
                 title="Supprimer"
             >
                 ✕

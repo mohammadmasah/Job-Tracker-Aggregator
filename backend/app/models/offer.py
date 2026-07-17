@@ -6,6 +6,7 @@ class Offer(SQLModel, table=True):
     __table_args__ = (UniqueConstraint("source", "reference"),)
     id: int | None = Field(default=None, primary_key=True)
     source: str = Field(index=True)
+    url: str | None = None
     reference: str | None = Field(default=None, index=True)
     title: str
     company: str | None = None
@@ -25,6 +26,7 @@ class Offer(SQLModel, table=True):
 
 class CreateOffer(SQLModel):
     source: str
+    url: str | None = None
     title: str
     company: str
     description: str | None = None
@@ -40,6 +42,7 @@ class CreateOffer(SQLModel):
 
 class ReadOffer(SQLModel):
     source: str
+    url: str | None = None
     title: str
     company: str
     description: str | None = None

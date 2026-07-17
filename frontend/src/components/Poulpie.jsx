@@ -1,8 +1,10 @@
 // Mascotte "Poulpie" — poulpe violet clair / bleu.
-// talking : léger rebond (quand le bot répond).
-// focused : Poulpie "lit" un contexte → petites lunettes + regard concentré.
-// size : taille en px.
-export default function Poulpie({ talking = false, focused = false, size = 32 }) {
+// talking  : léger rebond (quand le bot répond).
+// thinking : Poulpie réfléchit à un contexte → yeux concentrés vers le haut + petite
+//            bouche pensive. L'indication de CE sur quoi il est focus est portée par
+//            la bulle affichée à côté de lui (dans ChatWidget), pas par des lunettes.
+// size     : taille en px.
+export default function Poulpie({ talking = false, thinking = false, size = 32 }) {
     return (
         <svg
             width={size}
@@ -36,26 +38,16 @@ export default function Poulpie({ talking = false, focused = false, size = 32 })
             <circle cx="22" cy="32" r="3" fill="#f6a6c8" opacity="0.6" />
             <circle cx="42" cy="32" r="3" fill="#f6a6c8" opacity="0.6" />
 
-            {focused ? (
-                /* --- Mode concentré : yeux + lunettes --- */
-                <g>
-                    <g className="mascotte-eyes">
-                        <circle cx="25" cy="26" r="4.2" fill="#ffffff" />
-                        <circle cx="39" cy="26" r="4.2" fill="#ffffff" />
-                        <circle cx="25" cy="26.5" r="2" fill="#1a1530" />
-                        <circle cx="39" cy="26.5" r="2" fill="#1a1530" />
-                    </g>
-                    {/* Lunettes */}
-                    <g stroke="#1a1530" strokeWidth="1.3" fill="none">
-                        <circle cx="25" cy="26" r="5.4" />
-                        <circle cx="39" cy="26" r="5.4" />
-                        <path d="M30.4 26 L33.6 26" strokeLinecap="round" />
-                        <path d="M19.6 25 L16.5 23.5" strokeLinecap="round" />
-                        <path d="M44.4 25 L47.5 23.5" strokeLinecap="round" />
-                    </g>
-                    {/* reflets sur les verres */}
-                    <circle cx="23.4" cy="24.2" r="0.9" fill="#ffffff" opacity="0.8" />
-                    <circle cx="37.4" cy="24.2" r="0.9" fill="#ffffff" opacity="0.8" />
+            {thinking ? (
+                /* --- Mode réflexion : regard concentré vers le haut (pupilles hautes), pas de lunettes --- */
+                <g className="mascotte-eyes">
+                    <circle cx="25" cy="26" r="4.2" fill="#ffffff" />
+                    <circle cx="39" cy="26" r="4.2" fill="#ffffff" />
+                    {/* pupilles remontées → l'air pensif */}
+                    <circle cx="25.5" cy="24.4" r="2" fill="#1a1530" />
+                    <circle cx="39.5" cy="24.4" r="2" fill="#1a1530" />
+                    <circle cx="24.4" cy="23.4" r="0.8" fill="#ffffff" />
+                    <circle cx="38.4" cy="23.4" r="0.8" fill="#ffffff" />
                 </g>
             ) : (
                 /* --- Mode normal --- */
@@ -69,9 +61,9 @@ export default function Poulpie({ talking = false, focused = false, size = 32 })
                 </g>
             )}
 
-            {/* bouche : petit sourire (ou léger "o" concentré si focused) */}
-            {focused ? (
-                <ellipse cx="32" cy="35" rx="1.6" ry="1.2" fill="#1a1530" />
+            {/* bouche : sourire normal, ou petite bouche pensive si thinking */}
+            {thinking ? (
+                <ellipse cx="31" cy="35" rx="1.3" ry="1" fill="#1a1530" />
             ) : (
                 <path
                     d="M29 34 C30.5 36 33.5 36 35 34"
