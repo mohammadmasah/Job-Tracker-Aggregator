@@ -6,7 +6,7 @@ load_dotenv()
 API_KEY = os.getenv("WELOVEDEVS_API_KEY")
 URL = os.getenv("WELOVEDEVS_URL")
 
-def fetch_offers(query: str = "", page: int = 0, source: str = "welovedevs"):
+def fetch_offers(query: str = "", page: int = 50, source: str = "welovedevs"):
     url = URL
     headers = {
         "X-API-KEY": API_KEY,

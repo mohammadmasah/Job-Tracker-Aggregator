@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import OffersList from "../../components/offers/OffersList";
-import { fetchOffers, scrapeOffers } from "../../api/offers";
+import { fetchOffers, scrapeOffers, fetchAzduna } from "../../api/offers";
 import { IoRefreshOutline } from "react-icons/io5";
 
 
@@ -24,15 +24,31 @@ export default function Offers() {
     const handleScraping = async () => {
         setScraping(true);
         try {
-            await scrapeOffers();
+            console.log("Début du scraping WeLoveDevs...");
+            try {
+                await scrapeOffers();
+            } catch (err) {
+                console.error("Échec du scraper WeLoveDevs, mais on continue...", err);
+            }
+
+            console.log("Début du scraping Adzuna...");
+            try {
+                await fetchAzduna("developer", 1);
+            } catch (err) {
+                console.error("Échec du scraper Adzuna...", err);
+            }
+
+            // Une fois les deux exécutés l'un après l'autre, on recharge la liste unique
+            console.log("Rechargement de toutes les offres...");
             await loadOffers();
+
         } catch (e) {
-            console.error("Erreur scraping", e);
+            console.error("Erreur critique globale lors de l'actualisation", e);
         } finally {
             setScraping(false);
         }
     };
-
+    
     useEffect(() => {
         loadOffers();
     }, []);

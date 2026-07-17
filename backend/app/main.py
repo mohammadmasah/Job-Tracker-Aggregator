@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import create_db_and_tables
-from .routes import adzuna, applications, contacts, contact_method, documents, scraper, chatbot, user, weLoveDevs
+from .routes import adzuna, applications, contacts, contact_method, documents, scraper, chatbot, user, offers, weLoveDevs
 
 
 @asynccontextmanager
@@ -35,5 +35,6 @@ app.include_router(documents.router)
 app.include_router(scraper.router)
 app.include_router(chatbot.router)
 app.include_router(user.router)
+app.include_router(offers.router)
 app.include_router(weLoveDevs.router)
 app.include_router(adzuna.router)

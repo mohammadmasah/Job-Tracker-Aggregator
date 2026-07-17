@@ -2453,12 +2453,26 @@ def seed():
 
         # ---- CONTACTS (liés à une candidature) ----
         contacts = [
-            Contact(name="Sophie Martin", notes="qdqsdsqdsqdsqdsqdsqdsqdsqdq", application_id=applications[0].id),
-            Contact(name="Thomas Dubois", notes="sqdsqdqsdsqd", application_id=applications[0].id),
-            Contact(name="Julie Bernard", application_id=applications[1].id),
-            Contact(name="Marc Petit", application_id=applications[4].id),
-            # Contact libre (sans candidature)
-            Contact(name="Recruteur LinkedIn", application_id=None),
+            Contact(
+                name="Sophie Martin",
+                notes="qdqsdsqdsqdsqdsqdsqdsqdsqdq",
+                applications=[applications[0]],
+            ),
+            Contact(
+                name="Thomas Dubois",
+                notes="sqdsqdqsdsqd",
+                applications=[applications[0]],
+            ),
+            Contact(
+                name="Julie Bernard",
+                applications=[applications[1], applications[2]],
+            ),
+            Contact(
+                name="Marc Petit",
+                applications=[applications[4], applications[3], applications[6]],
+            ),
+            # Contact libre (aucune candidature)
+            Contact(name="Recruteur LinkedIn", applications=[]),
         ]
         session.add_all(contacts)
         session.commit()
