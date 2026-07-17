@@ -18,7 +18,8 @@ async def chat_with_assistant(request: ChatRequest):
     """
     try: 
         user_text = request.message
-        bot_reply = generate_chatbot_response(user_text)
+        session_id = request.session_id
+        bot_reply = generate_chatbot_response(user_text, session_id=session_id)
         return {"response": bot_reply}
     
     except Exception as e:

@@ -24,18 +24,17 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
     session.refresh(db_user)
     return {"message": "User created"}
 
-
 # LOGIN
 @router.post("/login")
 def login(credentials: UserLogin, session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == credentials.email)).first()
-    if not user:
+    if not user: 
         raise HTTPException(status_code=401, detail="Invalid identification")
     if not verify_password(credentials.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid identification")
     return {"message": "Connected " + user.name}
-
-
+    
+    
 # GET
 # All
 @router.get("")
