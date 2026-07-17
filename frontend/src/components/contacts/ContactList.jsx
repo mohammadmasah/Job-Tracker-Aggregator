@@ -2,13 +2,13 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import {
     IoMailOutline, IoCallOutline, IoLogoLinkedin, IoLinkOutline,
     IoSearchOutline, IoBusinessOutline, IoPersonOutline, IoAddOutline,
-    IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward, IoClose,
+    IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward, IoClose, IoCloseOutline,
 } from "react-icons/io5";
 import { METHOD_COLORS, STATUS_META } from "../../constants/status";
-import { updateContact, deleteContact } from "../../api/contacts";
+import { updateContact, deleteContact, linkApplication, unlinkApplication } from "../../api/contacts";
 import { createContactMethod, deleteContactMethod } from "../../api/contactMethod";
 import { activeApplicationStore } from "../../stores/activeApplication";
-import ApplicationDetail from "./../applications/ApplicationDetail";
+import ApplicationDetail from "../applications/ApplicationDetail";
 
 function getInitials(name) {
     if (!name) return "?";
@@ -42,20 +42,20 @@ export default function ContactList({ contacts, applications, onUpdated }) {
     const [selectedId, setSelectedId] = useState(null);
     const [linkFilter, setLinkFilter] = useState("all"); // all | linked | free
     const [methodFilter, setMethodFilter] = useState("all");
-    const [viewingApp, setViewingApp] = useState(null);   // candidature affichée inline
     const listRef = useRef(null);
 
-    const appOf = (contact) =>
-        contact?.application_id ? applications.find((a) => a.id === contact.application_id) : null;
+    const appsOf = (contact) =>
+        (contact?.application_ids || []).map((id) => applications.find((a) => a.id === id)).filter(Boolean);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();
         return [...contacts]
             .filter((c) => {
-                const company = appOf(c)?.company || "";
+                const company = appsOf(c)[0]?.company || "";
                 if (q && !c.name.toLowerCase().includes(q) && !company.toLowerCase().includes(q)) return false;
-                if (linkFilter === "linked" && !c.application_id) return false;
-                if (linkFilter === "free" && c.application_id) return false;
+                const linkedCount = (c.application_ids || []).length;
+                if (linkFilter === "linked" && linkedCount === 0) return false;
+                if (linkFilter === "free" && linkedCount > 0) return false;
                 if (methodFilter !== "all") {
                     const ms = c.methods || [];
                     const has = methodFilter === "other"
@@ -92,10 +92,9 @@ export default function ContactList({ contacts, applications, onUpdated }) {
 
     // Focus Poulpie "en attente" quand aucun contact ni candidature n'est ouvert
     useEffect(() => {
-        if (!selected && !viewingApp) {
-            activeApplicationStore.setWaiting();
-        }
-    }, [selected, viewingApp]);
+        if (selected) activeApplicationStore.setContact(selected);   // contact : halo c3
+        else activeApplicationStore.setWaiting();                     // rien : attente
+    }, [selected]);
 
     return (
         <div className="h-full flex min-h-0 relative">
@@ -177,7 +176,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                                 </div>
                                 {list.map((c) => {
                                     const active = selected && c.id === selected.id;
-                                    const app = appOf(c);
+                                    const app = appsOf(c)[0];
                                     return (
                                         <button
                                             key={c.id}
@@ -217,9 +216,8 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                                     key={letter}
                                     onClick={() => present && scrollToLetter(letter)}
                                     disabled={!present}
-                                    className={`text-[9px] leading-none py-px w-full transition-colors ${
-                                        present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
-                                    }`}
+                                    className={`text-[9px] leading-none py-px w-full transition-colors ${present ? "text-text-2 font-bold hover:text-accent cursor-pointer" : "text-text-3/25 cursor-default"
+                                        }`}
                                 >
                                     {letter}
                                 </button>
@@ -229,57 +227,49 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                 </div>
             </div>
 
-            {/* ================= PANNEAU DROITE (2/3) ================= */}
-            <div className={`relative flex-1 min-h-0 bg-bg ${showDetailMobile || viewingApp ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
-                {/* Fiche contact (toujours rendue en fond) */}
-                <div className="h-full overflow-y-auto custom-scroll">
-                    {!selected ? (
-                        <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne un contact.</div>
-                    ) : (
-                        <ContactDetail
-                            key={selected.id}
-                            contact={selected}
-                            app={appOf(selected)}
-                            onRefresh={onUpdated}
-                            onDeleted={() => { setSelectedId(null); onUpdated(); }}
-                            onBack={() => setSelectedId(null)}
-                            onViewApp={(a) => setViewingApp(a)}
-                        />
-                    )}
-                </div>
-
+            {/* ============ FICHE CONTACT (droite) ============ */}
+            <div className={`relative flex-1 min-h-0 bg-bg overflow-y-auto custom-scroll ${showDetailMobile ? "flex flex-col absolute inset-0 md:static md:flex" : "hidden md:block"}`}>
+                {!selected ? (
+                    <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne un contact.</div>
+                ) : (
+                    <ContactDetail
+                        key={selected.id}
+                        contact={selected}
+                        apps={appsOf(selected)}
+                        allApplications={applications}
+                        onRefresh={onUpdated}
+                        onDeleted={() => { setSelectedId(null); onUpdated(); }}
+                        onBack={() => setSelectedId(null)}
+                    />
+                )}
             </div>
-
-            {/* FENÊTRE candidature — le vrai panneau ApplicationDetail (glisse depuis la droite) */}
-            {viewingApp && (
-                <ApplicationDetail
-                    application={viewingApp}
-                    onClose={() => {
-                        setViewingApp(null);
-                        // reprendre le focus contact (halo couleur contact)
-                        if (selected) activeApplicationStore.setContact(selected);
-                    }}
-                    onDelete={() => {
-                        setViewingApp(null);
-                        if (selected) activeApplicationStore.setContact(selected);
-                    }}
-                    onRefresh={onUpdated}
-                    favorite={false}
-                    onToggleFavorite={() => {}}
-                />
-            )}
         </div>
     );
 }
 
-function ContactDetail({ contact, app, onRefresh, onDeleted, onBack, onViewApp }) {
+function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, onDeleted, onBack }) {
 
     // Focus chatbot : Poulpie se met en contexte sur le CONTACT ouvert (halo couleur contact).
     useEffect(() => {
         activeApplicationStore.setContact(contact);
         return () => activeApplicationStore.clear();
     }, [contact]);
-    const isLinked = Boolean(app);
+    const isLinked = apps.length > 0;
+    const [addingLink, setAddingLink] = useState(false);
+
+    const handleUnlink = async (appId) => {
+        setBusy(true);
+        try { await unlinkApplication(contact.id, appId); await onRefresh(); }
+        finally { setBusy(false); }
+    };
+    const handleLink = async (appId) => {
+        if (!appId) return;
+        setBusy(true);
+        try { await linkApplication(contact.id, Number(appId)); setAddingLink(false); await onRefresh(); }
+        finally { setBusy(false); }
+    };
+    // Candidatures non encore liées (pour le select d'ajout)
+    const linkableApps = allApplications.filter((a) => !apps.some((x) => x.id === a.id));
     const methods = contact.methods || [];
     const methodColor = (type) => METHOD_COLORS[type] || "var(--text-3)";
 
@@ -358,10 +348,14 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack, onViewApp }
                             </h2>
                         )}
                         <div className="mt-1.5">
-                            {isLinked ? (
-                                <span className="inline-flex items-center gap-1.5 text-[11px] text-accent border border-accent/40 px-2 py-0.5 rounded-[4px]">
-                                    <IoBusinessOutline className="text-[12px]" />{app.company}
-                                </span>
+                            {apps.length > 0 ? (
+                                <div className="flex flex-wrap gap-1.5">
+                                    {apps.map((a) => (
+                                        <span key={a.id} className="inline-flex items-center gap-1.5 text-[11px] text-accent border border-accent/40 px-2 py-0.5 rounded-[4px]">
+                                            <IoBusinessOutline className="text-[12px]" />{a.company}
+                                        </span>
+                                    ))}
+                                </div>
                             ) : (
                                 <span className="inline-flex items-center gap-1.5 text-[11px] text-text-3 border border-border-soft px-2 py-0.5 rounded-[4px]">
                                     <IoPersonOutline className="text-[12px]" />Contact libre
@@ -426,61 +420,68 @@ function ContactDetail({ contact, app, onRefresh, onDeleted, onBack, onViewApp }
                     </div>
                 </section>
 
-                {/* Colonne droite : candidature */}
+                {/* Colonne droite : candidatures liées (plusieurs possibles) */}
                 <section>
-                    <p className="text-text-3 uppercase text-[10px] tracking-wider mb-3">Candidature liée</p>
+                    <div className="flex items-center justify-between mb-3">
+                        <p className="text-text-3 uppercase text-[10px] tracking-wider">
+                            Candidature{apps.length > 1 ? "s" : ""} liée{apps.length > 1 ? "s" : ""}
+                            {apps.length > 0 && <span className="ml-1.5 text-text-3">({apps.length})</span>}
+                        </p>
+                        {/* Bouton ajouter un lien */}
+                        {!addingLink && linkableApps.length > 0 && (
+                            <button onClick={() => setAddingLink(true)}
+                                className="flex items-center gap-1 text-[10px] text-accent hover:text-accent-2 uppercase tracking-wide transition-colors">
+                                <IoAddOutline className="text-[13px]" /> Lier
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Select d'ajout de candidature */}
+                    {addingLink && (
+                        <div className="flex items-center gap-2 mb-3">
+                            <select
+                                autoFocus
+                                onChange={(e) => handleLink(e.target.value)}
+                                defaultValue=""
+                                className="flex-1 bg-card border border-border-soft rounded-[5px] px-2.5 py-2 text-[12px] text-text focus:outline-none focus:border-accent font-mono"
+                            >
+                                <option value="" disabled>Choisir une candidature...</option>
+                                {linkableApps.map((a) => (
+                                    <option key={a.id} value={a.id}>{a.company} — {a.position}</option>
+                                ))}
+                            </select>
+                            <button onClick={() => setAddingLink(false)}
+                                className="text-[11px] text-text-3 hover:text-text px-2 py-1.5 transition-colors">Annuler</button>
+                        </div>
+                    )}
+
+                    {/* Liste des candidatures liées, chacune en ApplicationDetail */}
                     {isLinked ? (
-                        <div className="bg-card border border-border-soft rounded-[6px] p-4 flex flex-col gap-3">
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: STATUS_META[app.status]?.color || "var(--accent)" }} />
-                                <span className="text-[11px] uppercase tracking-wide" style={{ color: STATUS_META[app.status]?.color }}>
-                                    {STATUS_META[app.status]?.label || app.status}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-[14px] text-text font-semibold">
-                                <IoBusinessOutline className="text-text-3" />{app.company}
-                            </div>
-                            <div className="flex items-center gap-2 text-[12px] text-text-2">
-                                <IoBriefcaseOutline className="text-text-3" />{app.position}
-                            </div>
-
-                            {/* Détails supplémentaires de la candidature */}
-                            <div className="grid grid-cols-2 gap-2 pt-1">
-                                {app.location && (
-                                    <DetailChip label="Lieu">{app.remote ? "Télétravail" : app.location}</DetailChip>
-                                )}
-                                {app.type && <DetailChip label="Type">{app.type}</DetailChip>}
-                                {app.salary && <DetailChip label="Salaire" accent="#4ade80">{app.salary}</DetailChip>}
-                                {app.sector && <DetailChip label="Secteur">{app.sector}</DetailChip>}
-                            </div>
-
-                            {/* Liens */}
-                            <div className="flex flex-wrap items-center gap-2 pt-2 mt-1 border-t border-border-soft/60">
-                                <button
-                                    onClick={() => onViewApp?.(app)}
-                                    className="inline-flex items-center gap-1.5 text-[11px] text-accent hover:text-accent-2 transition-colors"
-                                >
-                                    <IoArrowForward className="text-[13px]" />
-                                    Voir la candidature
-                                </button>
-                                {app.url && (
-                                    <>
-                                        <span className="w-px h-3.5 bg-border-soft" />
-                                        <a
-                                            href={app.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 text-[11px] text-text-2 hover:text-accent transition-colors"
-                                        >
-                                            <IoOpenOutline className="text-[13px]" />
-                                            Ouvrir l'offre
-                                        </a>
-                                    </>
-                                )}
-                            </div>
+                        <div className="flex flex-col gap-4">
+                            {apps.map((a) => (
+                                <div key={a.id} className="relative border border-border-soft rounded-[8px] overflow-hidden">
+                                    {/* Bouton délier */}
+                                    <button
+                                        onClick={() => handleUnlink(a.id)}
+                                        disabled={busy}
+                                        title="Supprimer le lien"
+                                        className="absolute top-3 right-3 z-10 flex items-center gap-1 text-[10px] uppercase tracking-wide px-2 py-1 rounded-[4px] border transition-colors"
+                                        style={{ color: "var(--c4)", borderColor: "var(--c4)66" }}
+                                    >
+                                        <IoCloseOutline className="text-[13px]" /> Délier
+                                    </button>
+                                    <ApplicationDetail
+                                        app={a}
+                                        onRefresh={onRefresh}
+                                        favorite={false}
+                                        onToggleFavorite={() => { }}
+                                        onClose={null}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     ) : (
-                        <p className="text-[12px] text-text-3">Ce contact n'est lié à aucune candidature.</p>
+                        !addingLink && <p className="text-[12px] text-text-3">Ce contact n'est lié à aucune candidature.</p>
                     )}
                 </section>
 

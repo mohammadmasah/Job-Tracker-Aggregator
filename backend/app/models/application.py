@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from .contact import ContactRead
 from .document import DocumentRead
+from .contact_application_link import ContactApplicationLink
 
 if TYPE_CHECKING:
     from .contact import Contact
@@ -22,7 +23,10 @@ class Application(SQLModel, table=True):
     status: str = Field(default="to_apply", index=True)
     notes: str | None = None
     applied_at: datetime = Field(default_factory=datetime.now)
-    contacts: list["Contact"] = Relationship(back_populates="application")
+    contacts: list["Contact"] = Relationship(
+        back_populates="applications",
+        link_model=ContactApplicationLink,
+    )
     documents: list["Document"] = Relationship(back_populates="application")
 
 

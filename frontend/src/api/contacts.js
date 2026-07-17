@@ -24,3 +24,13 @@ export const updateContact = (id, data) => {
 export const deleteContact = (id) => {
     return axios.delete(`/api/contacts/${id}`);
 };
+
+// --- Many-to-many : liens candidature <-> contact ---
+
+// Lier une candidature à un contact
+export const linkApplication = (contactId, applicationId) =>
+    axios.post(`/api/contacts/${contactId}/applications/${applicationId}`);
+
+// Délier une candidature d'un contact
+export const unlinkApplication = (contactId, applicationId) =>
+    axios.delete(`/api/contacts/${contactId}/applications/${applicationId}`);

@@ -7,6 +7,7 @@ import {
 } from "react-icons/io5";
 import { STATUS_META, STATUS_ORDER, STATUS_OPTIONS, RELANCE_COLOR, needsRelance } from "../../constants/status";
 import { updateApplication } from "../../api/application";
+import ApplicationDetail from "./ApplicationDetail";
 import { activeApplicationStore } from "../../stores/activeApplication";
 import ApplicationCard from "./ApplicationCard";
 import ApplicationRow from "./ApplicationRow";
@@ -185,7 +186,7 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                     <div className="h-full flex items-center justify-center text-text-3 text-[12px]">Sélectionne une candidature.</div>
                 ) : (
                     <div className="h-full overflow-y-auto custom-scroll">
-                        <ApplicationDetailPanel
+                        <ApplicationDetail
                             app={selected}
                             onClose={() => setSelectedId(null)}
                             onRefresh={onRefresh}
@@ -232,98 +233,5 @@ function StatusChip({ active, color, onClick, children }) {
             {color && <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />}
             {children}
         </button>
-    );
-}
-
-const TYPE_LABELS_D = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd: "CDD" };
-
-// Détail candidature — même format compact que OfferDetail, + statut changeable.
-function ApplicationDetailPanel({ app, onClose, onRefresh, favorite, onToggleFavorite }) {
-    const s = STATUS_META[app.status] || {};
-    const relance = needsRelance(app);
-    const date = app.applied_at ? new Date(app.applied_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null;
-
-    const changeStatus = async (e) => {
-        try { await updateApplication(app.id, { status: e.target.value }); await onRefresh?.(); }
-        catch (err) { console.error(err); }
-    };
-
-    return (
-        <div className="px-6 md:px-12 py-10 relative">
-            {/* Croix fermer */}
-            <button onClick={onClose} title="Fermer" className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-[5px] border border-border-soft text-text-3 hover:text-text hover:border-border transition-colors">
-                <IoClose className="text-[17px]" />
-            </button>
-
-            {/* En-tête : logo + entreprise + poste + favori */}
-            <div className="flex items-start gap-4 mb-5 pr-10">
-                <div className="w-16 h-16 rounded-[8px] flex items-center justify-center text-[22px] font-bold shrink-0" style={{ backgroundColor: `${s.color || "var(--accent)"}22`, color: s.color || "var(--accent)" }}>
-                    {(app.company || "?").slice(0, 2).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                        <h2 className="text-[20px] font-bold text-text leading-snug truncate">{app.company || "—"}</h2>
-                        <button onClick={() => onToggleFavorite?.(app.id)} className="shrink-0">
-                            {favorite ? <IoStar className="text-[17px]" style={{ color: "var(--c3)" }} /> : <IoStarOutline className="text-[17px] text-text-3 hover:text-[var(--c3)]" />}
-                        </button>
-                    </div>
-                    <div className="flex items-center gap-1.5 mt-1 text-text-2 text-[13px]">
-                        <IoBriefcaseOutline className="text-text-3" />{app.position || "—"}
-                    </div>
-                </div>
-            </div>
-
-            {/* Statut changeable + relance */}
-            <div className="flex items-center gap-2 mb-6 flex-wrap">
-                <select value={app.status} onChange={changeStatus}
-                    className="text-[11px] font-bold uppercase tracking-wide px-3 py-2 rounded-[5px] border bg-card focus:outline-none font-mono cursor-pointer"
-                    style={{ color: s.color, borderColor: `${s.color}66` }}>
-                    {STATUS_OPTIONS.filter((o) => o.value !== "all").map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                </select>
-                {relance && <span className="text-[10px] uppercase font-bold px-2 py-1 rounded-[4px]" style={{ color: RELANCE_COLOR, border: `1px solid ${RELANCE_COLOR}66` }}>À relancer</span>}
-            </div>
-
-            {/* Badges infos */}
-            <div className="flex flex-wrap gap-2 mb-6">
-                {app.type && <BadgeD icon={IoBriefcaseOutline} color="var(--text-2)">{TYPE_LABELS_D[app.type] || app.type}</BadgeD>}
-                {app.location && <BadgeD icon={IoLocationOutline} color="var(--c1)">{app.remote ? "Télétravail" : app.location}</BadgeD>}
-                {app.salary && <BadgeD icon={IoWalletOutline} color="var(--c2)">{app.salary}</BadgeD>}
-                {app.sector && <BadgeD icon={IoBusinessOutline} color="var(--text-2)">{app.sector}</BadgeD>}
-                {date && <BadgeD icon={IoCalendarOutline} color="var(--text-3)">{date}</BadgeD>}
-            </div>
-
-            {/* Description */}
-            {app.description && (
-                <div className="mb-6">
-                    <p className="text-text-3 uppercase text-[10px] tracking-wider mb-2">Description</p>
-                    <p className="text-[13px] text-text-2 leading-relaxed whitespace-pre-wrap">{app.description}</p>
-                </div>
-            )}
-
-            {/* Notes */}
-            {app.notes && (
-                <div className="mb-6">
-                    <p className="text-text-3 uppercase text-[10px] tracking-wider mb-2">Notes</p>
-                    <p className="text-[13px] text-text-2 leading-relaxed whitespace-pre-wrap bg-card border border-border-soft rounded-[6px] p-4">{app.notes}</p>
-                </div>
-            )}
-
-            {/* Lien offre */}
-            {app.url && (
-                <a href={app.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[12px] text-accent hover:text-accent-2 transition-colors">
-                    <IoOpenOutline className="text-[14px]" /> Ouvrir l'offre
-                </a>
-            )}
-        </div>
-    );
-}
-
-function BadgeD({ icon: Icon, color, children }) {
-    return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-[5px]" style={{ backgroundColor: "var(--card)", color: "var(--text-2)", border: "1px solid var(--border-soft)" }}>
-            <Icon className="text-[13px]" style={{ color }} />{children}
-        </span>
     );
 }

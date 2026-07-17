@@ -14,7 +14,7 @@ function detectType(value) {
 export default function ContactForm({ applications = [], onClose, onCreated }) {
     const [name, setName] = useState("");
     const [notes, setNotes] = useState("");
-    const [applicationId, setApplicationId] = useState("");
+    const [applicationIds, setApplicationIds] = useState([]);   // plusieurs candidatures
     const [infos, setInfos] = useState([""]);
     const [busy, setBusy] = useState(false);
 
@@ -30,7 +30,7 @@ export default function ContactForm({ applications = [], onClose, onCreated }) {
             const res = await createContact({
                 name: name.trim(),
                 notes: notes.trim() || null,
-                application_id: applicationId ? Number(applicationId) : null,
+                application_ids: applicationIds.map(Number),
             });
             const contactId = res.data.id;
 
@@ -83,17 +83,35 @@ export default function ContactForm({ applications = [], onClose, onCreated }) {
                     <div>
                         <label className={label}>Candidature liée</label>
                         <select
-                            value={applicationId}
-                            onChange={(e) => setApplicationId(e.target.value)}
+                            value=""
+                            onChange={(e) => {
+                                const id = Number(e.target.value);
+                                if (id && !applicationIds.includes(id)) setApplicationIds([...applicationIds, id]);
+                            }}
                             className={input}
                         >
-                            <option value="">Contact libre (aucune)</option>
-                            {applications.map((a) => (
+                            <option value="">+ Lier une candidature...</option>
+                            {applications.filter((a) => !applicationIds.includes(a.id)).map((a) => (
                                 <option key={a.id} value={a.id}>
                                     {a.company} — {a.position}
                                 </option>
                             ))}
                         </select>
+                        {/* Chips des candidatures sélectionnées */}
+                        {applicationIds.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                                {applicationIds.map((id) => {
+                                    const a = applications.find((x) => x.id === id);
+                                    if (!a) return null;
+                                    return (
+                                        <span key={id} className="inline-flex items-center gap-1 text-[10px] bg-card border border-border-soft rounded-[4px] px-2 py-1 text-text-2">
+                                            {a.company}
+                                            <button type="button" onClick={() => setApplicationIds(applicationIds.filter((x) => x !== id))} className="text-text-3 hover:text-[var(--c4)]">×</button>
+                                        </span>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     {/* Méthodes de contact */}

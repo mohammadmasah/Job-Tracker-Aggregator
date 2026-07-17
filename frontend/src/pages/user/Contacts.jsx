@@ -48,11 +48,7 @@ export default function Contacts() {
 
             {/* MAÎTRE-DÉTAIL */}
             <div className="flex-1 min-h-0">
-                <ContactList
-                    contacts={contacts}
-                    applications={applications}
-                    onUpdated={fetchContacts}
-                />
+                <ContactList contacts={contacts} applications={applications} onUpdated={fetchContacts} />
             </div>
 
             {/* MODAL de création */}

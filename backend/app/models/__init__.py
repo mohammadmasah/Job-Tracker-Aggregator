@@ -25,8 +25,12 @@ from .document import (
 )
 from .contact import (
     Contact,
+    ContactCreate,
     ContactUpdate,
     ContactRead,
+)
+from .contact_application_link import (
+    ContactApplicationLink
 )
 from .application import (
     Application,
