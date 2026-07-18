@@ -6,6 +6,7 @@ import { STATUS_META } from "../constants/status";
 import { activeApplicationStore } from "../stores/activeApplication";
 
 const CHAT_URL = "http://127.0.0.1:8000/chatbot/";
+const ANALYSE_CV_URL = "http://127.0.0.1:8000/analyse-cv/";
 
 const WELCOME = {
     role: "bot",
@@ -190,6 +191,35 @@ export default function ChatWidget() {
         ? ["/resume", "/relance", "/questions", "/help"]
         : ["/help"];
 
+    const fileInputRef = useRef(null);
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || typing) return;
+
+        setMessages((prev) => [...prev, { role: "user", text: `${file.name}` }]);
+        setTyping(true);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("message", "Analyse ce document."); 
+
+        try {
+            const res = await axios.post(ANALYSE_CV_URL, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            setTyping(false);
+            await typeOut(res.data.response);
+        } catch (error) {
+            console.error(error);
+            setTyping(false);
+            await typeOut("Erreur lors de l'envoi du fichier.");
+        } finally {
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
+        
+
     return (
         <>
             <style>{`
@@ -359,6 +389,14 @@ export default function ChatWidget() {
                             placeholder={activeApp ? `Une question sur ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company} ?` : "Pose une question ou tape /help"}
                             className="flex-1 bg-bg border border-border-soft rounded-[4px] px-3 py-2 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent transition-colors font-mono"
                         />
+                            <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileUpload} />
+                            <button 
+                                onClick={() => fileInputRef.current?.click()} 
+                                type="button" 
+                                className="shrink-0 w-9 h-9 flex items-center justify-center bg-card border border-border-soft rounded-[4px] hover:text-accent transition-colors"
+                            >
+                                📎
+                            </button>
                         <button onClick={() => sendMessage()} aria-label="Envoyer" className="shrink-0 w-9 h-9 flex items-center justify-center bg-accent text-bg rounded-[4px] hover:bg-accent-2 transition-colors">↑</button>
                     </div>
                 </div>
