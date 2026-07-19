@@ -7,6 +7,9 @@ from app.database import engine
 from app.models.application import Application
 from sqlmodel import Session, select
 
+from app.models.contact import Contact
+from app.models.contact_method import ContactMethod
+
 sessions_db = {}
 
 def get_sessions_history(session_id: str) -> InMemoryChatMessageHistory:
@@ -18,6 +21,8 @@ def get_sessions_history(session_id: str) -> InMemoryChatMessageHistory:
 def get_user_applications_context() -> str:
     with Session(engine) as session:
         applications = session.exec(select(Application)).all()
+        contacts = session.exec(select(Contact)).all()
+        methods = session.exec(select(ContactMethod)).all()
 
     if not applications:
         return "The user has no recorded applications."
@@ -39,7 +44,27 @@ def get_user_applications_context() -> str:
             f"Date: {app.applied_at.strftime('%d/%m/%Y')} | "
             f"Notes: {app.notes or '—'}"
         )
-    return context
+
+    if not contacts:
+        contacts_context = "The user has no recorded contacts."
+    else:
+        methods_by_contact = {}
+        for method in methods:
+            if method.contact_id not in methods_by_contact:
+                methods_by_contact[method.contact_id] = []
+            methods_by_contact[method.contact_id].append(f"{method.type}: {method.value}")
+
+        contacts_context = f"Total contacts: {len(contacts)}\n"
+        for contact in contacts:
+            contact_methods = methods_by_contact.get(contact.id, [])
+            methods_str = ", ".join(contact_methods) if contact_methods else "—"
+            contacts_context += (
+                f"\n- {contact.name} | "
+                f"Contact info: {methods_str} | "
+                f"Notes: {contact.notes or '—'}"
+            )
+
+    return f"{context}\n\n--- CONTACTS ---\n{contacts_context}"
 
 def generate_chatbot_response(user_message: str, session_id: str = "default_session") -> str:
     """
