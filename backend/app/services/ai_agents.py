@@ -10,6 +10,8 @@ from sqlmodel import Session, select
 from app.models.contact import Contact
 from app.models.contact_method import ContactMethod
 
+from app.models.offer import Offer
+
 sessions_db = {}
 
 def get_sessions_history(session_id: str) -> InMemoryChatMessageHistory:
@@ -23,6 +25,7 @@ def get_user_applications_context() -> str:
         applications = session.exec(select(Application)).all()
         contacts = session.exec(select(Contact)).all()
         methods = session.exec(select(ContactMethod)).all()
+        offers = session.exec(select(Offer)).all()
 
     if not applications:
         return "The user has no recorded applications."
@@ -63,8 +66,26 @@ def get_user_applications_context() -> str:
                 f"Contact info: {methods_str} | "
                 f"Notes: {contact.notes or '—'}"
             )
+    if not offers:
+        offers_context = "The user has no saved job offers."
+    else:
+        offers_context = f"Total offers: {len(offers)}\n"
+        for offer in offers:
+            salary = ""
+        if offer.salary_min or offer.salary_max:
+            salary = f"{offer.salary_min or ''}–{offer.salary_max or ''} {offer.salary_currency or '€'}"
+        
+        offers_context += (
+            f"\n- {offer.title} | "
+            f"Company: {offer.company or '—'} | "
+            f"Source: {offer.source} | "
+            f"Location: {', '.join(offer.localisation) if offer.localisation else '—'} | "
+            f"Skills: {', '.join(offer.skills) if offer.skills else '—'} | "
+            f"Salary: {salary or '—'} | "
+            f"Sectors: {', '.join(offer.sectors) if offer.sectors else '—'}"
+        )
 
-    return f"{context}\n\n--- CONTACTS ---\n{contacts_context}"
+    return f"{context}\n\n--- CONTACTS ---\n{contacts_context}\n\n--- JOB OFFERS ---\n{offers_context}"
 
 def generate_chatbot_response(user_message: str, session_id: str = "default_session") -> str:
     """
