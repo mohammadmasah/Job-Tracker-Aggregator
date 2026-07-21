@@ -1,19 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from datetime import timedelta
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlmodel import Session, select
 
+from app.api.deps import get_current_user
+from app.core.security import create_access_token, hash_password, verify_password
 from ..database import get_session
 from ..models import User, UserCreate, UserLogin
-from app.core.security import hash_password, verify_password,create_access_token
 
-from datetime import timedelta
-
-from app.api.deps import get_current_user
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/api/user", tags=["user"])
-
+    
 @router.post("/register")
 def create_user(user: UserCreate, session: Session = Depends(get_session)):
     db_user = User(
@@ -28,11 +27,20 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
     session.refresh(db_user)
     return {"message": "User created"}
 
+
 @router.post("/login")
 @limiter.limit("3/minute")
-def login(credentials: UserLogin,response: Response,request: Request, session: Session = Depends(get_session)):
-
-    user = session.exec(select(User).where(User.email == credentials.email)).first()
+@limiter.limit("15/hour")
+@limiter.limit("30/day")
+def login(
+    request: Request,
+    credentials: UserLogin,
+    response: Response,
+    session: Session = Depends(get_session),
+):
+    user = session.exec(
+        select(User).where(User.email == credentials.email)
+    ).first()
     if not user:
         raise HTTPException(status_code=401, detail="Invalid identification")
 
@@ -44,6 +52,7 @@ def login(credentials: UserLogin,response: Response,request: Request, session: S
     access_token = create_access_token(
         data=token_data, expires_delta=timedelta(days=14)
     )
+
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -52,6 +61,7 @@ def login(credentials: UserLogin,response: Response,request: Request, session: S
         samesite="lax",
         secure=False,
     )
+
     return {
         "message": "Connected successfully",
         "user": {
@@ -61,6 +71,7 @@ def login(credentials: UserLogin,response: Response,request: Request, session: S
             "email": user.email,
         },
     }
+
 @router.get("/me")
 def get_me(current_user: User = Depends(get_current_user)):
     return {
@@ -70,6 +81,8 @@ def get_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "role": current_user.role,
     }
+
+
 @router.get("")
 def get_user(session: Session = Depends(get_session)):
     return session.exec(select(User)).all()
