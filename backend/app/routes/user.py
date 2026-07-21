@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from sqlmodel import Session, select
 
 from ..database import get_session
@@ -24,7 +24,7 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
     return {"message": "User created"}
 
 @router.post("/login")
-def login(credentials: UserLogin, session: Session = Depends(get_session)):
+def login(credentials: UserLogin,response: Response, session: Session = Depends(get_session)):
 
     user = session.exec(select(User).where(User.email == credentials.email)).first()
     if not user:
@@ -38,10 +38,16 @@ def login(credentials: UserLogin, session: Session = Depends(get_session)):
     access_token = create_access_token(
         data=token_data, expires_delta=timedelta(days=14)
     )
-
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        max_age=1209600,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+    )
     return {
-        "access_token": access_token,
-        "token_type": "bearer",
+        "message": "Connected successfully",
         "user": {
             "id": user.id,
             "name": user.name,
