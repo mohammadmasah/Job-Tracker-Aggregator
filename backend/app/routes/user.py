@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlmodel import Session, select
 
 from ..database import get_session
@@ -7,6 +9,9 @@ from app.core.security import hash_password, verify_password,create_access_token
 
 from datetime import timedelta
 
+from app.api.deps import get_current_user
+
+limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/api/user", tags=["user"])
 
 @router.post("/register")
@@ -24,7 +29,8 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
     return {"message": "User created"}
 
 @router.post("/login")
-def login(credentials: UserLogin,response: Response, session: Session = Depends(get_session)):
+@limiter.limit("3/minute")
+def login(credentials: UserLogin,response: Response,request: Request, session: Session = Depends(get_session)):
 
     user = session.exec(select(User).where(User.email == credentials.email)).first()
     if not user:
@@ -54,6 +60,15 @@ def login(credentials: UserLogin,response: Response, session: Session = Depends(
             "lastname": user.lastname,
             "email": user.email,
         },
+    }
+@router.get("/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "lastname": current_user.lastname,
+        "email": current_user.email,
+        "role": current_user.role,
     }
 @router.get("")
 def get_user(session: Session = Depends(get_session)):
