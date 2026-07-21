@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import create_db_and_tables
 from .routes import adzuna, applications, contacts, contact_method, documents, scraper, chatbot, chatbot_analyse, user, offers, weLoveDevs
+from app.api.user import router as user_router
 
 
 @asynccontextmanager
@@ -39,3 +40,4 @@ app.include_router(user.router)
 app.include_router(offers.router)
 app.include_router(weLoveDevs.router)
 app.include_router(adzuna.router)
+app.include_router(user_router)
