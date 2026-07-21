@@ -1,5 +1,10 @@
 # app/core/security.py
+from datetime import datetime, timedelta, timezone
 import bcrypt
+import jwt
+
+SECRET_KEY = "SUPER_SECRET_KEY_FOR_JWT_SIGNING"
+ALGORITHM = "HS256"
 
 
 def hash_password(password: str) -> str:
@@ -12,3 +17,14 @@ def hash_password(password: str) -> str:
 def verify_password(plain: str, hashed: str) -> bool:
     plain_bytes = plain.encode("utf-8")[:72]
     return bcrypt.checkpw(plain_bytes, hashed.encode("utf-8"))
+
+def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
+    to_encode = data.copy()
+
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(days=14)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
