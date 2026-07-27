@@ -36,6 +36,6 @@ def get_current_user(request: Request, session: Session = Depends(get_session)) 
 
 
 def require_admin(user: User = Depends(get_current_user)):
-    if user.role != "admin":
+    if user.role != "user":
         raise HTTPException(403, "Reserved for admins")
     return user

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import { useTheme } from "./hooks/useTheme";
 
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/user/Dashboard";
@@ -22,7 +23,13 @@ export default function App() {
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
 
-                <Route element={<Layout />}>
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <Layout />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/offers" element={<Offers />} />
                     <Route path="/applications" element={<Applications />} />
@@ -35,7 +42,18 @@ export default function App() {
                     </Route>
                 </Route>
 
+                <Route
+                    element={
+                        <ProtectedRoute requireAdmin>
+                            <Layout />
+                        </ProtectedRoute>
+                    }
+                >
+                    {/* <Route path="/admin" element={}/> */}
+                    {/* <Route path="/admin/users" element={<AdminUsers />} /> */}
+                </Route>
+
             </Routes>
-        </BrowserRouter>
+        </BrowserRouter >
     );
 }
