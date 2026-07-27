@@ -4,6 +4,7 @@ import { useTheme } from "./hooks/useTheme";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/user/Dashboard";
 import Offers from "./pages/user/Offers";
 import Applications from "./pages/user/Applications";
@@ -34,6 +35,8 @@ export default function App() {
                         <Route path="apparence" element={<SettingsApparence />} />
                     </Route>
                 </Route>
+
+                <Route path="*" element={<NotFound />} />
 
             </Routes>
         </BrowserRouter>
