@@ -5,9 +5,10 @@ import os
 import uuid
 
 from ..database import get_session
+from ..api.deps import get_current_user
 from ..models import Document, DocumentUpdate, Application
 
-router = APIRouter(prefix="/api/documents", tags=["documents"])
+router = APIRouter(prefix="/api/documents", dependencies=[Depends(get_current_user)], tags=["documents"])
 
 UPLOAD_DIR = "uploads"
 

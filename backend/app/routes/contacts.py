@@ -6,8 +6,12 @@ from sqlmodel import Session, select
 
 from ..database import get_session
 from ..models import Contact, ContactCreate, ContactUpdate, ContactRead, Application
+from ..api.deps import get_current_user
 
-router = APIRouter(prefix="/api/contacts", tags=["contacts"])
+
+router = APIRouter(
+    prefix="/api/contacts", dependencies=[Depends(get_current_user)], tags=["contacts"]
+)
 
 
 # Convertit un Contact en ContactRead (avec la liste des application_ids)
@@ -43,7 +47,9 @@ def get_contacts(session: Session = Depends(get_session)):
 
 
 @router.get("/by-application/{application_id}", response_model=list[ContactRead])
-def get_application_contacts(application_id: int, session: Session = Depends(get_session)):
+def get_application_contacts(
+    application_id: int, session: Session = Depends(get_session)
+):
     app = session.get(Application, application_id)
     if not app:
         raise HTTPException(404, "Application not found")
@@ -51,7 +57,9 @@ def get_application_contacts(application_id: int, session: Session = Depends(get
 
 
 @router.patch("/{id}", response_model=ContactRead)
-def update_contact(id: int, data: ContactUpdate, session: Session = Depends(get_session)):
+def update_contact(
+    id: int, data: ContactUpdate, session: Session = Depends(get_session)
+):
     contact = session.get(Contact, id)
     if not contact:
         raise HTTPException(404, "Contact not found")
@@ -65,8 +73,11 @@ def update_contact(id: int, data: ContactUpdate, session: Session = Depends(get_
 
 # --- Gestion des liens candidature ↔ contact ---
 
+
 @router.post("/{id}/applications/{application_id}", response_model=ContactRead)
-def link_application(id: int, application_id: int, session: Session = Depends(get_session)):
+def link_application(
+    id: int, application_id: int, session: Session = Depends(get_session)
+):
     contact = session.get(Contact, id)
     app = session.get(Application, application_id)
     if not contact or not app:
@@ -80,7 +91,9 @@ def link_application(id: int, application_id: int, session: Session = Depends(ge
 
 
 @router.delete("/{id}/applications/{application_id}", response_model=ContactRead)
-def unlink_application(id: int, application_id: int, session: Session = Depends(get_session)):
+def unlink_application(
+    id: int, application_id: int, session: Session = Depends(get_session)
+):
     contact = session.get(Contact, id)
     app = session.get(Application, application_id)
     if not contact or not app:

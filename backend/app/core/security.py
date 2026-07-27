@@ -1,8 +1,11 @@
 # app/core/security.py
+from fastapi import Depends, HTTPException
 from datetime import datetime, timedelta, timezone
 import bcrypt
 import jwt
 from jwt import PyJWTError
+
+from ..models.user import User
 
 SECRET_KEY = "SUPER_SECRET_KEY_FOR_JWT_SIGNING"
 ALGORITHM = "HS256"

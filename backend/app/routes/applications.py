@@ -3,8 +3,9 @@ from sqlmodel import Session, select
 
 from ..database import get_session
 from ..models import Application, ApplicationCreate, ApplicationUpdate, ApplicationRead
+from ..api.deps import get_current_user
 
-router = APIRouter(prefix="/api/applications", tags=["applications"])
+router = APIRouter(prefix="/api/applications", dependencies=[Depends(get_current_user)], tags=["applications"])
 
 
 # Create application

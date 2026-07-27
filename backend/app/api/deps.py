@@ -1,14 +1,13 @@
 from fastapi import Depends, HTTPException, Request, status
 from sqlmodel import Session
 
-from app.core.security import decode_access_token
+from ..core.security import decode_access_token
+
 from ..database import get_session
 from ..models import User
 
 
-def get_current_user(
-    request: Request, session: Session = Depends(get_session)
-) -> User:
+def get_current_user(request: Request, session: Session = Depends(get_session)) -> User:
     token = request.cookies.get("access_token")
 
     if not token:
@@ -33,4 +32,10 @@ def get_current_user(
             detail="User not found",
         )
 
+    return user
+
+
+def require_admin(user: User = Depends(get_current_user)):
+    if user.role != "admin":
+        raise HTTPException(403, "Reserved for admins")
     return user

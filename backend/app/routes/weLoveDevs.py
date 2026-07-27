@@ -4,8 +4,14 @@ from sqlmodel import Session, select
 from ..database import get_session
 from ..models import Offer
 from ..services import fetch_offers
+from ..api.deps import get_current_user
 
-router = APIRouter(prefix="/api/welovedevs", tags=["welovedevs"])
+
+router = APIRouter(
+    prefix="/api/welovedevs",
+    dependencies=[Depends(get_current_user)],
+    tags=["welovedevs"],
+)
 
 
 @router.post("")

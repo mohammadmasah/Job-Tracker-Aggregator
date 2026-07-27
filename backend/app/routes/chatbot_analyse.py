@@ -1,10 +1,12 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from app.services.ai_agents import generate_chatbot_response
 import pdfplumber
 import io
+from ..api.deps import get_current_user
 
 router = APIRouter(
     prefix="/analyse-cv",
+    dependencies=[Depends(get_current_user)],
     tags=["Analyse CV"]
 )
 

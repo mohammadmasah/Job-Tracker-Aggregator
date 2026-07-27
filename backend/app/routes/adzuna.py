@@ -5,8 +5,9 @@ import traceback
 from ..database import get_session
 from ..models import Offer
 from ..services.adzuna import fetch_adzuna
+from ..api.deps import get_current_user
 
-router = APIRouter(prefix="/api/adzuna", tags=["adzuna"])
+router = APIRouter(prefix="/api/adzuna", dependencies=[Depends(get_current_user)] ,tags=["adzuna"])
 
 
 @router.post("")
