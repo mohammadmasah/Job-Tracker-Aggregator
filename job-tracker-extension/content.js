@@ -34,29 +34,36 @@ function extractHelloWork() {
     }
   }
 
+  // ✅ این بخش جدید را جایگزین کنید:
   let descriptionText = "";
-  const descSelectors = [
-    '[class*="jobDescription"]',
-    '[class*="job-description"]',
-    'section[class*="content"]',
-  ];
-  
-  for (const sel of descSelectors) {
-    const el = document.querySelector(sel);
-    if (el && el.innerText.trim().length > 200) {
-      descriptionText = el.innerText.trim();
-      break;
+
+  // 1. بهترین و دقیق‌ترین سلکتور HelloWork بر اساس data attribute
+  const targetEl = document.querySelector('[data-truncate-text-target="content"]');
+  if (targetEl && targetEl.innerText.trim().length > 50) {
+    descriptionText = targetEl.innerText.trim();
+  }
+
+  // 2. اولویت دوم: کلاس typo-long-m که متن اصلی توضیحات را دارد
+  if (!descriptionText) {
+    const typoEl = document.querySelector('.typo-long-m');
+    if (typoEl && typoEl.innerText.trim().length > 50) {
+      descriptionText = typoEl.innerText.trim();
     }
   }
 
+  // 3. اولویت سوم: فال‌بک روی sectionهایی که متن توضیحات دارند
   if (!descriptionText) {
-    const allSections = Array.from(document.querySelectorAll('section, div, article'));
-    const missionSection = allSections.find(el =>
-      el.innerText?.includes("Les missions du poste") &&
-      el.innerText?.length > 300
-    );
-    if (missionSection) {
-      descriptionText = missionSection.innerText.trim();
+    const descSelectors = [
+      '[class*="jobDescription"]',
+      '[class*="job-description"]',
+      'section[class*="content"]'
+    ];
+    for (const sel of descSelectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 100) {
+        descriptionText = el.innerText.trim();
+        break;
+      }
     }
   }
 
@@ -116,7 +123,7 @@ function extractJob() {
     sector: data.sector || "",
     type: data.type || "alternance",
     description: descriptionText,
-    notes: descriptionText,
+    notes: "",
     url: window.location.href
   };
 }

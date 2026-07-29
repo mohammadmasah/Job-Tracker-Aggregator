@@ -32,8 +32,8 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
           salary: jobData.salary,
           sector: jobData.sector,
           url: jobData.url,
-          description: jobData.description,
-          notes: "",
+          description: jobData.description || "",
+          notes: jobData.description || "",
           type: "alternance",
           status: "to_apply",
           remote: false
