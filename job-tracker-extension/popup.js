@@ -34,7 +34,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
           url: jobData.url,
           description: jobData.description || "",
           notes: jobData.description || "",
-          type: "alternance",
+          type: jobData.type || "Non spécifié",
           status: "to_apply",
           remote: false
         })

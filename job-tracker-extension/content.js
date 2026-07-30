@@ -506,7 +506,6 @@ function extractLinkedIn() {
     company = company.split("\n")[0].trim();
   }
 
-  // ۲. Position
   let position = "";
   const titleLink = document.querySelector('a[href*="/jobs/view/"]');
   if (titleLink) {
@@ -525,10 +524,8 @@ function extractLinkedIn() {
     position = position.split("\n")[0].trim();
   }
 
-  // ۳. Location
   let location = "";
-  const topCard = document.querySelector('.job-details-jobs-unified-top-card__primary-description-container') ||
-                  document.querySelector('div[class*="primary-description"]');
+  const topCard = document.querySelector('.job-details-jobs-unified-top-card__primary-description-container') || document.querySelector('div[class*="primary-description"]');
 
   if (topCard) {
     location = topCard.innerText?.split('·')[0]?.trim() || "";
@@ -549,8 +546,6 @@ function extractLinkedIn() {
   if (!location) {
     location = "France";
   }
-
-  // ۴. Type (اضافه شد تا متغیر تعریف‌نشده نباشد)
   let type = "Non spécifié";
   const allTexts = Array.from(document.querySelectorAll('span, div, li')).map(el => el.innerText?.toLowerCase() || "");
   
@@ -564,10 +559,8 @@ function extractLinkedIn() {
     type = "cdd";
   }
 
-  // ۵. DescriptionText
   let descriptionText = "";
-  const aboutTheJobElem = document.querySelector('[id*="JobDetails_AboutTheJob"]') || 
-                          document.querySelector('[componentkey*="JobDetails_AboutTheJob"]');
+  const aboutTheJobElem = document.querySelector('[id*="JobDetails_AboutTheJob"]') || document.querySelector('[componentkey*="JobDetails_AboutTheJob"]');
 
   if (aboutTheJobElem) {
     descriptionText = aboutTheJobElem.innerText?.trim() || "";
@@ -585,7 +578,6 @@ function extractLinkedIn() {
     }
   }
 
-  // ۶. Sector (اضافه شد تا متغیر تعریف‌نشده نباشد)
   let sector = "Non renseigné";
   const criteriaList = document.querySelectorAll('.jobs-unified-top-card__job-insight');
   if (criteriaList.length > 1) {
@@ -595,7 +587,6 @@ function extractLinkedIn() {
     sector = sector.substring(0, 200);
   }
 
-  // ۷. Salary (اضافه شد تا متغیر تعریف‌نشده نباشد)
   let salary = "Non spécifié";
   const salaryElem = Array.from(document.querySelectorAll('span, div')).find(el => {
     const txt = el.innerText || "";
