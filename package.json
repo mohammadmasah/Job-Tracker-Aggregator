@@ -1,0 +1,24 @@
+{
+  "name": "w-yep-200-par-2-1-job_aggregator-4",
+  "version": "1.0.0",
+  "description": "- Python 3.10+ - Node.js 18+ - (Optionnel, pour le chatbot) Ollama : https://ollama.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EpitechWebAcademiePromo2027/W-YEP-200-PAR-2-1-job_aggregator-4.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EpitechWebAcademiePromo2027/W-YEP-200-PAR-2-1-job_aggregator-4/issues"
+  },
+  "homepage": "https://github.com/EpitechWebAcademiePromo2027/W-YEP-200-PAR-2-1-job_aggregator-4#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.3.3"
+  }
+}
