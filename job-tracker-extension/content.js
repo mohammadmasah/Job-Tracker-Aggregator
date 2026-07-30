@@ -1,4 +1,4 @@
-// ------------- HELLOWORK ----------------
+// --------------------------- HELLOWORK ---------------------------
 function extractHelloWork() {
   let position = document.querySelector('h1')?.innerText?.trim();
     
@@ -86,7 +86,7 @@ function extractHelloWork() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
-  // ------------- WELCOME TO THE JUNGLE ----------------
+  // ---------------------------- WELCOME TO THE JUNGLE -----------------------------
 function extractWelcomeToTheJungle() {
   let position = 
     document.querySelector('h2.wui-text')?.innerText?.trim() ||
@@ -212,7 +212,7 @@ function extractWelcomeToTheJungle() {
   return { position, company, location, descriptionText, salary, sector, type }
 }
 
-// ------------- JOBTEASER ----------------
+// -------------------------------- JOBTEASER ---------------------------------
 function extractJobTeaser() {
   let position = 
     document.querySelector('[data-testid="jobad-DetailView__Heading__title"]')?.innerText?.trim() ||
@@ -290,7 +290,7 @@ function extractJobTeaser() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
-// ------------- INDEED ----------------
+// ------------------------------ INDEED -------------------------------
 function extractIndeed() {
   let position = 
     document.querySelector('[data-testid="jobsearch-JobInfoHeader-title"]')?.innerText?.trim() ||
@@ -337,7 +337,7 @@ function extractIndeed() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
-// ------------- WELOVEDEVS ----------------
+// --------------------------- WELOVEDEVS ------------------------------
 function extractWeLoveDevs() {
   let company = 
     document.querySelector('a[href*="/app/company/"] span')?.innerText?.trim() ||
@@ -389,7 +389,7 @@ function extractWeLoveDevs() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
-// ------------- LA BONNE ALTERNANCE ----------------
+// ---------------------------- LA BONNE ALTERNANCE ----------------------------
 function extractLaBonneAlternance() {
   let company = 
     document.querySelector('p[class*="MuiTypography"] span')?.innerText?.trim() ||
@@ -484,7 +484,7 @@ function extractLaBonneAlternance() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
-// ------------- LINKEDIN ----------------
+// --------------------------------- LINKEDIN ----------------------------
 function extractLinkedIn() {
   let company = "";
   const titleLink = document.querySelector('a[href*="/jobs/view/"]');
@@ -596,7 +596,7 @@ function extractLinkedIn() {
 
   return { position, company, location, descriptionText, salary, sector, type };
 }
-// ---------------- MAIN ---------------
+// ----------------------------------- MAIN -----------------------------------
 function detectSite() {
   const url = window.location.href;
   if (url.includes("hellowork.com")) return "hellowork";
@@ -655,7 +655,7 @@ function extractJob() {
     url: window.location.href
   };
 }
-// -------------- LISTENER ---------------
+// -------------------------------- LISTENER --------------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "extract_job") {
     setTimeout(() => {
