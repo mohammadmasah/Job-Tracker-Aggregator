@@ -290,7 +290,201 @@ function extractJobTeaser() {
     }
   }
   return { position, company, location, descriptionText, salary, sector, type };
-} 
+}
+
+// ------------- INDEED ----------------
+function extractIndeed() {
+  let position = 
+    document.querySelector('[data-testid="jobsearch-JobInfoHeader-title"]')?.innerText?.trim() ||
+    document.querySelector('h1.jobsearch-JobInfoHeader-title')?.innerText?.trim() ||
+    document.querySelector('h2.jobsearch-JobInfoHeader-title')?.innerText?.trim();
+
+  if (!position && document.title) {
+    const titleParts = document.title.split(' - ');
+    if (titleParts.length > 0) position = titleParts[0].trim();
+  }
+
+  let company = 
+    document.querySelector('[data-testid="inlineHeader-companyName"]')?.innerText?.trim() ||
+    document.querySelector('[data-testid="jobsearch-CompanyInfoContainer"] a')?.innerText?.trim() ||
+    document.querySelector('[data-testid="jobsearch-CompanyInfoContainer"]')?.innerText?.split('\n')[0]?.trim();
+
+  let location = 
+    document.querySelector('[data-testid="inlineHeader-companyLocation"]')?.innerText?.trim() ||
+    document.querySelector('[data-testid="jobsearch-CompanyInfoContainer"] div:last-child')?.innerText?.trim() ||
+    "";
+
+  let type = document.getElementById('salaryInfoAndJobType')?.innerText?.trim()?.toLowerCase() || "";
+
+  if (type.includes("cdi")) type = "cdi";
+  else if (type.includes("cdd")) type = "cdd";
+  else if (type.includes("stage") || type.includes("intern")) type = "stage";
+  else if (type.includes("alternance") || type.includes("apprentissage")) type = "alternance";
+  else if (type.includes("intérim") || type.includes("interim")) type = "intérim";
+  else type = "Non spécifié";
+
+  let descriptionText = document.getElementById('jobDescriptionText')?.innerText?.trim() || "";
+
+  let salary = "";
+  const salaryContainer = document.getElementById('salaryInfoAndJobType');
+  if (salaryContainer) {
+    const salarySpan = salaryContainer.querySelector('span');
+    if (salarySpan && salarySpan.innerText.includes("€")) {
+      salary = salarySpan.innerText.trim();
+    }
+  }
+
+  let sector = "Non renseigné";
+
+  return { position, company, location, descriptionText, salary, sector, type };
+}
+
+// ------------- WELOVEDEVS ----------------
+function extractWeLoveDevs() {
+  let company = 
+    document.querySelector('a[href*="/app/company/"] span')?.innerText?.trim() ||
+    document.querySelector('a[href*="/app/company/"]')?.innerText?.trim() ||
+    document.querySelector('img[alt*="company"]')?.getAttribute('alt')?.trim() ||
+    "";
+
+  let position = document.querySelector('h1')?.innerText?.trim() || "";
+
+  const spans = Array.from(document.querySelectorAll('span'));
+
+  let salary = "";
+  const salarySpan = spans.find(span => span.innerText && span.innerText.includes("€"));
+  if (salarySpan) {
+    salary = salarySpan.innerText.trim();
+  }
+
+  let descriptionText = "";
+  const descContainer = document.querySelector('h1')?.parentElement?.parentElement;
+  if (descContainer) {
+    descriptionText = descContainer.innerText?.trim() || "";
+  }
+
+  let location = 
+    document.querySelector('a[href*="google.com/maps"]')?.innerText?.trim() ||
+    "";
+
+  let sector = "IT & Technology";
+
+  let type = "";
+  const contractElement = spans.find(s => {
+    const txt = (s.innerText || "").toLowerCase();
+    return txt.includes("permanent contract") || txt.includes("fixed-term") || txt.includes("cdi") || txt.includes("cdd") || txt.includes("alternance") || txt.includes("stage") || txt.includes("freelance");
+  });
+
+  let rawType = contractElement ? contractElement.innerText.toLowerCase() : "";
+
+  if (!rawType) {
+    rawType = (position + " " + document.body.innerText).toLowerCase();
+  }
+
+  if (rawType.includes("permanent") || rawType.includes("cdi")) type = "cdi";
+  else if (rawType.includes("fixed-term") || rawType.includes("cdd")) type = "cdd";
+  else if (rawType.includes("stage") || rawType.includes("intern")) type = "stage";
+  else if (rawType.includes("alternance") || rawType.includes("apprentissage")) type = "alternance";
+  else if (rawType.includes("freelance")) type = "freelance";
+  else type = "Non spécifié";
+
+  return { position, company, location, descriptionText, salary, sector, type };
+}
+
+// ------------- LA BONNE ALTERNANCE ----------------
+function extractLaBonneAlternance() {
+  let company = 
+    document.querySelector('p[class*="MuiTypography"] span')?.innerText?.trim() ||
+    "";
+
+  if (company.includes("recherche")) {
+    company = company.split("recherche")[0].trim();
+  }
+
+  let position = 
+    document.getElementById('detail-header')?.innerText?.trim() ||
+    document.querySelector('h3#detail-header')?.innerText?.trim() ||
+    document.querySelector('h3')?.innerText?.trim() ||
+    "";
+
+  let location = "";
+  const cityElem = document.querySelector('p[class*="1cjxt7q"]')?.parentElement;
+  if (cityElem) {
+    location = cityElem.innerText?.replace(/\n/g, ' ')?.trim() || "";
+  }
+
+  let type = "";
+  const natureElem = Array.from(document.querySelectorAll('div')).find(el => 
+    el.innerText?.includes("Nature du contrat")
+  );
+
+  if (natureElem) {
+    const rawTypeText = natureElem.innerText.replace(/Nature du contrat\s*:/i, '').trim().toLowerCase();
+    
+    if (rawTypeText.includes("apprentissage") || rawTypeText.includes("alternance") || rawTypeText.includes("professionnalisation")) {
+      type = "alternance";
+    } else if (rawTypeText.includes("cdi")) {
+      type = "cdi";
+    } else if (rawTypeText.includes("cdd")) {
+      type = "cdd";
+    } else if (rawTypeText.includes("stage")) {
+      type = "stage";
+    } else {
+      type = rawTypeText || "Non spécifié";
+    }
+  } else {
+    type = "Non spécifié";
+  }
+
+  let descriptionText = "";
+  const descHeading = Array.from(document.querySelectorAll('h4, h3, p, div')).find(el => {
+    const txt = el.innerText?.trim().toLowerCase() || "";
+    return txt === "description du métier" || txt === "description de l'offre" || txt === "présentation de l'entreprise";
+  });
+
+  if (descHeading && descHeading.parentElement) {
+    descriptionText = descHeading.parentElement.innerText?.trim() || "";
+  }
+
+  if (!descriptionText || descriptionText.length < 50) {
+    const mainBox = document.querySelector('div[class*="mui-1nmhkkl"]') || 
+      document.getElementById('detail-content-container') || 
+      document.querySelector('main');
+    if (mainBox) {
+      descriptionText = mainBox.innerText?.trim() || "";
+    }
+  }
+
+  let sector = "Non renseigné";
+  const sectorElem = Array.from(document.querySelectorAll('div, p, span')).find(el => {
+    const txt = el.innerText || "";
+    return txt.includes("Secteur d'activité") && txt.length < 300; // جلوگیری از گرفتن کانتینرهای بزرگ
+  });
+
+  if (sectorElem) {
+    sector = sectorElem.innerText.replace(/Secteur d'activité\s*:/i, '').trim();
+  }
+  if (sector.length > 200) {
+    sector = sector.substring(0, 200);
+  }
+
+  let salary = "";
+  const allElements = Array.from(document.querySelectorAll('div, p, span, li'));
+  const salaryElem = allElements.find(el => {
+    const txt = el.innerText || "";
+    return el.children.length === 0 && (txt.includes("€") || /salaire|rémunération/i.test(txt));
+  });
+
+  if (salaryElem) {
+    salary = salaryElem.innerText.replace(/salaire\s*:?/i, '').trim();
+  }
+
+  if (!salary) {
+    salary = "Non spécifié";
+  }
+
+  return { position, company, location, descriptionText, salary, sector, type };
+}
 
 // ---------------- MAIN ---------------
 function detectSite() {
@@ -298,6 +492,9 @@ function detectSite() {
   if (url.includes("hellowork.com")) return "hellowork";
   if (url.includes("welcometothejungle.com")) return "welcometothejungle";
   if (url.includes("jobteaser.com")) return "jobteaser";
+  if (url.includes("indeed.com")) return "indeed";
+  if (url.includes("welovedevs.com")) return "welovedevs";
+  if (url.includes("labonnealternance")) return "labonnealternance";
   return "unknown";
 }
 
@@ -315,6 +512,15 @@ function extractJob() {
     case "jobteaser":
       data = extractJobTeaser();
       break;
+    case "indeed":
+      data = extractIndeed();
+      break;
+    case "welovedevs":
+      data = extractWeLoveDevs();
+      break;
+    case "labonnealternance":
+      data = extractLaBonneAlternance();
+      break;
     default:          
       data = {};
   }
@@ -329,7 +535,7 @@ function extractJob() {
     location: data.location || "France",
     salary: data.salary || "",
     sector: data.sector || "",
-    type: data.type || "alternance",
+    type: data.type ? data.type : "Non spécifié",
     description: descriptionText,
     notes: "",
     url: window.location.href
