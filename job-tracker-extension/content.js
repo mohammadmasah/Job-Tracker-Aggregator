@@ -213,11 +213,91 @@ function extractWelcomeToTheJungle() {
   }
   return { position, company, location, descriptionText, salary, sector, type }
 }
+
+// ------------- JOBTEASER ----------------
+function extractJobTeaser() {
+  let position = 
+    document.querySelector('[data-testid="jobad-DetailView__Heading__title"]')?.innerText?.trim() ||
+    document.querySelector('h1')?.innerText?.trim();
+
+  let company = 
+    document.querySelector('[data-testid="jobad-DetailView__Heading__company_name"]')?.innerText?.trim() ||
+    document.getElementById('company-name')?.innerText?.trim() ||
+    document.querySelector('a[href*="/companies/"]')?.innerText?.trim();
+
+  if (!company) {
+    const titleMatch = document.title.match(/chez\s+([^\-|]+)/i);
+    if (titleMatch) company = titleMatch[1].trim();
+  }
+
+  let salary = "";
+  const salaryEl = document.querySelector('[data-testid="jobad-DetailView__CandidacyDetails__Wage"]');
+  if (salaryEl) {
+    salary = salaryEl.innerText.trim();
+  }
+
+  if (!salary) {
+    const allLi = Array.from(document.querySelectorAll('li'));
+    const salaryLi = allLi.find(li => 
+      li.innerText?.toLowerCase().includes("salary") || 
+      li.innerText?.toLowerCase().includes("rémunération")
+    );
+    if (salaryLi) salary = salaryLi.innerText.replace(/^Salary\s*/i, '').trim();
+  }
+
+  let location = 
+    document.querySelector('[data-testid="jobad-DetailView__CandidacyDetails__Locations"]')?.innerText?.trim() ||
+    document.querySelector('[class*="ContractAndLocations"] p:last-child')?.innerText?.trim() ||
+    "";
+
+  let type = 
+    document.querySelector('[data-testid="jobad-DetailView__CandidacyDetails__contract"]')?.innerText?.trim()?.toLowerCase() ||
+    "";
+
+  if (!type) {
+    const fullContent = (document.title + " " + window.location.href).toLowerCase();
+    if (fullContent.includes("alternance") || fullContent.includes("apprentissage")) type = "alternance";
+    else if (fullContent.includes("cdi")) type = "cdi";
+    else if (fullContent.includes("stage") || fullContent.includes("internship")) type = "stage";
+  }
+
+  let descriptionText = "";
+  const descEl = document.getElementById('description-summary-block') || document.querySelector('[class*="description"]');
+  if (descEl && descEl.innerText.trim().length > 50) {
+    descriptionText = descEl.innerText.trim();
+  }
+  
+  let sector = "";
+  
+  const sectorContainer = document.querySelector('[data-testid="jobad-DetailView__Summary__function"]');
+  if (sectorContainer) {
+    const ddEl = sectorContainer.querySelector('dd');
+    if (ddEl) sector = ddEl.innerText.trim();
+  }
+
+  if (!sector) {
+    const categoryEl = document.querySelector('dd[aria-labelledby="Job Category"]');
+    if (categoryEl) sector = categoryEl.innerText.trim();
+  }
+
+  if (!sector) {
+    const companyInfoEl = document.querySelector('[class*="CompanyInfo-module"]');
+    if (companyInfoEl) {
+      const parts = companyInfoEl.innerText.split('•');
+      if (parts.length > 1) {
+        sector = parts[parts.length - 1].trim();
+      }
+    }
+  }
+  return { position, company, location, descriptionText, salary, sector, type };
+} 
+
 // ---------------- MAIN ---------------
 function detectSite() {
   const url = window.location.href;
   if (url.includes("hellowork.com")) return "hellowork";
   if (url.includes("welcometothejungle.com")) return "welcometothejungle";
+  if (url.includes("jobteaser.com")) return "jobteaser";
   return "unknown";
 }
 
@@ -231,6 +311,9 @@ function extractJob() {
       break;
     case "welcometothejungle":
       data = extractWelcomeToTheJungle();
+      break;
+    case "jobteaser":
+      data = extractJobTeaser();
       break;
     default:          
       data = {};

@@ -2,14 +2,15 @@
   "manifest_version": 3,
   "name": "Job Tracker Companion",
   "version": "1.0",
-  "description": "Enregistrez facilement les offres d'emploi HelloWork et Welcome to the Jungle dans votre dashboard",
+  "description": "Enregistrez facilement les offres d'emploi HelloWork, Welcome to the Jungle et JobTeaser dans votre dashboard",
   "permissions": [
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
     "https://*.hellowork.com/*",
-    "https://www.welcometothejungle.com/*"
+    "https://www.welcometothejungle.com/*",
+    "https://*.jobteaser.com/*"
   ],
   "action": {
     "default_popup": "popup.html"
@@ -18,7 +19,8 @@
     {
       "matches": [
         "https://*.hellowork.com/*",
-        "https://www.welcometothejungle.com/*"
+        "https://www.welcometothejungle.com/*",
+        "https://*.jobteaser.com/*"
       ],
       "js": [
         "content.js"
