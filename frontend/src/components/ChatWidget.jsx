@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import axios from "axios";
 import Poulpie from "./Poulpie";
-import { IoBusinessOutline, IoBriefcaseOutline, IoPersonOutline, IoDocumentTextOutline } from "react-icons/io5";
+import { IoBusinessOutline, IoBriefcaseOutline, IoPersonOutline, IoDocumentTextOutline, IoCopyOutline, IoCheckmarkOutline, IoVolumeHighOutline } from "react-icons/io5";
 import { STATUS_META } from "../constants/status";
 import { activeApplicationStore } from "../stores/activeApplication";
+import ReactMarkdown from 'react-markdown';
 
 const CHAT_URL = "http://127.0.0.1:8000/chatbot/";
 const ANALYSE_CV_URL = "http://127.0.0.1:8000/analyse-cv/";
@@ -136,11 +137,11 @@ export default function ChatWidget() {
     const isWaiting = focusKind === "waiting";
     const hasFocus = Boolean(activeApp) || isWaiting;   // waiting = focus léger sans données
 
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages, typing, open]);
+    //useEffect(() => {
+     //   if (scrollRef.current) {
+       //     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        //}
+   // }, [messages, typing, open]);
 
     const sendMessage = async (textToSend = null) => {
         const raw = typeof textToSend === "string" ? textToSend : input;
@@ -218,9 +219,55 @@ export default function ChatWidget() {
             if (fileInputRef.current) fileInputRef.current.value = "";
         }
     };
+    useEffect(() => {
+        const hasOpenedBefore = sessionStorage.getItem("poulpie_opened");
+
+        if (!hasOpenedBefore) {
+            const timer = setTimeout(() => {
+                openChat();
+                sessionStorage.setItem("poulpie_opened", "true");
+            }, 0);
+
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
+
+
+const speakText = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/[*_#`]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+
+    const voices = window.speechSynthesis.getVoices();
+
+    const bestVoice = voices.find(
+        (v) => v.lang.startsWith('fr') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Enhanced'))
+    ) || voices.find((v) => v.lang.startsWith('fr'));
+
+    if (bestVoice) utterance.voice = bestVoice;
+
+    utterance.lang = 'fr-FR';
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    window.speechSynthesis.speak(utterance);
+};
+const [copiedIndex, setCopiedIndex] = useState(null);
+
+const copyToClipboard = (text, index) => {
+    // پاک‌سازی علامت‌های مارک‌داون قبل از کپی (در صورت نیاز)
+    const cleanText = text.replace(/\*/g, '');
+    navigator.clipboard.writeText(cleanText);
+
+    // تغییر موقت آیکون به وضعیت کپی شد
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+};
         
 
-    return (
+return (
         <>
             <style>{`
                 @keyframes mascotte-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
@@ -229,102 +276,122 @@ export default function ChatWidget() {
                 .mascotte-eyes { animation: mascotte-blink 5s infinite; transform-origin:center; transform-box:fill-box; }
                 @keyframes tentacle-wave { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1.5px)} }
                 .poulpie-tentacles { animation: tentacle-wave 2.4s ease-in-out infinite; transform-origin:center; transform-box:fill-box; }
-                @keyframes dot-pulse { 0%,60%,100%{opacity:0.25} 30%{opacity:1} }
+                @keyframes dot-pulse { 0%,60%,100%{opacity:0.3} 30%{opacity:1} }
                 .typing-dot { animation: dot-pulse 1.2s infinite; }
                 .typing-dot:nth-child(2){animation-delay:0.2s}
                 .typing-dot:nth-child(3){animation-delay:0.4s}
-                @keyframes panel-in { from{opacity:0;transform:translateY(8px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
-                @keyframes panel-out { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(8px) scale(0.98)} }
+                @keyframes panel-in { from{opacity:0;transform:translateY(12px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+                @keyframes panel-out { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(12px) scale(0.96)} }
                 @keyframes halo-pulse {
-                    0%   { box-shadow: 0 0 0 0 var(--accent); opacity: 0.6; }
-                    70%  { box-shadow: 0 0 0 10px transparent; opacity: 0; }
+                    0%   { box-shadow: 0 0 0 0 var(--halo-color, var(--accent)); opacity: 0.8; }
+                    70%  { box-shadow: 0 0 0 12px transparent; opacity: 0; }
                     100% { box-shadow: 0 0 0 0 transparent; opacity: 0; }
                 }
                 .halo-ring::before {
-                    content: ""; position: absolute; inset: -2px; border-radius: 9999px;
+                    content: ""; position: absolute; inset: -3px; border-radius: 9999px;
                     animation: halo-pulse 2s ease-out infinite;
+                    pointer-events: none;
                 }
-                .panel-in { animation: panel-in 0.16s ease-out; }
-                .panel-out { animation: panel-out 0.16s ease-in forwards; }
+                .panel-in { animation: panel-in 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+                .panel-out { animation: panel-out 0.15s cubic-bezier(0.7, 0, 0.84, 0) forwards; }
             `}</style>
 
             {!open && (
                 <button
                     onClick={openChat}
-                    aria-label="Ouvrir le chat"
-                    className={`fixed bottom-6 right-6 z-50 w-16 h-16 flex items-center justify-center bg-panel rounded-full transition-colors shadow-lg border-2 ${hasFocus ? "halo-ring" : ""}`}
+                    aria-label="Ouvrir le chat d'assistance Poulpie"
+                    className={`fixed bottom-6 right-6 z-50 w-16 h-16 flex items-center justify-center bg-panel rounded-full transition-all duration-300 shadow-xl border-2 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent ${hasFocus ? "halo-ring" : ""}`}
                     style={{ borderColor: hasFocus ? focusColor : "var(--border)", "--halo-color": focusColor }}
                     title={activeApp ? `En contexte : ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company}` : "Ouvrir le chat"}
                 >
-                    <Poulpie size={36} thinking={hasFocus} />
+                    <Poulpie size={38} thinking={hasFocus} />
 
-                    {/* Bulle de focus : montre CE sur quoi Poulpie réfléchit */}
                     {activeApp && (
                         <span
-                            className="focus-bubble absolute -top-2 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2"
+                            className="focus-bubble absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2 shadow-sm font-bold transition-transform transform scale-100"
                             style={{ backgroundColor: "var(--panel)", borderColor: focusColor, color: focusColor }}
                             title={isContact ? "Focus : contact" : isOffer ? "Focus : offre" : "Focus : candidature"}
+                            aria-hidden="true"
                         >
-                            {isContact ? <IoPersonOutline className="text-[12px]" /> : isOffer ? <IoDocumentTextOutline className="text-[12px]" /> : <IoBriefcaseOutline className="text-[12px]" />}
+                            {isContact ? <IoPersonOutline className="text-[13px]" /> : isOffer ? <IoDocumentTextOutline className="text-[13px]" /> : <IoBriefcaseOutline className="text-[13px]" />}
                         </span>
                     )}
 
-                    {/* Pastille : Poulpie a répondu pendant que le chat était fermé */}
                     {unread && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#f43f5e] border-2 border-bg animate-pulse" title="Nouvelle réponse" />
+                        <span 
+                            className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#f43f5e] border-2 border-bg animate-pulse" 
+                            title="Nouvelle réponse disponible" 
+                            aria-label="Nouveau message non lu"
+                        />
                     )}
                 </button>
             )}
 
             {open && (
-                <div className={`${closing ? "panel-out" : "panel-in"} fixed bottom-6 right-6 z-50 w-[360px] h-[520px] flex flex-col bg-panel border border-border rounded-[6px] overflow-hidden shadow-2xl font-mono`}>
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-border-soft bg-bg-2">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 flex items-center justify-center border border-border-soft rounded-[4px] bg-card">
-                                <Poulpie size={28} talking={typing} thinking={Boolean(activeApp) && !typing} />
+                <div 
+                    role="dialog"
+                    aria-label="Assistant virtuel Poulpie"
+                    aria-modal="false"
+                    className={`${closing ? "panel-out" : "panel-in"} fixed bottom-6 right-6 z-50 w-[460px] max-w-[calc(100vw-2rem)] h-[720px] max-h-[calc(100vh-3.5rem)] flex flex-col bg-panel border border-border/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md text-text transition-all font-['Google_Sans_Text',sans-serif]`}
+                >
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-soft bg-bg-2/80 backdrop-blur-sm select-none">
+                        <div className="flex items-center gap-3.5">
+                            <div className="w-11 h-11 flex items-center justify-center border border-border-soft rounded-xl bg-card shadow-sm">
+                                <Poulpie size={32} talking={typing} thinking={Boolean(activeApp) && !typing} />
                             </div>
                             <div className="leading-tight">
-                                <p className="text-[13px] font-bold text-text">Poulpie</p>
-                                <p className="text-[10px] text-text-2">{typing ? "écrit…" : "en ligne"}</p>
+                                <h2 className="text-[15px] font-bold text-text tracking-tight">Poulpie</h2>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                    <span className={`w-2.5 h-2.5 rounded-full ${typing ? "bg-accent animate-ping" : "bg-emerald-500"}`} />
+                                    <p className="text-[11px] text-text-2 font-medium">{typing ? "écrit…" : "en ligne"}</p>
+                                </div>
                             </div>
                         </div>
-                        <button onClick={closeChat} aria-label="Fermer le chat" className="text-text-2 hover:text-text text-lg leading-none px-1">✕</button>
+                        <button 
+                            onClick={closeChat} 
+                            aria-label="Fermer le chat" 
+                            className="w-9 h-9 rounded-xl flex items-center justify-center text-text-2 hover:text-text hover:bg-card active:scale-95 transition-all text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        >
+                            ✕
+                        </button>
                     </div>
 
+                    {/* Context Bar */}
                     {activeApp && (
-                        <div className="flex items-center gap-2.5 px-4 py-2.5 bg-card border-b border-border-soft">
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: focusColor }} />
+                        <div className="flex items-center gap-3 px-5 py-2.5 bg-card/60 border-b border-border-soft backdrop-blur-xs">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: focusColor }} />
                             <div className="min-w-0 flex-1 flex flex-col gap-0.5">
                                 {isContact ? (
                                     <>
-                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
-                                            <IoPersonOutline className="text-[12px] text-text-3 shrink-0" />
+                                        <span className="flex items-center gap-1.5 text-[13px] text-text font-semibold truncate">
+                                            <IoPersonOutline className="text-[14px] text-text-3 shrink-0" />
                                             {activeApp.name}
                                         </span>
-                                        <span className="text-[10px] text-text-3 truncate pl-[18px]">Contact</span>
+                                        <span className="text-[11px] text-text-3 font-medium truncate pl-[20px]">Contact sélectionné</span>
                                     </>
                                 ) : isOffer ? (
                                     <>
-                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
-                                            <IoDocumentTextOutline className="text-[12px] text-text-3 shrink-0" />
+                                        <span className="flex items-center gap-1.5 text-[13px] text-text font-semibold truncate">
+                                            <IoDocumentTextOutline className="text-[14px] text-text-3 shrink-0" />
                                             {activeApp.title}
                                         </span>
                                         {activeApp.company && (
-                                            <span className="flex items-center gap-1.5 text-[10px] text-text-2 truncate">
-                                                <IoBusinessOutline className="text-[11px] text-text-3 shrink-0" />
+                                            <span className="flex items-center gap-1.5 text-[12px] text-text-2 truncate pl-[20px]">
+                                                <IoBusinessOutline className="text-[13px] text-text-3 shrink-0" />
                                                 {activeApp.company}
                                             </span>
                                         )}
                                     </>
                                 ) : (
                                     <>
-                                        <span className="flex items-center gap-1.5 text-[11px] text-text font-semibold truncate">
-                                            <IoBusinessOutline className="text-[12px] text-text-3 shrink-0" />
+                                        <span className="flex items-center gap-1.5 text-[13px] text-text font-semibold truncate">
+                                            <IoBusinessOutline className="text-[14px] text-text-3 shrink-0" />
                                             {activeApp.company}
                                         </span>
                                         {activeApp.position && (
-                                            <span className="flex items-center gap-1.5 text-[10px] text-text-2 truncate">
-                                                <IoBriefcaseOutline className="text-[11px] text-text-3 shrink-0" />
+                                            <span className="flex items-center gap-1.5 text-[12px] text-text-2 truncate pl-[20px]">
+                                                <IoBriefcaseOutline className="text-[13px] text-text-3 shrink-0" />
                                                 {activeApp.position}
                                             </span>
                                         )}
@@ -334,70 +401,137 @@ export default function ChatWidget() {
                         </div>
                     )}
 
-                    <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scroll px-3 py-4 space-y-3">
+                    {/* Messages Container */}
+                    <div 
+                        ref={scrollRef} 
+                        role="log"
+                        aria-live="polite"
+                        aria-label="Historique des messages"
+                        className="flex-1 overflow-y-auto custom-scroll px-5 py-4 space-y-4"
+                    >
                         {messages.map((m, i) =>
                             m.role === "bot" ? (
-                                <div key={i} className="flex items-end gap-2">
-                                    <div className="shrink-0 w-7 h-7 flex items-center justify-center mb-0.5">
-                                        <Poulpie size={24} />
+                                <div key={i} className="flex items-end gap-3 group">
+                                    <div className="shrink-0 w-8 h-8 flex items-center justify-center mb-0.5" aria-hidden="true">
+                                        <Poulpie size={26} />
                                     </div>
-                                    <div className="max-w-[78%] bg-card border border-border-soft rounded-[4px] rounded-bl-none px-3 py-2 text-[12px] text-text leading-relaxed whitespace-pre-wrap">
-                                        {m.text}
+                                    
+                                    <div className="max-w-[84%] bg-card border border-border-soft rounded-2xl rounded-bl-sm px-4 py-3 text-[13px] text-text leading-relaxed shadow-xs">
+                                        {/* رندر مارک‌داون پیام */}
+                                        <ReactMarkdown>{m.text}</ReactMarkdown>
+
+                                        {/* نوار ابزار پایین پیام (صدا + کپی) */}
+                                        {m.text && (
+                                            <div className="mt-2 pt-2 border-t border-border-soft/40 flex items-center gap-2 select-none">
+                                                <button
+                                                    onClick={() => speakText(m.text)}
+                                                    title="Écouter le message"
+                                                    aria-label="Écouter le message"
+                                                    className="p-1.5 rounded-lg text-text-3 hover:text-text hover:bg-card/80 transition-all flex items-center justify-center text-base active:scale-90"
+                                                >
+                                                    <IoVolumeHighOutline className="text-[17px]" />
+                                                </button>
+
+                                                <button
+                                                    onClick={() => copyToClipboard(m.text, i)}
+                                                    title={copiedIndex === i ? "Copié !" : "Copier le texte"}
+                                                    aria-label="Copier le texte"
+                                                    className="p-1.5 rounded-lg text-text-3 hover:text-text hover:bg-card/80 transition-all flex items-center justify-center text-base active:scale-90"
+                                                >
+                                                    {copiedIndex === i ? (
+                                                        <IoCheckmarkOutline className="text-[17px] text-emerald-500" />
+                                                    ) : (
+                                                        <IoCopyOutline className="text-[17px]" />
+                                                    )}
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ) : (
                                 <div key={i} className="flex justify-end">
-                                    <div className="max-w-[78%] bg-accent text-bg rounded-[4px] rounded-br-none px-3 py-2 text-[12px] leading-relaxed whitespace-pre-wrap">
+                                    <div className="max-w-[84%] bg-accent text-bg font-medium rounded-2xl rounded-br-sm px-4 py-3 text-[13px] leading-relaxed whitespace-pre-wrap shadow-xs">
                                         {m.text}
                                     </div>
                                 </div>
                             )
                         )}
 
+                        {/* نشانگر تایپ ربات (خارج از حلقه پیام‌ها) */}
                         {typing && (
-                            <div className="flex items-end gap-2">
-                                <div className="shrink-0 w-7 h-7 flex items-center justify-center mb-0.5">
-                                    <Poulpie size={24} talking />
+                            <div className="flex items-end gap-3" role="status" aria-label="Poulpie est en train d'écrire">
+                                <div className="shrink-0 w-8 h-8 flex items-center justify-center mb-0.5" aria-hidden="true">
+                                    <Poulpie size={26} talking />
                                 </div>
-                                <div className="bg-card border border-border-soft rounded-[4px] rounded-bl-none px-3 py-2.5 flex gap-1">
-                                    <span className="typing-dot w-1.5 h-1.5 rounded-full bg-text-2" />
-                                    <span className="typing-dot w-1.5 h-1.5 rounded-full bg-text-2" />
-                                    <span className="typing-dot w-1.5 h-1.5 rounded-full bg-text-2" />
+                                <div className="bg-card border border-border-soft rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5 shadow-xs">
+                                    <span className="typing-dot w-2 h-2 rounded-full bg-text-2" />
+                                    <span className="typing-dot w-2 h-2 rounded-full bg-text-2" />
+                                    <span className="typing-dot w-2 h-2 rounded-full bg-text-2" />
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex gap-1.5 px-3 py-2 border-t border-border-soft overflow-x-auto custom-scroll">
-                        {commands.map((cmd) => (
-                            <button
-                                key={cmd}
-                                onClick={() => sendMessage(cmd)}
-                                className="shrink-0 text-[10px] text-text-2 hover:text-text bg-card border border-border-soft hover:border-accent rounded-[3px] px-2 py-1 transition-colors"
-                            >
-                                {cmd}
-                            </button>
-                        ))}
-                    </div>
+                    {/* Quick Commands */}
+                    {commands && commands.length > 0 && (
+                        <div 
+                            aria-label="Commandes rapides"
+                            className="flex gap-2.5 px-5 py-2.5 border-t border-border-soft/60 overflow-x-auto custom-scroll bg-bg-2/30"
+                        >
+                            {commands.map((cmd) => (
+                                <button
+                                    key={cmd}
+                                    onClick={() => sendMessage(cmd)}
+                                    className="shrink-0 text-[11px] font-medium text-text-2 hover:text-text bg-card hover:bg-card/80 border border-border-soft hover:border-accent/50 rounded-xl px-3.5 py-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95"
+                                >
+                                    {cmd}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
-                    <div className="flex items-center gap-2 px-3 py-3 border-t border-border-soft">
-                        <input
-                            type="text"
+                    {/* Input Controls */}
+                    <div className="flex items-end gap-2.5 px-5 py-3.5 border-t border-border-soft bg-bg-2/50">
+                        <textarea
+                            rows={1}
                             value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={onKeyDown}
+                            onChange={(e) => {
+                                setInput(e.target.value);
+                                e.target.style.height = "auto";
+                                e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    sendMessage();
+                                    e.target.style.height = "auto";
+                                }
+                            }}
                             placeholder={activeApp ? `Une question sur ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company} ?` : "Pose une question ou tape /help"}
-                            className="flex-1 bg-bg border border-border-soft rounded-[4px] px-3 py-2 text-[12px] text-text placeholder-text-3 focus:outline-none focus:border-accent transition-colors font-mono"
+                            className="flex-1 bg-bg border border-border-soft rounded-xl px-4 py-2.5 text-[13px] text-text placeholder-text-3 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all resize-none max-h-[120px] custom-scroll leading-relaxed"
+                            aria-label="Votre message"
                         />
-                            <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileUpload} />
-                            <button 
-                                onClick={() => fileInputRef.current?.click()} 
-                                type="button" 
-                                className="shrink-0 w-9 h-9 flex items-center justify-center bg-card border border-border-soft rounded-[4px] hover:text-accent transition-colors"
-                            >
-                                📎
-                            </button>
-                        <button onClick={() => sendMessage()} aria-label="Envoyer" className="shrink-0 w-9 h-9 flex items-center justify-center bg-accent text-bg rounded-[4px] hover:bg-accent-2 transition-colors">↑</button>
+                        
+                        <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileUpload} />
+                        
+                        <button 
+                            onClick={() => fileInputRef.current?.click()} 
+                            type="button" 
+                            aria-label="Joindre un fichier PDF"
+                            title="Joindre un fichier PDF"
+                            className="shrink-0 w-10 h-10 flex items-center justify-center bg-card border border-border-soft rounded-xl text-text-2 hover:text-accent hover:border-accent/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95 text-lg mb-0.5"
+                        >
+                            📎
+                        </button>
+                        
+                        <button 
+                            onClick={() => sendMessage()} 
+                            aria-label="Envoyer le message" 
+                            title="Envoyer"
+                            className="shrink-0 w-10 h-10 flex items-center justify-center bg-accent text-bg rounded-xl hover:opacity-95 active:scale-95 transition-all font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent text-base mb-0.5"
+                        >
+                            ↑
+                        </button>
                     </div>
                 </div>
             )}

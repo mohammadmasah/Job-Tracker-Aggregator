@@ -20,5 +20,8 @@
   "homepage": "https://github.com/EpitechWebAcademiePromo2027/W-YEP-200-PAR-2-1-job_aggregator-4#readme",
   "devDependencies": {
     "tailwindcss": "^4.3.3"
+  },
+  "dependencies": {
+    "react-markdown": "^10.1.0"
   }
 }
