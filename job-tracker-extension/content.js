@@ -486,9 +486,8 @@ function extractLaBonneAlternance() {
 
 // ------------- LINKEDIN ----------------
 function extractLinkedIn() {
-  // ۱. Company
   let company = "";
-  const companyLink = document.querySelector('a[href*="/company/"]');
+  const titleLink = document.querySelector('a[href*="/jobs/view/"]');
   if (companyLink) {
     company = companyLink.innerText?.trim() || companyLink.getAttribute('aria-label')?.trim() || "";
   }
