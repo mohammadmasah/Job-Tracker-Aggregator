@@ -34,16 +34,13 @@ function extractHelloWork() {
     }
   }
 
-  // ✅ این بخش جدید را جایگزین کنید:
   let descriptionText = "";
 
-  // 1. بهترین و دقیق‌ترین سلکتور HelloWork بر اساس data attribute
   const targetEl = document.querySelector('[data-truncate-text-target="content"]');
   if (targetEl && targetEl.innerText.trim().length > 50) {
     descriptionText = targetEl.innerText.trim();
   }
 
-  // 2. اولویت دوم: کلاس typo-long-m که متن اصلی توضیحات را دارد
   if (!descriptionText) {
     const typoEl = document.querySelector('.typo-long-m');
     if (typoEl && typoEl.innerText.trim().length > 50) {
@@ -51,7 +48,6 @@ function extractHelloWork() {
     }
   }
 
-  // 3. اولویت سوم: فال‌بک روی sectionهایی که متن توضیحات دارند
   if (!descriptionText) {
     const descSelectors = [
       '[class*="jobDescription"]',
@@ -92,10 +88,136 @@ function extractHelloWork() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
+  // ------------- WELCOME TO THE JUNGLE ----------------
+function extractWelcomeToTheJungle() {
+  let position = 
+    document.querySelector('h2.wui-text')?.innerText?.trim() ||
+    document.querySelector('[data-testid="job-metadata-title"]')?.innerText?.trim() ||
+    document.querySelector('h1')?.innerText?.trim() ||
+    document.querySelector('h2')?.innerText?.trim();
+
+  if (!position && document.title) {
+    const titleParts = document.title.split(' - ');
+    if (titleParts.length > 0) {
+      position = titleParts[0].trim();
+    }
+  }
+
+  let company = 
+    document.querySelector('a[href*="/companies/"] span')?.innerText?.trim() ||
+    document.querySelector('a[href*="/companies/"]')?.innerText?.trim() ||
+    document.querySelector('[data-testid="job-metadata-company-name"]')?.innerText?.trim();
+
+  if (!company) {
+    const urlMatch = window.location.href.match(/\/companies\/([^\/]+)/);
+    if (urlMatch) {
+      company = urlMatch[1].replace(/-/g, ' ').toUpperCase();
+    }
+  }
+
+  let salary = "";
+
+  const metadataDivs = Array.from(document.querySelectorAll('div[variant="default"], [data-testid="job-metadata-salary"]'));
+  const salaryDiv = metadataDivs.find(div => 
+    div.innerText?.includes("Salaire") || 
+    div.innerText?.includes("€") || 
+    div.innerText?.includes("k€")
+  );
+
+  if (salaryDiv) {
+    salary = salaryDiv.innerText.replace(/^Salaire\s*:\s*/i, '').trim();
+  }
+  if (!salary) {
+    const allSpansAndDivs = Array.from(document.querySelectorAll('section div, section span'));
+    const found = allSpansAndDivs.find(el => el.children.length === 0 && el.innerText?.startsWith("Salaire :"));
+    if (found) {
+      salary = found.innerText.replace(/^Salaire\s*:\s*/i, '').trim();
+    }
+  }
+
+  let location = "";
+
+  const locationSvg = document.querySelector('svg[alt="Location"]');
+  if (locationSvg) {
+    const parentDiv = locationSvg.closest('div[variant="default"]');
+    if (parentDiv) location = parentDiv.innerText.trim();
+  }
+
+  if (!location) {
+    const dataTestEl = document.querySelector('[data-testid="job-metadata-location"]');
+    if (dataTestEl) location = dataTestEl.innerText.trim();
+  }
+
+  if (!location) {
+    const urlParts = window.location.href.split('_');
+    if (urlParts.length > 1) {
+      location = urlParts[urlParts.length - 1].replace(/-/g, ' ').toUpperCase();
+    }
+  }
+
+  let descriptionText = "";
+
+  const descEl = document.querySelector('[data-testid="job-section-description"]');
+  if (descEl && descEl.innerText.trim().length > 50) {
+    descriptionText = descEl.innerText.trim();
+  }
+  if (!descriptionText) {
+    const positionSection = document.getElementById('the-position-section');
+    if (positionSection && positionSection.innerText.trim().length > 50) {
+      descriptionText = positionSection.innerText.trim();
+    }
+  }
+  if (!descriptionText) {
+    const descSelectors = [
+      'section[data-testid*="job"]',
+      'div[class*="description"]',
+      'div[id*="description"]'
+    ];
+    for (const sel of descSelectors) {
+      const el = document.querySelector(sel);
+      if (el && el.innerText.trim().length > 100) {
+        descriptionText = el.innerText.trim();
+        break;
+      }
+    }
+  }
+
+  let type = "";
+
+  const metadataDivsForType = Array.from(document.querySelectorAll('div[variant="default"]'));
+  if (metadataDivsForType.length > 0) {
+    type = metadataDivsForType[0].innerText.trim().toLowerCase();
+  }
+
+  if (!type) {
+    const fullContent = (document.title + " " + window.location.href).toLowerCase();
+    if (fullContent.includes("alternance")) type = "alternance";
+    else if (fullContent.includes("cdi")) type = "cdi";
+    else if (fullContent.includes("cdd")) type = "cdd";
+    else if (fullContent.includes("stage")) type = "stage";
+    else if (fullContent.includes("freelance")) type = "freelance";
+  }
+
+  let sector = "";
+  const sectorEl = document.querySelector('[data-testid="job-company-tag"]');
+  if (sectorEl) {
+    sector = sectorEl.innerText.trim();
+  }
+
+  if (!sector) {
+    const tagSvg = document.querySelector('svg[alt="Tag"]');
+    if (tagSvg) {
+      const parentDiv = tagSvg.closest('div');
+      if (parentDiv) sector = parentDiv.innerText.trim();
+    }
+  }
+  return { position, company, location, descriptionText, salary, sector, type }
+}
 // ---------------- MAIN ---------------
 function detectSite() {
   const url = window.location.href;
   if (url.includes("hellowork.com")) return "hellowork";
+  if (url.includes("welcometothejungle.com")) return "welcometothejungle";
   return "unknown";
 }
 
@@ -106,6 +228,9 @@ function extractJob() {
   switch(site) {
     case "hellowork": 
       data = extractHelloWork(); 
+      break;
+    case "welcometothejungle":
+      data = extractWelcomeToTheJungle();
       break;
     default:          
       data = {};
@@ -127,7 +252,6 @@ function extractJob() {
     url: window.location.href
   };
 }
-
 // -------------- LISTENER ---------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "extract_job") {
