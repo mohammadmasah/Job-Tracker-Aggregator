@@ -456,7 +456,7 @@ function extractLaBonneAlternance() {
   let sector = "Non renseigné";
   const sectorElem = Array.from(document.querySelectorAll('div, p, span')).find(el => {
     const txt = el.innerText || "";
-    return txt.includes("Secteur d'activité") && txt.length < 300; // جلوگیری از گرفتن کانتینرهای بزرگ
+    return txt.includes("Secteur d'activité") && txt.length < 300;
   });
 
   if (sectorElem) {
