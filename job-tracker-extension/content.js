@@ -486,6 +486,129 @@ function extractLaBonneAlternance() {
   return { position, company, location, descriptionText, salary, sector, type };
 }
 
+// ------------- LINKEDIN ----------------
+function extractLinkedIn() {
+  // ۱. Company
+  let company = "";
+  const companyLink = document.querySelector('a[href*="/company/"]');
+  if (companyLink) {
+    company = companyLink.innerText?.trim() || companyLink.getAttribute('aria-label')?.trim() || "";
+  }
+
+  if (!company) {
+    company = 
+      document.querySelector('.job-details-jobs-unified-top-card__company-name')?.innerText?.trim() ||
+      document.querySelector('.jobs-unified-top-card__company-name')?.innerText?.trim() ||
+      document.querySelector('.job-card-container__company-name')?.innerText?.trim() ||
+      "";
+  }
+  if (company.includes("\n")) {
+    company = company.split("\n")[0].trim();
+  }
+
+  // ۲. Position
+  let position = "";
+  const titleLink = document.querySelector('a[href*="/jobs/view/"]');
+  if (titleLink) {
+    position = titleLink.innerText?.trim() || "";
+  }
+
+  if (!position) {
+    position = 
+      document.querySelector('.job-details-jobs-unified-top-card__job-title')?.innerText?.trim() ||
+      document.querySelector('h1')?.innerText?.trim() ||
+      document.querySelector('h2')?.innerText?.trim() ||
+      "";
+  }
+
+  if (position.includes("\n")) {
+    position = position.split("\n")[0].trim();
+  }
+
+  // ۳. Location
+  let location = "";
+  const topCard = document.querySelector('.job-details-jobs-unified-top-card__primary-description-container') ||
+                  document.querySelector('div[class*="primary-description"]');
+
+  if (topCard) {
+    location = topCard.innerText?.split('·')[0]?.trim() || "";
+  }
+
+  if (!location) {
+    const allSpans = Array.from(document.querySelectorAll('span, div'));
+    const locSpan = allSpans.find(el => {
+      const txt = el.innerText?.trim() || "";
+      return el.children.length === 0 && (txt.includes("France") || txt.includes("Paris") || txt.includes("On-site") || txt.includes("Hybrid"));
+    });
+
+    if (locSpan) {
+      location = locSpan.innerText.split('·')[0].trim();
+    }
+  }
+
+  if (!location) {
+    location = "France";
+  }
+
+  // ۴. Type (اضافه شد تا متغیر تعریف‌نشده نباشد)
+  let type = "Non spécifié";
+  const allTexts = Array.from(document.querySelectorAll('span, div, li')).map(el => el.innerText?.toLowerCase() || "");
+  
+  if (allTexts.some(txt => txt.includes("apprentissage") || txt.includes("alternance") || txt.includes("apprentice"))) {
+    type = "alternance";
+  } else if (allTexts.some(txt => txt.includes("cdi") || txt.includes("full-time") || txt.includes("temps plein"))) {
+    type = "cdi";
+  } else if (allTexts.some(txt => txt.includes("stage") || txt.includes("internship"))) {
+    type = "stage";
+  } else if (allTexts.some(txt => txt.includes("cdd"))) {
+    type = "cdd";
+  }
+
+  // ۵. DescriptionText
+  let descriptionText = "";
+  const aboutTheJobElem = document.querySelector('[id*="JobDetails_AboutTheJob"]') || 
+                          document.querySelector('[componentkey*="JobDetails_AboutTheJob"]');
+
+  if (aboutTheJobElem) {
+    descriptionText = aboutTheJobElem.innerText?.trim() || "";
+  }
+
+  if (!descriptionText || descriptionText.length < 30) {
+    const descContainer = 
+      document.getElementById('job-details') || 
+      document.querySelector('.jobs-description__content') ||
+      document.querySelector('.jobs-box__html-content') ||
+      document.querySelector('article');
+
+    if (descContainer) {
+      descriptionText = descContainer.innerText?.trim() || "";
+    }
+  }
+
+  // ۶. Sector (اضافه شد تا متغیر تعریف‌نشده نباشد)
+  let sector = "Non renseigné";
+  const criteriaList = document.querySelectorAll('.jobs-unified-top-card__job-insight');
+  if (criteriaList.length > 1) {
+    sector = criteriaList[1].innerText?.split('·')[0]?.trim() || "Non renseigné";
+  }
+  if (sector.length > 200) {
+    sector = sector.substring(0, 200);
+  }
+
+  // ۷. Salary (اضافه شد تا متغیر تعریف‌نشده نباشد)
+  let salary = "Non spécifié";
+  const salaryElem = Array.from(document.querySelectorAll('span, div')).find(el => {
+    const txt = el.innerText || "";
+    return el.children.length === 0 && (txt.includes("€") || txt.includes("$") || /salaire/i.test(txt));
+  });
+
+  if (salaryElem) {
+    salary = salaryElem.innerText.trim();
+  }
+
+  return { position, company, location, descriptionText, salary, sector, type };
+}
+
 // ---------------- MAIN ---------------
 function detectSite() {
   const url = window.location.href;
@@ -495,6 +618,7 @@ function detectSite() {
   if (url.includes("indeed.com")) return "indeed";
   if (url.includes("welovedevs.com")) return "welovedevs";
   if (url.includes("labonnealternance")) return "labonnealternance";
+  if (url.includes("linkedin.com/jobs")) return "linkedin";
   return "unknown";
 }
 
@@ -520,6 +644,9 @@ function extractJob() {
       break;
     case "labonnealternance":
       data = extractLaBonneAlternance();
+      break;
+    case "linkedin":
+      data = extractLinkedIn();
       break;
     default:          
       data = {};
