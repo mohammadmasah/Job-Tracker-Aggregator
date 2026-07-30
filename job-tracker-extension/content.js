@@ -11,7 +11,6 @@ function extractHelloWork() {
     const titleMatch = document.title.match(/Recrutement par ([^|]+)/i);
     if (titleMatch) company = titleMatch[1].trim();
   }
-
   let salary = 
     document.querySelector('span.truncate')?.innerText?.trim() ||
     document.querySelector('[data-cy="salary-tag-button"] span')?.innerText?.trim() ||
@@ -35,7 +34,6 @@ function extractHelloWork() {
   }
 
   let descriptionText = "";
-
   const targetEl = document.querySelector('[data-truncate-text-target="content"]');
   if (targetEl && targetEl.innerText.trim().length > 50) {
     descriptionText = targetEl.innerText.trim();
@@ -599,7 +597,6 @@ function extractLinkedIn() {
 
   return { position, company, location, descriptionText, salary, sector, type };
 }
-
 // ---------------- MAIN ---------------
 function detectSite() {
   const url = window.location.href;
