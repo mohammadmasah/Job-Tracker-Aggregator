@@ -1,18 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+import secrets
+from datetime import timedelta
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, BackgroundTasks
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlmodel import Session, select
+from pydantic import BaseModel
 
 from ..database import get_session
 from ..models import User, UserCreate, UserLogin
-from app.core.security import hash_password, verify_password,create_access_token
-
-from datetime import timedelta
-
+from app.core.security import hash_password, verify_password, create_access_token
 from app.api.deps import get_current_user
+
+from app.core.redis_client import redis_client
+from app.core.email import send_reset_password_email
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter(prefix="/api/user", tags=["user"])
+
+
+class ResetPasswordSchema(BaseModel):
+    token: str
+    new_password: str
+
 
 @router.post("/register")
 def create_user(user: UserCreate, session: Session = Depends(get_session)):
@@ -28,16 +37,48 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
     session.refresh(db_user)
     return {"message": "User created"}
 
+
 @router.post("/login")
-@limiter.limit("3/minute")
-def login(credentials: UserLogin,response: Response,request: Request, session: Session = Depends(get_session)):
+@limiter.limit("5/minute")
+def login(
+    credentials: UserLogin,
+    response: Response,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    session: Session = Depends(get_session)
+):
+    email = credentials.email
+    lock_key = f"lock:{email}"
+    attempts_key = f"failed:{email}"
 
-    user = session.exec(select(User).where(User.email == credentials.email)).first()
-    if not user:
+    if redis_client.get(lock_key):
+        raise HTTPException(
+            status_code=403,
+            detail="Votre compte est bloqué suite à 3 tentatives échouées. Consultez votre e-mail pour réinitialiser votre mot de passe."
+        )
+
+    user = session.exec(select(User).where(User.email == email)).first()
+
+    if not user or not verify_password(credentials.password, user.hashed_password):
+        attempts = redis_client.incr(attempts_key)
+
+        if attempts >= 3:
+            redis_client.set(lock_key, "locked")
+            redis_client.delete(attempts_key)
+
+            reset_token = secrets.token_urlsafe(32)
+            redis_client.setex(f"reset_token:{reset_token}", 1800, email)
+
+            send_reset_password_email(email, reset_token)
+
+            raise HTTPException(
+                status_code=403,
+                detail="Compte bloqué après 3 échecs. Un e-mail de réinitialisation vous a été envoyé."
+            )
+
         raise HTTPException(status_code=401, detail="Invalid identification")
 
-    if not verify_password(credentials.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid identification")
+    redis_client.delete(attempts_key)
 
     token_data = {"sub": str(user.id), "email": user.email, "role": user.role}
 
@@ -61,6 +102,34 @@ def login(credentials: UserLogin,response: Response,request: Request, session: S
             "email": user.email,
         },
     }
+
+@router.post("/reset-password")
+def reset_password(
+    data: ResetPasswordSchema,
+    session: Session = Depends(get_session)
+):
+    email = redis_client.get(f"reset_token:{data.token}")
+
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Le jeton de réinitialisation est invalide ou a expiré."
+        )
+
+    user = session.exec(select(User).where(User.email == email)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé.")
+
+    user.hashed_password = hash_password(data.new_password)
+    session.add(user)
+    session.commit()
+
+    redis_client.delete(f"lock:{email}")
+    redis_client.delete(f"reset_token:{data.token}")
+
+    return {"message": "Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter."}
+
+
 @router.get("/me")
 def get_me(current_user: User = Depends(get_current_user)):
     return {
@@ -70,6 +139,8 @@ def get_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "role": current_user.role,
     }
+
+
 @router.get("")
 def get_user(session: Session = Depends(get_session)):
     return session.exec(select(User)).all()
