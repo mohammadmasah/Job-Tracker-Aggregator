@@ -27,14 +27,14 @@ export default function LoginForm() {
                     </div>
                     <div>
 
-                        <label className={label}>Lot de passe</label>
+                        <label className={label}>Mot de passe</label>
                         <input className={input}
                             type="password"
                             placeholder="********"></input>
                     </div>
                     <button className={button}
                         type="submit"
-                        onSubmit={handleLogin}>Insrivez-vous</button>
+                        onSubmit={handleLogin}>Se connecter</button>
 
                     <p className="text-sm text-slate-400 pt-2">
                         Pas encore de compte?{" "}

@@ -39,7 +39,7 @@ export default function RegisterForm() {
                     </div>
                     <div>
 
-                        <label className={label}>Lot de passe</label>
+                        <label className={label}>Mot de passe</label>
                         <input className={input}
                             type="password"
                             placeholder="********"></input>
@@ -52,7 +52,7 @@ export default function RegisterForm() {
                             type="password"
                             placeholder="********"></input>
                     </div>
-                    <button className={button}>Insrivez-vous</button>
+                    <button className={button}>Inscrivez-vous</button>
 
                     <p className="text-sm text-slate-400 pt-2">
                         Déjà inscrit ?{" "}
