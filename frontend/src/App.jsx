@@ -9,6 +9,7 @@ import Dashboard from "./pages/user/Dashboard";
 import Offers from "./pages/user/Offers";
 import Applications from "./pages/user/Applications";
 import Contacts from "./pages/user/Contacts";
+import ResetPassword from './pages/ResetPassword';
 import SettingsLayout, {
     SettingsStatistiques,
     SettingsNotifications,
@@ -22,6 +23,7 @@ export default function App() {
             <Routes>
                 <Route path='/register' element={<Register />} />
                 <Route path='/login' element={<Login />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
 
                 <Route element={<Layout />}>
                     <Route path="/" element={<Dashboard />} />
