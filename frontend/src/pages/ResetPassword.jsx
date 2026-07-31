@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ResetPassword() {
+  const [token] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('token') || '';
+  });
+
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -11,8 +16,11 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const token = queryParams.get('token');
+  useEffect(() => {
+    if (window.location.search.includes('token=')) {
+      window.history.replaceState({}, '', '/reset-password');
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,6 +82,12 @@ export default function ResetPassword() {
           <p className="text-slate-500 text-sm mt-1">Réinitialisation du mot de passe</p>
         </div>
 
+        {!token && (
+          <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl text-center font-medium">
+            Jeton invalide ou manquant.
+          </div>
+        )}
+
         {message && (
           <div className="mb-4 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-xl text-center font-medium">
             {message}
@@ -99,7 +113,8 @@ export default function ResetPassword() {
               required
               minLength={6}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200"
+              disabled={!token}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 disabled:opacity-50"
             />
           </div>
 
@@ -114,7 +129,8 @@ export default function ResetPassword() {
               required
               minLength={6}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200"
+              disabled={!token}
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 disabled:opacity-50"
             />
           </div>
 
