@@ -1,0 +1,19 @@
+# Python / Backend
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.venv
+**/venv
+
+# Node / Frontend
+**/node_modules
+**/npm-debug.log*
+**/.npm
+
+# Git & System
+**/.git
+**/.gitignore
+**/.DS_Store
+**/.vscode
+**/.idea
