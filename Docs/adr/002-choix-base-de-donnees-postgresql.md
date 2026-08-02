@@ -1,4 +1,4 @@
-# ADR 0002 : Choix du Système de Gestion de Base de Données – PostgreSQL
+# ADR 002 : Choix du Système de Gestion de Base de Données – PostgreSQL
 
 * **Statut :** Accepté
 * **Date :** 2026-08-02
