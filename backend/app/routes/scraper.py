@@ -1,10 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 import httpx
 import re
 from bs4 import BeautifulSoup
+from ..api.deps import get_current_user
 
-router = APIRouter(prefix="/api/scrape", tags=["scraper"])
+
+router = APIRouter(
+    prefix="/api/scrape", dependencies=[Depends(get_current_user)], tags=["scraper"]
+)
 
 
 class ScrapeRequest(BaseModel):
@@ -53,8 +57,14 @@ def scrape_job(data: ScrapeRequest):
         )
 
     # Detection basique de blocage
-    blocked_signals = ["security check", "blocked", "captcha", "are you a robot",
-                       "verify you are human", "access denied"]
+    blocked_signals = [
+        "security check",
+        "blocked",
+        "captcha",
+        "are you a robot",
+        "verify you are human",
+        "access denied",
+    ]
     title_text = (response.text[:2000] or "").lower()
     if any(sig in title_text for sig in blocked_signals):
         raise HTTPException(
@@ -76,9 +86,7 @@ def scrape_job(data: ScrapeRequest):
 
     # --- COMPANY (entreprise) ---
     result["company"] = (
-        get_meta(soup, prop="og:site_name")
-        or get_meta(soup, name="author")
-        or ""
+        get_meta(soup, prop="og:site_name") or get_meta(soup, name="author") or ""
     )
 
     # --- NOTES (description) ---
@@ -109,16 +117,21 @@ def scrape_job(data: ScrapeRequest):
     result["salary"] = find_in_text(page_text, salary_patterns)
 
     # --- REMOTE (teletravail) ---
-    remote_keywords = ["télétravail", "remote", "100% remote", "full remote",
-                       "travail à distance", "hybride", "home office"]
+    remote_keywords = [
+        "télétravail",
+        "remote",
+        "100% remote",
+        "full remote",
+        "travail à distance",
+        "hybride",
+        "home office",
+    ]
     lower_text = page_text.lower()
     result["remote"] = any(kw in lower_text for kw in remote_keywords)
 
     # --- SECTOR (secteur) ---
     result["sector"] = (
-        get_meta(soup, name="industry")
-        or get_meta(soup, prop="article:section")
-        or ""
+        get_meta(soup, name="industry") or get_meta(soup, prop="article:section") or ""
     )
 
     return result

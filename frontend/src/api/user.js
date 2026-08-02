@@ -1,5 +1,6 @@
 import axios from "axios"
 
+
 // Register
 export const register = (data) => {
     return axios.post("/api/user/register", data)

@@ -8,8 +8,12 @@ from pydantic import BaseModel
 
 from ..database import get_session
 from ..models import User, UserCreate, UserLogin
-from app.core.security import hash_password, verify_password, create_access_token
+from ..core.security import hash_password, verify_password,create_access_token
+
+from datetime import timedelta
+
 from app.api.deps import get_current_user
+from ..api.deps import require_admin
 
 from app.core.redis_client import redis_client
 from app.core.email import send_reset_password_email
@@ -139,8 +143,22 @@ def get_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "role": current_user.role,
     }
+<<<<<<< HEAD
 
 
 @router.get("")
 def get_user(session: Session = Depends(get_session)):
     return session.exec(select(User)).all()
+=======
+    
+
+@router.get("")
+def get_user(admin: User = Depends(require_admin), session: Session = Depends(get_session)):
+    return session.exec(select(User)).all()
+
+@router.post("/logout")
+def logout(response: Response, current_user : User = Depends(get_current_user)):
+    response.delete_cookie("access_token")
+    return {"message": "Disconnected"}
+
+>>>>>>> crudProtection

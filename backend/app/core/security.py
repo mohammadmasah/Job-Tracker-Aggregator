@@ -1,14 +1,15 @@
-import os
+# app/core/security.py
+from fastapi import Depends, HTTPException
 from datetime import datetime, timedelta, timezone
 import bcrypt
 import jwt
 from jwt import PyJWTError
 from dotenv import load_dotenv
 
-load_dotenv()
+from ..models.user import User
 
-SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key_for_dev_only")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
+SECRET_KEY = "SUPER_SECRET_KEY_FOR_JWT_SIGNING"
+ALGORITHM = "HS256"
 
 
 def hash_password(password: str) -> str:

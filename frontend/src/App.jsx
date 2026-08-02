@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import { useTheme } from "./hooks/useTheme";
 
+import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -25,7 +26,13 @@ export default function App() {
                 <Route path='/login' element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                <Route element={<Layout />}>
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <Layout />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/offers" element={<Offers />} />
                     <Route path="/applications" element={<Applications />} />
@@ -41,6 +48,6 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
 
             </Routes>
-        </BrowserRouter>
+        </BrowserRouter >
     );
 }

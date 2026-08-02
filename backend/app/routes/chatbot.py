@@ -1,10 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 from app.services.ai_agents import generate_chatbot_response
+from ..api.deps import get_current_user
 
 router = APIRouter(
     prefix = "/chatbot",
+    dependencies=[Depends(get_current_user)],
     tags = ["Chatbot"]
 )
 

@@ -23,6 +23,8 @@ class Offer(SQLModel, table=True):
     salary_min: int | None = None
     salary_max: int | None = None
 
+    seen: bool = Field(default=False, index=True)
+
 
 class CreateOffer(SQLModel):
     source: str
@@ -39,6 +41,8 @@ class CreateOffer(SQLModel):
     salary_min: int | None = None
     salary_max: int | None = None
 
+    seen: bool = Field(default=False, index=True)
+
 
 class ReadOffer(SQLModel):
     source: str
@@ -54,3 +58,5 @@ class ReadOffer(SQLModel):
     salary_currency: str | None = None
     salary_min: int | None = None
     salary_max: int | None = None
+
+    seen: bool
