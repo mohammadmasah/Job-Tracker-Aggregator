@@ -2,7 +2,7 @@
 
 * **Statut :** Accepté
 * **Date :** 2026-08-02
-* **Auteurs :** Équipe TrackIT
+* **Auteurs :** Mohammad Masah (Équipe TrackIT)
 
 ---
 
