@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import { useTheme } from "./hooks/useTheme";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
@@ -14,11 +13,9 @@ import ResetPassword from './pages/ResetPassword';
 import SettingsLayout, {
     SettingsStatistiques,
     SettingsNotifications,
-    SettingsApparence,
 } from "./pages/user/Settings";
 
 export default function App() {
-    useTheme();
     return (
         <BrowserRouter>
             <Routes>
@@ -41,7 +38,6 @@ export default function App() {
                     <Route path="/settings" element={<SettingsLayout />}>
                         <Route path="statistiques" element={<SettingsStatistiques />} />
                         <Route path="notifications" element={<SettingsNotifications />} />
-                        <Route path="apparence" element={<SettingsApparence />} />
                     </Route>
                 </Route>
 

@@ -112,7 +112,6 @@ export default function Nav() {
                         <div className="flex flex-col border-b border-border-soft pb-1">
                             <NavLink to="/settings/statistiques" className={subLinkClass}>Statistiques</NavLink>
                             <NavLink to="/settings/notifications" className={subLinkClass}>Notifications</NavLink>
-                            <NavLink to="/settings/apparence" className={subLinkClass}>Apparence</NavLink>
                         </div>
                     )}
                 </nav>

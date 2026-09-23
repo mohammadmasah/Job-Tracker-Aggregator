@@ -3,24 +3,18 @@ import { useApplications } from "../../hooks/useApplications";
 import { useContacts } from "../../hooks/useContacts";
 import ApplicationForm from "../../components/applications/ApplicationForm";
 import StatsCards from "../../components/stats/StatsCards";
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
+import ApplicationsPipeline from "../../components/dashboard/ApplicationsPipeline";
+import FollowUpList from "../../components/dashboard/FollowUpList";
+import RecentApplications from "../../components/dashboard/RecentApplications";
 import { createApplication } from "../../api/application";
 import { createContact } from "../../api/contacts";
 import { createContactMethod } from "../../api/contactMethod";
 import { uploadDocument } from "../../api/document";
 
-const statusLabels = {
-    to_apply: "À postuler",
-    applied: "Postulé",
-    interview: "Entretien",
-    technical_test: "Test technique",
-    offer: "Offre",
-    accepted: "Accepté",
-    rejected: "Refusé",
-};
-
 export default function Dashboard() {
-    const { applications, loading, removeApplication, fetchApplications } = useApplications();
-    const { contacts } = useContacts();
+    const { applications, loading, fetchApplications } = useApplications();
+    const { contacts, fetchContacts } = useContacts();
     const [isAddFormOpen, setIsAddFormOpen] = useState(false);
 
     const detectType = (value) => {
@@ -55,6 +49,7 @@ export default function Dashboard() {
         }
 
         await fetchApplications();
+    await fetchContacts();
         setIsAddFormOpen(false);
     };
 
@@ -64,20 +59,7 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-full bg-bg font-mono">
-            {/* HEADER */}
-            <div className="flex justify-between h-[100px] border-b border-border-soft items-center px-8">
-                <div>
-                    <h1 className="font-extrabold text-2xl uppercase text-text tracking-wide">Tableau de bord</h1>
-                    <span className="text-[11px] text-text-3">Vue d'ensemble</span>
-                </div>
-
-                <button
-                    onClick={() => setIsAddFormOpen(true)}
-                    className="px-5 py-2.5 text-[11px] font-bold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase rounded-[4px] transition-colors"
-                >
-                    + Nouvelle candidature
-                </button>
-            </div>
+            <DashboardHeader onAddApplication={() => setIsAddFormOpen(true)} />
 
             {/* MODAL formulaire */}
             {isAddFormOpen && (
@@ -93,10 +75,13 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {/* CONTENU */}
-            <div className="px-8 py-6 flex flex-col gap-6">
-                {/* CARTES STATS */}
+            <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-5 py-5 sm:px-8 sm:py-7">
                 <StatsCards applications={applications} contacts={contacts} />
+                <ApplicationsPipeline applications={applications} />
+                <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
+                    <RecentApplications applications={applications} />
+                    <FollowUpList applications={applications} />
+                </div>
             </div>
         </div>
     );
