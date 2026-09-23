@@ -58,14 +58,20 @@ export default function Nav() {
 
     return (
         <>
-            {!mobileOpen && <button
-                type="button"
-                onClick={() => setMobileOpen(true)}
-                aria-label="Ouvrir la navigation"
-                className="fixed left-4 top-4 z-40 flex size-11 items-center justify-center rounded-[8px] border border-border-soft bg-panel text-text shadow-md transition-colors hover:border-accent hover:text-accent md:hidden"
-            >
-                <IoMenuOutline className="text-[22px]" />
-            </button>}
+            <div className="fixed inset-x-0 top-0 z-30 flex h-16 items-center border-b border-border-soft bg-panel/95 px-4 backdrop-blur md:hidden">
+                {!mobileOpen && <button
+                    type="button"
+                    onClick={() => setMobileOpen(true)}
+                    aria-label="Ouvrir la navigation"
+                    className="flex size-10 items-center justify-center rounded-[7px] border border-border-soft bg-card text-text shadow-sm transition-colors hover:border-accent hover:text-accent"
+                >
+                    <IoMenuOutline className="text-[21px]" />
+                </button>}
+                <div className="ml-3 flex items-center gap-2">
+                    <span className="flex size-7 items-center justify-center rounded-[5px] bg-accent text-[11px] font-extrabold text-white">T</span>
+                    <span className="text-sm font-extrabold tracking-wide text-text">TrackIT</span>
+                </div>
+            </div>
 
             {mobileOpen && (
                 <div
