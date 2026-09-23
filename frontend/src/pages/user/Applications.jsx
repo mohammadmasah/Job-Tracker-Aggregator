@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useApplications } from "../../hooks/useApplications";
 import ApplicationForm from "../../components/applications/ApplicationForm";
 import ApplicationsList from "../../components/applications/ApplicationsList";
+import PageHeader from "../../components/layout/PageHeader";
 import { createApplication } from "../../api/application";
 import { createContact } from "../../api/contacts";
 import { createContactMethod } from "../../api/contactMethod";
@@ -62,19 +63,11 @@ export default function Applications() {
 
     return (
         <div className="h-full bg-bg font-mono flex flex-col">
-            {/* HEADER */}
-            <div className="flex items-center justify-between px-8 h-[100px] border-b border-border-soft shrink-0">
-                <div>
-                    <h1 className="text-2xl font-extrabold uppercase text-text tracking-wide">Mes candidatures</h1>
-                    <p className="text-[11px] text-text-3 mt-1">{applications.length} au total</p>
-                </div>
-                <button
-                    onClick={() => setIsAddFormOpen(true)}
-                    className="text-[11px] text-bg bg-accent hover:bg-accent-2 px-5 py-2.5 rounded-[4px] tracking-wider uppercase transition-colors font-bold"
-                >
-                    + Nouvelle candidature
-                </button>
-            </div>
+            <PageHeader
+                title="Mes candidatures"
+                description={`${applications.length} candidature${applications.length > 1 ? "s" : ""} suivie${applications.length > 1 ? "s" : ""}.`}
+                actions={<button onClick={() => setIsAddFormOpen(true)} className="min-h-10 rounded-[5px] bg-accent px-4 text-[11px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-accent-2">Nouvelle candidature</button>}
+            />
 
             {/* MAÎTRE-DÉTAIL */}
             <div className="flex-1 min-h-0">

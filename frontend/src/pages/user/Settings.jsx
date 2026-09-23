@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import StatCardsConfig from "../../components/stats/StatCardsConfig";
+import PageHeader from "../../components/layout/PageHeader";
 
 function SettingsLayout() {
     const location = useLocation();
@@ -10,10 +11,7 @@ function SettingsLayout() {
 
     return (
         <div className="font-mono min-h-full bg-bg">
-            <div className="px-8 py-8 border-b border-border-soft">
-                <h1 className="text-2xl font-extrabold uppercase text-text tracking-wide">Paramètres</h1>
-                <p className="text-[11px] text-text-3 mt-1">Personnalise ton espace</p>
-            </div>
+            <PageHeader title="Paramètres" description="Gérez votre espace de travail." />
 
             <div className="px-8 py-6 max-w-xl">
                 <Outlet />
