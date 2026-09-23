@@ -36,13 +36,30 @@
    ============================================================ */
 
 body {
-
     background-color: var(--color-bg);
-
     color: var(--color-text);
+    font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+    text-rendering: optimizeLegibility;
+}
 
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+.font-mono {
+    font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+}
 
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 *::-webkit-scrollbar {
@@ -100,21 +117,21 @@ body {
 
 /* Défaut = Blue nuit */
 :root {
-    --bg: #06080d;
-    --bg-2: #080a11;
-    --panel: #0c0f17;
-    --card: #0b0e16;
-    --border: rgba(255, 255, 255, 0.15);
-    --border-soft: rgba(255, 255, 255, 0.09);
-    --text: #e8ecf2;
-    --text-2: #8b93a3;
-    --text-3: #5a6272;
-    --accent: #d6dde8;
-    --accent-2: #ffffff;
-    --c1: #5a7fe0;
-    --c2: #97c459;
-    --c3: #e8a33d;
-    --c4: #d96f6f;
+    --bg: #f3f6f4;
+    --bg-2: #e9efeb;
+    --panel: #ffffff;
+    --card: #f7faf8;
+    --border: #cbd7d0;
+    --border-soft: #e1e9e4;
+    --text: #17231d;
+    --text-2: #56645c;
+    --text-3: #7b887f;
+    --accent: #136f57;
+    --accent-2: #0f5c48;
+    --c1: #247b68;
+    --c2: #38815f;
+    --c3: #b7791f;
+    --c4: #bd4a4a;
 }
 
 /* ============================================================
