@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoNotificationsOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { NavLink, useLocation } from "react-router-dom";
+import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import Logo from "./Logo";
 
 export default function Nav() {
@@ -26,15 +26,6 @@ export default function Nav() {
         ? "text-accent bg-bg border-accent"
         : "text-text-2 hover:text-accent hover:bg-card border-transparent"
         }`;
-
-
-    const navigate = useNavigate();
-
-    // Placeholders (à brancher plus tard)
-    const user = { name: "Dawid", email: "dawid@trackit.app" };
-    const toFollowUp = 0;        // nb à relancer → pastille si > 0
-    const notifCount = 0;        // nb notifications
-    const initial = user.name.charAt(0).toUpperCase();
 
     const [uploading, setUploading] = useState(false);
 
@@ -113,52 +104,6 @@ export default function Nav() {
                {/* ESPACE PERSONNEL — carte stylée */}
                 <div className="mt-auto p-3">
                     <div className="bg-card border border-border-soft rounded-[6px] overflow-hidden shadow-sm">
-
-                        {/* Ligne profil */}
-                        <div className="flex items-center gap-2.5 p-3 border-b border-border-soft/60">
-                            {/* Profil cliquable */}
-                            <button
-                                onClick={() => navigate("/profile")}
-                                className="flex items-center gap-2.5 min-w-0 flex-1 text-left group"
-                                title="Mon profil"
-                            >
-                                <div className="relative shrink-0">
-                                    <div className="w-9 h-9 rounded-[8px] bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/40 flex items-center justify-center text-accent text-[13px] font-bold shadow-[0_0_12px_-4px] shadow-accent/40">
-                                        {initial}
-                                    </div>
-                                    {toFollowUp > 0 && (
-                                        <span
-                                            className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-card animate-pulse"
-                                            style={{ backgroundColor: "var(--c3)" }}
-                                            title={`${toFollowUp} à relancer`}
-                                        />
-                                    )}
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="text-[12.5px] font-semibold text-text truncate group-hover:text-accent transition-colors leading-tight">
-                                        {user.name}
-                                    </div>
-                                    <div className="text-[10px] text-text-3 truncate leading-tight mt-0.5 font-mono">
-                                        {user.email}
-                                    </div>
-                                </div>
-                            </button>
-
-                            {/* Cloche notifications */}
-                            <button
-                                className="relative shrink-0 w-8 h-8 rounded-[6px] flex items-center justify-center text-text-2 hover:text-accent hover:bg-bg/60 transition-colors"
-                                title="Notifications"
-                            >
-                                <IoNotificationsOutline className="text-[17px]" />
-                                {notifCount > 0 && (
-                                    <span className="absolute top-1 right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-accent text-bg text-[9px] font-bold flex items-center justify-center leading-none ring-2 ring-card">
-                                        {notifCount > 9 ? "9+" : notifCount}
-                                    </span>
-                                )}
-                            </button>
-                        </div>
-
-                        {/* Zone d'upload */}
                         <label className="group cursor-pointer flex items-center gap-2.5 px-3 py-2.5 hover:bg-bg/40 transition-colors">
                             <span className="w-7 h-7 rounded-[6px] border border-dashed border-border group-hover:border-accent flex items-center justify-center text-text-3 group-hover:text-accent transition-colors text-[14px] shrink-0">
                                 {uploading ? "…" : "↑"}
