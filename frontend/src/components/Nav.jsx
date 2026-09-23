@@ -1,23 +1,14 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { IoBriefcaseOutline, IoDocumentTextOutline, IoGridOutline, IoMenu, IoNotificationsOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoNotificationsOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import Logo from "./Logo";
 
 export default function Nav() {
     const location = useLocation();
     const isSettings = location.pathname.startsWith("/settings");
-    const isOffers = location.pathname.startsWith("/offers")
 
-    // Ouverte par défaut sur desktop ; l'état est persisté
-    const [open, setOpen] = useState(() => localStorage.getItem("nav-open") !== "0");
-    const toggle = () => {
-        setOpen((v) => {
-            const next = !v;
-            localStorage.setItem("nav-open", next ? "1" : "0");
-            return next;
-        });
-    };
-    const close = () => { setOpen(false); localStorage.setItem("nav-open", "0"); };
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const closeMobileNav = () => setMobileOpen(false);
 
     const linkClass = ({ isActive }) =>
         `flex items-center gap-3 px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isActive
@@ -67,47 +58,43 @@ export default function Nav() {
 
     return (
         <>
-            {/* Bouton toggle — fixe, en haut à gauche */}
-            <button
-                onClick={toggle}
-                aria-label={open ? "Masquer le menu" : "Afficher le menu"}
-                title={open ? "Masquer le menu" : "Afficher le menu"}
-                className="fixed top-2 left-1 z-50 w-5 h-5 flex items-center justify-center text-text-2 hover:text-accent hover:border-accent shadow-md transition-colors"
+            {!mobileOpen && <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                aria-label="Ouvrir la navigation"
+                className="fixed left-4 top-4 z-40 flex size-11 items-center justify-center rounded-[8px] border border-border-soft bg-panel text-text shadow-md transition-colors hover:border-accent hover:text-accent md:hidden"
             >
-                {open ? <IoMenu className="text-[18px]" /> : <IoMenu className="text-[18px]" />}
-            </button>
+                <IoMenuOutline className="text-[22px]" />
+            </button>}
 
-            {/* Fond sombre (mobile uniquement, quand ouvert) */}
-            {open && (
+            {mobileOpen && (
                 <div
-                    className="md:hidden fixed inset-0 bg-bg/70 z-30"
-                    onClick={close}
+                    className="fixed inset-0 z-30 bg-text/20 backdrop-blur-[2px] md:hidden"
+                    onClick={closeMobileNav}
                 />
             )}
 
-            {/* Barre latérale */}
             <aside
-                className={`fixed md:static top-0 left-0 h-screen z-40 border-r border-border-soft bg-panel flex flex-col font-mono overflow-hidden
-                    transition-[width,transform] duration-300 ease-in-out
-                    ${open ? "w-60 translate-x-0" : "w-60 -translate-x-full md:w-0 md:translate-x-0 md:border-r-0"}`}
+                className={`fixed inset-y-0 left-0 z-40 flex w-[min(19rem,calc(100vw-2.5rem))] flex-col overflow-hidden border-r border-border-soft bg-panel font-mono shadow-xl transition-transform duration-300 ease-out md:static md:w-64 md:translate-x-0 md:shadow-none ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
-                <div className="flex items-center gap-3 border-b border-border-soft bg-panel px-5 py-5 min-w-60">
+                <div className="flex items-center gap-3 border-b border-border-soft bg-panel px-5 py-5">
                     <span className="flex size-9 items-center justify-center rounded-[6px] bg-accent text-sm font-extrabold text-white shadow-sm">T</span>
                     <div className="min-w-0">
                         <p className="text-sm font-extrabold tracking-wide text-text">TrackIT</p>
                         <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-3">Career workspace</p>
                     </div>
+                    <button type="button" onClick={closeMobileNav} aria-label="Fermer la navigation" className="ml-auto flex size-9 items-center justify-center rounded-[6px] text-text-2 transition-colors hover:bg-card hover:text-text md:hidden"><IoCloseOutline className="text-[20px]" /></button>
                 </div>
 
-                <nav className="flex flex-col gap-1 px-3 pt-6 min-w-60">
+                <nav className="flex flex-col gap-1 px-3 pt-6">
                     <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-3">Espace de travail</p>
-                    <NavLink to="/" end className={linkClass}><IoGridOutline className="text-[16px]" />Tableau de bord</NavLink>
-                    <NavLink to="/applications" className={linkClass}><IoBriefcaseOutline className="text-[16px]" />Candidatures</NavLink>
-                    <NavLink to="/offers" className={linkClass}><IoDocumentTextOutline className="text-[16px]" />Offres</NavLink>
-                    <NavLink to="/contacts" className={linkClass}><IoPeopleOutline className="text-[16px]" />Contacts</NavLink>
+                    <NavLink to="/" end className={linkClass} onClick={closeMobileNav}><IoGridOutline className="text-[16px]" />Tableau de bord</NavLink>
+                    <NavLink to="/applications" className={linkClass} onClick={closeMobileNav}><IoBriefcaseOutline className="text-[16px]" />Candidatures</NavLink>
+                    <NavLink to="/offers" className={linkClass} onClick={closeMobileNav}><IoDocumentTextOutline className="text-[16px]" />Offres</NavLink>
+                    <NavLink to="/contacts" className={linkClass} onClick={closeMobileNav}><IoPeopleOutline className="text-[16px]" />Contacts</NavLink>
 
                     <div className="mt-5 border-t border-border-soft pt-4">
-                        <NavLink to="/settings" end className={settingsParentClass}><IoSettingsOutline className="text-[16px]" />Paramètres</NavLink>
+                        <NavLink to="/settings" end className={settingsParentClass} onClick={closeMobileNav}><IoSettingsOutline className="text-[16px]" />Paramètres</NavLink>
                     </div>
                     {isSettings && (
                         <div className="ml-7 flex flex-col border-l border-border-soft pb-1">
@@ -118,7 +105,7 @@ export default function Nav() {
                 </nav>
 
                {/* ESPACE PERSONNEL — carte stylée */}
-                <div className="mt-auto min-w-60 p-3">
+                <div className="mt-auto p-3">
                     <div className="bg-card border border-border-soft rounded-[6px] overflow-hidden shadow-sm">
 
                         {/* Ligne profil */}
