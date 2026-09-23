@@ -59,8 +59,8 @@ export default function Nav() {
                     <IoMenuOutline className="text-[21px]" />
                 </button>}
                 <div className="ml-3 flex items-center gap-2">
-                    <span className="flex size-7 items-center justify-center rounded-[5px] bg-accent text-[11px] font-extrabold text-white">T</span>
-                    <span className="text-sm font-extrabold tracking-wide text-text">TrackIT</span>
+                    <span className="flex size-7 items-center justify-center rounded-[5px] bg-accent text-[10px] font-extrabold text-white">JT</span>
+                    <span className="text-xs font-extrabold tracking-wide text-text">Job Tracker &amp; Aggregator</span>
                 </div>
             </div>
 
@@ -75,9 +75,9 @@ export default function Nav() {
                 className={`fixed inset-y-0 left-0 z-40 flex w-[min(19rem,calc(100vw-2.5rem))] flex-col overflow-hidden border-r border-border-soft bg-panel font-mono shadow-xl transition-transform duration-300 ease-out md:static md:w-64 md:translate-x-0 md:shadow-none ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
                 <div className="flex items-center gap-3 border-b border-border-soft bg-panel px-5 py-5">
-                    <span className="flex size-9 items-center justify-center rounded-[6px] bg-accent text-sm font-extrabold text-white shadow-sm">T</span>
+                    <span className="flex size-9 items-center justify-center rounded-[6px] bg-accent text-[11px] font-extrabold text-white shadow-sm">JT</span>
                     <div className="min-w-0">
-                        <p className="text-sm font-extrabold tracking-wide text-text">TrackIT</p>
+                        <p className="text-sm font-extrabold tracking-wide text-text">Job Tracker &amp; Aggregator</p>
                         <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-3">Career workspace</p>
                     </div>
                     <button type="button" onClick={closeMobileNav} aria-label="Fermer la navigation" className="ml-auto flex size-9 items-center justify-center rounded-[6px] text-text-2 transition-colors hover:bg-card hover:text-text md:hidden"><IoCloseOutline className="text-[20px]" /></button>
