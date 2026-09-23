@@ -6,7 +6,7 @@ export default function Layout() {
     return (
         <div className="h-screen bg-bg flex overflow-hidden">
             <Nav />
-            <main className="flex-1 min-h-0 overflow-hidden">
+            <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <Outlet />
             </main>
             <ChatWidget />

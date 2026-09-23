@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { IoMenu, IoNotificationsOutline } from "react-icons/io5";
+import { IoBriefcaseOutline, IoDocumentTextOutline, IoGridOutline, IoMenu, IoNotificationsOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import Logo from "./Logo";
-import TodayDate from "./TodayDate";
 
 export default function Nav() {
     const location = useLocation();
@@ -21,9 +20,9 @@ export default function Nav() {
     const close = () => { setOpen(false); localStorage.setItem("nav-open", "0"); };
 
     const linkClass = ({ isActive }) =>
-        `px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isActive
-            ? "text-accent bg-bg border-accent/70"
-            : "text-text-2 hover:text-accent/70 hover:bg-card/50 border-transparent"
+        `flex items-center gap-3 px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isActive
+            ? "text-accent bg-bg border-accent"
+            : "text-text-2 hover:text-accent hover:bg-card border-transparent"
         }`;
 
     const subLinkClass = ({ isActive }) =>
@@ -32,14 +31,9 @@ export default function Nav() {
             : "text-accent-2/30 hover:text-accent-2/70 hover:bg-bg/30 hover:border-accent-2/30 border-transparent"
         }`;
 
-    const settingsParentClass = `px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isSettings
-        ? "text-accent bg-bg border-accent/70"
-        : "text-text-2 hover:text-accent/70 hover:bg-card/50 border-transparent"
-        }`;
-
-    const offersParentClass = `px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isOffers
-        ? "text-accent bg-bg border-accent/70"
-        : "text-text-2 hover:text-accent/70 hover:bg-card/50 border-transparent"
+    const settingsParentClass = `flex items-center gap-3 px-4 py-2.5 text-[12px] transition-colors border-l-4 whitespace-nowrap ${isSettings
+        ? "text-accent bg-bg border-accent"
+        : "text-text-2 hover:text-accent hover:bg-card border-transparent"
         }`;
 
 
@@ -97,19 +91,26 @@ export default function Nav() {
                     transition-[width,transform] duration-300 ease-in-out
                     ${open ? "w-60 translate-x-0" : "w-60 -translate-x-full md:w-0 md:translate-x-0 md:border-r-0"}`}
             >
-                <div className="flex justify-center items-center bg-bg border-b border-border h-[100px] min-w-60">
-                    <TodayDate />
+                <div className="flex items-center gap-3 border-b border-border-soft bg-panel px-5 py-5 min-w-60">
+                    <span className="flex size-9 items-center justify-center rounded-[6px] bg-accent text-sm font-extrabold text-white shadow-sm">T</span>
+                    <div className="min-w-0">
+                        <p className="text-sm font-extrabold tracking-wide text-text">TrackIT</p>
+                        <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-3">Career workspace</p>
+                    </div>
                 </div>
 
-                <nav className="flex flex-col mt-8 min-w-60">
-                    <NavLink to="/" end className={linkClass}>Tableau de bord</NavLink>
-                    <NavLink to="/applications" className={linkClass}>Candidatures</NavLink>
-                    <NavLink to="/offers" className={linkClass}>Offres</NavLink>
-                    <NavLink to="/contacts" className={linkClass}>Contacts</NavLink>
+                <nav className="flex flex-col gap-1 px-3 pt-6 min-w-60">
+                    <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-3">Espace de travail</p>
+                    <NavLink to="/" end className={linkClass}><IoGridOutline className="text-[16px]" />Tableau de bord</NavLink>
+                    <NavLink to="/applications" className={linkClass}><IoBriefcaseOutline className="text-[16px]" />Candidatures</NavLink>
+                    <NavLink to="/offers" className={linkClass}><IoDocumentTextOutline className="text-[16px]" />Offres</NavLink>
+                    <NavLink to="/contacts" className={linkClass}><IoPeopleOutline className="text-[16px]" />Contacts</NavLink>
 
-                    <NavLink to="/settings" end className={settingsParentClass}>Paramètres</NavLink>
+                    <div className="mt-5 border-t border-border-soft pt-4">
+                        <NavLink to="/settings" end className={settingsParentClass}><IoSettingsOutline className="text-[16px]" />Paramètres</NavLink>
+                    </div>
                     {isSettings && (
-                        <div className="flex flex-col border-b border-border-soft pb-1">
+                        <div className="ml-7 flex flex-col border-l border-border-soft pb-1">
                             <NavLink to="/settings/statistiques" className={subLinkClass}>Statistiques</NavLink>
                             <NavLink to="/settings/notifications" className={subLinkClass}>Notifications</NavLink>
                         </div>
@@ -118,7 +119,7 @@ export default function Nav() {
 
                {/* ESPACE PERSONNEL — carte stylée */}
                 <div className="mt-auto min-w-60 p-3">
-                    <div className="bg-card border border-border-soft rounded-[8px] overflow-hidden">
+                    <div className="bg-card border border-border-soft rounded-[6px] overflow-hidden shadow-sm">
 
                         {/* Ligne profil */}
                         <div className="flex items-center gap-2.5 p-3 border-b border-border-soft/60">
