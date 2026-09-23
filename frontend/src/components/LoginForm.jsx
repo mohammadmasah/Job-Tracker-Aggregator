@@ -46,7 +46,7 @@ export default function LoginForm() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
         
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-blue-600 tracking-tight">TrackIT</h1>
+          <h1 className="text-xl font-bold text-blue-600 tracking-tight">Job Tracker &amp; Aggregator</h1>
           <p className="text-slate-500 text-sm mt-1">Connexion à votre compte</p>
         </div>
 

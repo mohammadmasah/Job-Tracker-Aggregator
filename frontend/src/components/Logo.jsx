@@ -7,8 +7,8 @@ export default function Logo({ size = 1 }) {
             style={{ fontSize: `${fontSize}px` }}
         >
             <span>
-                <span className="text-text">Track</span>
-                <span className="text-accent">IT</span>
+                <span className="text-text">Job Tracker</span>
+                <span className="text-accent"> &amp; Aggregator</span>
                 <span className="ml-1 text-xs text-text-3">
                     © {new Date().getFullYear()} MD
                 </span>
