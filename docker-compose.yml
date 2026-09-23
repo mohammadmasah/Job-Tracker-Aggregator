@@ -37,8 +37,6 @@ services:
     restart: always
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     environment:
       - DATABASE_URL=postgresql://trackit_user:trackit_password@db:5432/trackit_db
       - OLLAMA_BASE_URL=http://ollama:11434

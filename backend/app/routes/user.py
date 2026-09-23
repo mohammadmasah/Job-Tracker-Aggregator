@@ -143,15 +143,6 @@ def get_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "role": current_user.role,
     }
-<<<<<<< HEAD
-
-
-@router.get("")
-def get_user(session: Session = Depends(get_session)):
-    return session.exec(select(User)).all()
-=======
-    
-
 @router.get("")
 def get_user(admin: User = Depends(require_admin), session: Session = Depends(get_session)):
     return session.exec(select(User)).all()
@@ -160,5 +151,3 @@ def get_user(admin: User = Depends(require_admin), session: Session = Depends(ge
 def logout(response: Response, current_user : User = Depends(get_current_user)):
     response.delete_cookie("access_token")
     return {"message": "Disconnected"}
-
->>>>>>> crudProtection
