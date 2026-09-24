@@ -68,6 +68,7 @@ export default function Nav() {
                 <div
                     className="fixed inset-0 z-30 bg-text/20 backdrop-blur-[2px] md:hidden"
                     onClick={closeMobileNav}
+                    role="presentation"
                 />
             )}
 
@@ -111,7 +112,7 @@ export default function Nav() {
                             <span className="text-[11px] text-text-2 group-hover:text-text transition-colors font-mono truncate">
                                 {uploading ? "Envoi en cours…" : "Téléverser un document"}
                             </span>
-                            <input type="file" className="hidden" onChange={handleFileUpload} disabled={uploading} />
+                            <input type="file" aria-label="Téléverser un document" className="hidden" onChange={handleFileUpload} disabled={uploading} />
                         </label>
                     </div>
 

@@ -42,6 +42,23 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+.skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-200%);
+    background: var(--accent);
+    color: white;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.35rem;
+    font-weight: 700;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
 .font-mono {
     font-family: "Avenir Next", "Helvetica Neue", sans-serif;
 }
@@ -96,6 +113,17 @@ select:focus-visible {
 
     scrollbar-color: var(--color-border) transparent;
 
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 @keyframes pulse-border {

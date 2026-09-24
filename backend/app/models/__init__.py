@@ -1,4 +1,5 @@
 from sqlalchemy.orm import configure_mappers
+from .chat_message import ChatMessage
 
 from .user import (
     User,

@@ -1,26 +1,19 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from "react";
-import axios from "axios";
+import { requestChatStream, fetchChatHistory, saveLocalChat } from "../api/chatStream";
 import Poulpie from "./Poulpie";
 import { IoBusinessOutline, IoBriefcaseOutline, IoPersonOutline, IoDocumentTextOutline, IoCopyOutline, IoCheckmarkOutline, IoVolumeHighOutline } from "react-icons/io5";
 import { STATUS_META } from "../constants/status";
 import { activeApplicationStore } from "../stores/activeApplication";
 import ReactMarkdown from 'react-markdown';
 
-// Match the login host so the browser sends its access_token cookie.
-const chatbotApi = axios.create({
-    baseURL: "http://localhost:8000",
-    withCredentials: true,
-    timeout: 100000,
-});
-
-function chatbotErrorMessage(error, fallback) {
-    if (error.code === "ECONNABORTED" || error.response?.status === 504) {
+function chatbotErrorMessage(error) {
+    if (error.name === "TimeoutError" || error.response?.status === 504) {
         return "Poulpie met trop de temps à répondre. Réessaie dans un instant.";
     }
     if (error.response?.status === 401) {
         return "Ta session a expiré. Reconnecte-toi pour utiliser Poulpie.";
     }
-    return fallback;
+    return error.message || "Le service de chat est indisponible. Réessaie.";
 }
 
 const WELCOME = {
@@ -103,35 +96,55 @@ export default function ChatWidget() {
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);
     const [unread, setUnread] = useState(false);
+    const [historyLoading, setHistoryLoading] = useState(true);
+    const [historyError, setHistoryError] = useState("");
+    const [historyRetry, setHistoryRetry] = useState(0);
     const scrollRef = useRef(null);
-    const typingTimer = useRef(null);
+    const requestRef = useRef(null);
+    const followBottom = useRef(true);
 
-    // Nettoie le timer si le composant est démonté
-    useEffect(() => () => clearInterval(typingTimer.current), []);
-
-    // Affiche `fullText` caractère par caractère dans le dernier message bot
-    const typeOut = (fullText) => {
-        return new Promise((resolve) => {
-            // On ajoute d'abord un message bot vide, qu'on va remplir
-            setMessages((prev) => [...prev, { role: "bot", text: "" }]);
-            // Si le chat est fermé, on signale une réponse non lue (pastille)
-            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
-            let i = 0;
-            clearInterval(typingTimer.current);
-            typingTimer.current = setInterval(() => {
-                i++;
-                const slice = fullText.slice(0, i);
-                setMessages((prev) => {
-                    const copy = [...prev];
-                    copy[copy.length - 1] = { role: "bot", text: slice };
-                    return copy;
-                });
-                if (i >= fullText.length) {
-                    clearInterval(typingTimer.current);
-                    resolve();
-                }
-            }, 12); // vitesse de frappe (ms par caractère)
+    useEffect(() => {
+        const controller = new AbortController();
+        fetchChatHistory(controller.signal).then((history) => {
+            setMessages([WELCOME, ...history]);
+        }).catch((error) => {
+            if (!controller.signal.aborted) setHistoryError(chatbotErrorMessage(error));
+        }).finally(() => {
+            if (!controller.signal.aborted) setHistoryLoading(false);
         });
+        return () => controller.abort();
+    }, [historyRetry]);
+
+    useEffect(() => () => requestRef.current?.abort(), []);
+
+    const receiveResponse = async (path, body) => {
+        const controller = new AbortController();
+        requestRef.current = controller;
+        const timer = setTimeout(() => controller.abort(new DOMException("Timeout", "TimeoutError")), 100000);
+        const id = crypto.randomUUID();
+        let text = "";
+        setTyping(true);
+        setMessages((prev) => [...prev, { id, role: "bot", text: "", streaming: true }]);
+        try {
+            await requestChatStream(path, body, (delta) => {
+                text += delta;
+                const currentText = text;
+                setMessages((prev) => prev.map((m) => m.id === id ? { ...m, text: currentText } : m));
+            }, controller.signal);
+            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                const errorText = chatbotErrorMessage(error);
+                setMessages((prev) => prev.map((m) => m.id === id
+                    ? { ...m, text: text ? `${text}\n\n${errorText}` : errorText }
+                    : m));
+            }
+        } finally {
+            clearTimeout(timer);
+            requestRef.current = null;
+            setMessages((prev) => prev.map((m) => m.id === id ? { ...m, streaming: false } : m));
+            setTyping(false);
+        }
     };
 
     const activeApp = useSyncExternalStore(
@@ -151,56 +164,46 @@ export default function ChatWidget() {
     const isWaiting = focusKind === "waiting";
     const hasFocus = Boolean(activeApp) || isWaiting;   // waiting = focus léger sans données
 
-    //useEffect(() => {
-     //   if (scrollRef.current) {
-       //     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        //}
-   // }, [messages, typing, open]);
+    useEffect(() => {
+        if (followBottom.current && scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages, typing, open]);
 
     const sendMessage = async (textToSend = null) => {
         const raw = typeof textToSend === "string" ? textToSend : input;
         const text = raw.trim();
-        if (!text || typing) return;
-
-        // Affiche le message utilisateur
+        if (!text || requestRef.current || historyLoading || historyError) return;
+        followBottom.current = true;
         setMessages((prev) => [...prev, { role: "user", text }]);
         setInput("");
-
-        // 1) Commande locale instantanée (/help, ou commande sans candidature) ?
         const local = localCommand(text, activeApp);
         if (local !== null) {
-            await typeOut(local);
+            const controller = new AbortController();
+            requestRef.current = controller;
+            setTyping(true);
+            const timer = setTimeout(() => controller.abort(), 15000);
+            try {
+                const reply = await saveLocalChat(text, controller.signal);
+                setMessages((prev) => [...prev, { role: "bot", text: reply }]);
+            } catch (error) {
+                setMessages((prev) => [...prev, { role: "bot", text: chatbotErrorMessage(error) }]);
+            } finally {
+                clearTimeout(timer);
+                requestRef.current = null;
+                setTyping(false);
+            }
             return;
         }
-
-        // 2) Sinon → LLM. On transforme la commande en consigne, on injecte le contexte.
-        setTyping(true);
         const instruction = commandToPrompt(text, activeApp);
         const payload = buildContext(activeApp, focusKind) + instruction;
-
-        try {
-            const res = await chatbotApi.post("/chatbot/", { message: payload });
-            setTyping(false);                 // on masque les "..." avant de taper
-            setMessages((prev) => [...prev, { role: "bot", text: res.data.response }]);
-            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
-        } catch (error) {
-            console.error("Erreur connexion Chatbot API:", error);
-            setTyping(false);
-            await typeOut(chatbotErrorMessage(error, "Désolé, le service de chat est indisponible. Réessaie dans un instant."));
-        }
+        await receiveResponse("/chatbot/", { message: payload, display_message: text, stream: true });
     };
 
     const openChat = () => { setOpen(true); setClosing(false); setUnread(false); };
     const closeChat = () => {
         setClosing(true);
         setTimeout(() => { setOpen(false); setClosing(false); }, 160);
-    };
-
-    const onKeyDown = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
     };
 
     const commands = activeApp
@@ -211,24 +214,15 @@ export default function ChatWidget() {
 
     const handleFileUpload = async (e) => {
         const file = e.target.files?.[0];
-        if (!file || typing) return;
-
-        setMessages((prev) => [...prev, { role: "user", text: `${file.name}` }]);
-        setTyping(true);
-
+        if (!file || requestRef.current || historyLoading || historyError) return;
+        followBottom.current = true;
+        setMessages((prev) => [...prev, { role: "user", text: file.name }]);
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("message", "Analyse ce document."); 
-
+        formData.append("message", "Analyse ce document.");
+        formData.append("stream", "true");
         try {
-            const res = await chatbotApi.post("/analyse-cv/", formData);
-            setTyping(false);
-            setMessages((prev) => [...prev, { role: "bot", text: res.data.response }]);
-            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
-        } catch (error) {
-            console.error(error);
-            setTyping(false);
-            await typeOut(chatbotErrorMessage(error, "Erreur lors de l'envoi du fichier."));
+            await receiveResponse("/analyse-cv/", formData);
         } finally {
             if (fileInputRef.current) fileInputRef.current.value = "";
         }
@@ -416,16 +410,29 @@ return (
                     )}
 
                     {/* Messages Container */}
+                    {historyLoading && <p role="status" className="px-5 py-2 text-sm text-text-2">Chargement de tes messages…</p>}
+                    {historyError && <div role="alert" className="px-5 py-2 text-sm text-text-2">
+                        {historyError}
+                        <button className="ml-2 underline" onClick={() => {
+                            setHistoryError("");
+                            setHistoryLoading(true);
+                            setHistoryRetry((value) => value + 1);
+                        }}>Réessayer</button>
+                    </div>}
                     <div 
-                        ref={scrollRef} 
+                        ref={scrollRef}
+                        onScroll={(e) => {
+                            const el = e.currentTarget;
+                            followBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+                        }}
                         role="log"
                         aria-live="polite"
                         aria-label="Historique des messages"
                         className="flex-1 overflow-y-auto custom-scroll px-5 py-4 space-y-4"
                     >
-                        {messages.map((m, i) =>
+                        {messages.filter((m) => m.text || !m.streaming).map((m, i) =>
                             m.role === "bot" ? (
-                                <div key={i} className="flex items-end gap-3 group">
+                                <div key={m.id || i} className="flex items-end gap-3 group">
                                     <div className="shrink-0 w-8 h-8 flex items-center justify-center mb-0.5" aria-hidden="true">
                                         <Poulpie size={26} />
                                     </div>
@@ -433,9 +440,10 @@ return (
                                     <div className="max-w-[84%] bg-card border border-border-soft rounded-2xl rounded-bl-sm px-4 py-3 text-[13px] text-text leading-relaxed shadow-xs">
                                         {/* رندر مارک‌داون پیام */}
                                         <ReactMarkdown>{m.text}</ReactMarkdown>
+                                        {m.streaming && <span className="inline-block w-1.5 h-4 bg-accent animate-pulse" aria-hidden="true" />}
 
                                         {/* نوار ابزار پایین پیام (صدا + کپی) */}
-                                        {m.text && (
+                                        {m.text && !m.streaming && (
                                             <div className="mt-2 pt-2 border-t border-border-soft/40 flex items-center gap-2 select-none">
                                                 <button
                                                     onClick={() => speakText(m.text)}
@@ -472,7 +480,7 @@ return (
                         )}
 
                         {/* نشانگر تایپ ربات (خارج از حلقه پیام‌ها) */}
-                        {typing && (
+                        {typing && !messages.some((m) => m.streaming && m.text) && (
                             <div className="flex items-end gap-3" role="status" aria-label="Poulpie est en train d'écrire">
                                 <div className="shrink-0 w-8 h-8 flex items-center justify-center mb-0.5" aria-hidden="true">
                                     <Poulpie size={26} talking />
@@ -496,6 +504,7 @@ return (
                                 <button
                                     key={cmd}
                                     onClick={() => sendMessage(cmd)}
+                                    disabled={typing || historyLoading || Boolean(historyError)}
                                     className="shrink-0 text-[11px] font-medium text-text-2 hover:text-text bg-card hover:bg-card/80 border border-border-soft hover:border-accent/50 rounded-xl px-3.5 py-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95"
                                 >
                                     {cmd}
@@ -529,7 +538,8 @@ return (
                         <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileUpload} />
                         
                         <button 
-                            onClick={() => fileInputRef.current?.click()} 
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={typing || historyLoading || Boolean(historyError)}
                             type="button" 
                             aria-label="Joindre un fichier PDF"
                             title="Joindre un fichier PDF"
@@ -539,7 +549,8 @@ return (
                         </button>
                         
                         <button 
-                            onClick={() => sendMessage()} 
+                            onClick={() => sendMessage()}
+                            disabled={typing || historyLoading || Boolean(historyError)}
                             aria-label="Envoyer le message" 
                             title="Envoyer"
                             className="shrink-0 w-10 h-10 flex items-center justify-center bg-accent text-bg rounded-xl hover:opacity-95 active:scale-95 transition-all font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent text-base mb-0.5"
