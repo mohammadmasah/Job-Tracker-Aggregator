@@ -6,8 +6,22 @@ import { STATUS_META } from "../constants/status";
 import { activeApplicationStore } from "../stores/activeApplication";
 import ReactMarkdown from 'react-markdown';
 
-const CHAT_URL = "http://127.0.0.1:8000/chatbot/";
-const ANALYSE_CV_URL = "http://127.0.0.1:8000/analyse-cv/";
+// Match the login host so the browser sends its access_token cookie.
+const chatbotApi = axios.create({
+    baseURL: "http://localhost:8000",
+    withCredentials: true,
+    timeout: 100000,
+});
+
+function chatbotErrorMessage(error, fallback) {
+    if (error.code === "ECONNABORTED" || error.response?.status === 504) {
+        return "Poulpie met trop de temps à répondre. Réessaie dans un instant.";
+    }
+    if (error.response?.status === 401) {
+        return "Ta session a expiré. Reconnecte-toi pour utiliser Poulpie.";
+    }
+    return fallback;
+}
 
 const WELCOME = {
     role: "bot",
@@ -165,13 +179,14 @@ export default function ChatWidget() {
         const payload = buildContext(activeApp, focusKind) + instruction;
 
         try {
-            const res = await axios.post(CHAT_URL, { message: payload });
+            const res = await chatbotApi.post("/chatbot/", { message: payload });
             setTyping(false);                 // on masque les "..." avant de taper
-            await typeOut(res.data.response);
+            setMessages((prev) => [...prev, { role: "bot", text: res.data.response }]);
+            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
         } catch (error) {
             console.error("Erreur connexion Chatbot API:", error);
             setTyping(false);
-            await typeOut("Désolé, je n'arrive pas à joindre le serveur. Vérifie qu'il tourne et réessaie.");
+            await typeOut(chatbotErrorMessage(error, "Désolé, le service de chat est indisponible. Réessaie dans un instant."));
         }
     };
 
@@ -206,15 +221,14 @@ export default function ChatWidget() {
         formData.append("message", "Analyse ce document."); 
 
         try {
-            const res = await axios.post(ANALYSE_CV_URL, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            const res = await chatbotApi.post("/analyse-cv/", formData);
             setTyping(false);
-            await typeOut(res.data.response);
+            setMessages((prev) => [...prev, { role: "bot", text: res.data.response }]);
+            setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
         } catch (error) {
             console.error(error);
             setTyping(false);
-            await typeOut("Erreur lors de l'envoi du fichier.");
+            await typeOut(chatbotErrorMessage(error, "Erreur lors de l'envoi du fichier."));
         } finally {
             if (fileInputRef.current) fileInputRef.current.value = "";
         }

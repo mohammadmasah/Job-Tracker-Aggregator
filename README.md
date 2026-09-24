@@ -180,6 +180,25 @@ Chaque service tourne dans son propre conteneur (`trackit_db`, `trackit_redis`, 
 
 ## Variables d'environnement
 
+### Mac Apple Silicon : accélération GPU du chatbot
+
+Exécuter Ollama directement sur macOS pour utiliser Metal. Le conteneur
+Ollama utilise le CPU sur cette configuration et peut prendre plusieurs minutes.
+
+```bash
+brew install ollama
+docker compose stop ollama
+brew services start ollama
+ollama pull llama3.2
+docker compose -f docker-compose.yml -f compose.macos.yaml up -d --build
+```
+
+Utiliser les deux fichiers Compose pour les prochains démarrages sur Mac.
+Le backend rejoint Ollama via `host.docker.internal:11434` ; les autres
+services restent dans Docker. Après un message, `ollama ps` doit afficher
+`100% GPU`. Le premier message peut prendre plus de temps pour charger le modèle.
+
+
 Créer un fichier `.env` à la racine du backend à partir de l'exemple ci-dessous. **Ne jamais committer de vraies valeurs.**
 
 ```env

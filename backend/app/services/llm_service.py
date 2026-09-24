@@ -8,11 +8,11 @@ load_dotenv()
 def get_llm_model():
     ollama_url = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
     model = ChatOllama(
-        model = "llama3.2",
+        model = os.getenv("OLLAMA_MODEL", "llama3.2"),
         base_url=ollama_url,
-        max_tokens=None,
-        timeout=None,
-        max_retries=2,
+        num_predict=1024,
+        keep_alive="15m",
+        client_kwargs={"timeout": 90.0},
         temperature = 0.7
         
     )

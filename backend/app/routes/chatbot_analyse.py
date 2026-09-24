@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from app.services.ai_agents import generate_chatbot_response
 import pdfplumber
 import io
+import asyncio
+from starlette.concurrency import run_in_threadpool
+from httpx import TimeoutException
 from ..api.deps import get_current_user
 
 router = APIRouter(
@@ -27,11 +30,16 @@ async def analyse_cv(
             raise HTTPException(status_code=400, detail="PDF It is empty or has no text.")
 
         full_message = f"{message}\n\n Content CV:\n{pdf_text}"
-        bot_reply = generate_chatbot_response(full_message, session_id=session_id)
+        bot_reply = await asyncio.wait_for(
+            run_in_threadpool(generate_chatbot_response, full_message, session_id=session_id),
+            timeout=90,
+        )
         return {"response": bot_reply}
 
     except HTTPException:
         raise
+    except (TimeoutError, TimeoutException):
+        raise HTTPException(status_code=504, detail="Le modèle met trop de temps à répondre. Réessaie.")
     except Exception as e:
         print(f"ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
