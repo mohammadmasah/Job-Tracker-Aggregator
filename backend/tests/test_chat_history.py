@@ -90,7 +90,7 @@ class PersistentChatTests(unittest.TestCase):
         app = FastAPI()
         app.include_router(chatbot.router)
         app.dependency_overrides[get_current_user] = lambda: SimpleNamespace(id=1)
-        with TestClient(app) as client:
+        with TestClient(app) as client, patch.object(chatbot, "get_user_applications_context", return_value='{"summary": {}, "contacts": []}'):
             self.assertEqual(client.post("/chatbot/local/", json={"command": "/help"}).status_code, 200)
             history = client.get("/chatbot/history/").json()["messages"]
             self.assertEqual(history[0]["text"], "/help")

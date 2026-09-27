@@ -3,10 +3,12 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 from httpx import TimeoutException
 import asyncio
+import json
 from typing import Literal
 from langchain_core.messages import HumanMessage, AIMessage
 
-from app.services.ai_agents import generate_chatbot_response
+from app.services.ai_agents import generate_chatbot_response, get_user_applications_context
+from app.services.workspace_updates import SNAPSHOT_KEY, describe_updates, records_from_snapshot
 from app.services.chat_stream import streaming_chat_response
 from ..api.deps import get_current_user
 from app.models import User
@@ -69,7 +71,11 @@ def save_local_command(request: LocalCommandRequest, user: User = Depends(get_cu
         if request.command == "/help" else
         "Ouvre d'abord une candidature (clique une carte) pour que je puisse t'aider dessus."
     )
-    DatabaseChatHistory(user.id, "default").add_messages([
-        HumanMessage(content=request.command), AIMessage(content=reply),
+    history = DatabaseChatHistory(user.id, "default")
+    records = records_from_snapshot(json.loads(get_user_applications_context()))
+    notice, current = describe_updates(records, history.messages, request.command)
+    reply = notice + reply
+    history.add_messages([
+        HumanMessage(content=request.command), AIMessage(content=reply, additional_kwargs={SNAPSHOT_KEY: json.dumps(current)}),
     ])
     return {"response": reply}

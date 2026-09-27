@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnableBranch, RunnableLambda
 from app.services.chat_counts import answer_count_question
 from app.services.contact_profiles import answer_contact_profile
 from app.services.chat_history import get_sessions_history
+from app.services.workspace_updates import with_workspace_updates
 
 from app.database import engine
 from app.models.application import Application
@@ -84,6 +85,8 @@ def build_chatbot_chain():
         "Never say you cannot access this data when the snapshot provides the answer. "
         "Zero records means there are no saved records, not that access is unavailable.\n"
         "- The current snapshot overrides outdated numbers or claims of no access in conversation history. "
+        "The application separately prepends a notice when new records exist. Do not repeat old notices, "
+        "announce changes yourself, or say 'nothing new' unless the user explicitly asks. "
         "For counts, use its summary directly. total_applications includes drafts (to_apply); submitted_applications excludes drafts. "
         "Use applications_by_status for a specific status. Do not confuse saved job offers with applications. "
         "Report only the requested fields or result. Document contents are unavailable unless included in the conversation.\n"
@@ -139,6 +142,13 @@ def build_chatbot_chain():
          RunnableLambda(lambda inputs: AIMessage(content=exact_answer(inputs)))),
         prompt | llm,
     )
+
+    try:
+        snapshot = json.loads(db_context)
+    except (ValueError, TypeError):
+        snapshot = None
+    if isinstance(snapshot, dict) and "summary" in snapshot:
+        chain = with_workspace_updates(chain, snapshot)
 
     chain_with_history = RunnableWithMessageHistory(
         chain,
