@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.post("/")
 async def analyse_cv(
-    message: str = Form(default="Review the CV briefly: identify up to 3 specific improvements, with no introduction."),
+    message: str = Form(default=""),
     session_id: str = Form(default="default", min_length=1, max_length=80),
     file: UploadFile = File(...),
     stream: bool = Form(default=False),
@@ -33,9 +33,11 @@ async def analyse_cv(
         if not pdf_text.strip():
             raise HTTPException(status_code=400, detail="PDF It is empty or has no text.")
 
-        full_message = f"{message}\n\n Content CV:\n{pdf_text}"
+        caption = message.strip()
+        instruction = caption or "Analyse brièvement ce document et donne jusqu'à 3 remarques concrètes, sans introduction."
+        full_message = f"{instruction}\n\n Content PDF:\n{pdf_text}"
         session_id = f"{user.id}:{session_id}"
-        display_message = file.filename or "Document PDF"
+        display_message = "\n\n".join(filter(None, [file.filename or "Document PDF", caption]))
         if stream:
             return streaming_chat_response(full_message, session_id, display_message)
         bot_reply = await asyncio.wait_for(

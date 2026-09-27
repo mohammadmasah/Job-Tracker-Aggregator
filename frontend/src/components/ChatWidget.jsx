@@ -94,6 +94,9 @@ export default function ChatWidget() {
     const [closing, setClosing] = useState(false);
     const [messages, setMessages] = useState([WELCOME]);
     const [input, setInput] = useState("");
+    const [attachment, setAttachment] = useState(null);
+    const [attachmentError, setAttachmentError] = useState("");
+    const inputRef = useRef(null);
     const [typing, setTyping] = useState(false);
     const [unread, setUnread] = useState(false);
     const [historyLoading, setHistoryLoading] = useState(true);
@@ -132,6 +135,7 @@ export default function ChatWidget() {
                 setMessages((prev) => prev.map((m) => m.id === id ? { ...m, text: currentText } : m));
             }, controller.signal);
             setOpen((isOpen) => { if (!isOpen) setUnread(true); return isOpen; });
+            return true;
         } catch (error) {
             if (error.name !== "AbortError") {
                 const errorText = chatbotErrorMessage(error);
@@ -139,6 +143,7 @@ export default function ChatWidget() {
                     ? { ...m, text: text ? `${text}\n\n${errorText}` : errorText }
                     : m));
             }
+            return false;
         } finally {
             clearTimeout(timer);
             requestRef.current = null;
@@ -173,10 +178,27 @@ export default function ChatWidget() {
     const sendMessage = async (textToSend = null) => {
         const raw = typeof textToSend === "string" ? textToSend : input;
         const text = raw.trim();
-        if (!text || requestRef.current || historyLoading || historyError) return;
+        if ((!text && !attachment) || requestRef.current || historyLoading || historyError) return;
         followBottom.current = true;
-        setMessages((prev) => [...prev, { role: "user", text }]);
+        const file = attachment;
+        const displayText = file ? [file.name, text].filter(Boolean).join("\n\n") : text;
+        setMessages((prev) => [...prev, { role: "user", text: displayText }]);
         setInput("");
+        if (inputRef.current) inputRef.current.style.height = "auto";
+        if (file) {
+            setAttachment(null);
+            setAttachmentError("");
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("message", text);
+            formData.append("stream", "true");
+            const sent = await receiveResponse("/analyse-cv/", formData);
+            if (!sent) {
+                setAttachment((current) => current || file);
+                setInput((current) => current || text);
+            }
+            return;
+        }
         const local = localCommand(text, activeApp);
         if (local !== null) {
             const controller = new AbortController();
@@ -212,20 +234,17 @@ export default function ChatWidget() {
 
     const fileInputRef = useRef(null);
 
-    const handleFileUpload = async (e) => {
+    const handleFileSelect = (e) => {
         const file = e.target.files?.[0];
+        e.target.value = "";
         if (!file || requestRef.current || historyLoading || historyError) return;
-        followBottom.current = true;
-        setMessages((prev) => [...prev, { role: "user", text: file.name }]);
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("message", "Analyse ce document.");
-        formData.append("stream", "true");
-        try {
-            await receiveResponse("/analyse-cv/", formData);
-        } finally {
-            if (fileInputRef.current) fileInputRef.current.value = "";
+        if (!file.name.toLowerCase().endsWith(".pdf")) {
+            setAttachmentError("Choisis un fichier PDF.");
+            return;
         }
+        setAttachment(file);
+        setAttachmentError("");
+        inputRef.current?.focus();
     };
     useEffect(() => {
         const hasOpenedBefore = sessionStorage.getItem("poulpie_opened");
@@ -504,7 +523,7 @@ return (
                                 <button
                                     key={cmd}
                                     onClick={() => sendMessage(cmd)}
-                                    disabled={typing || historyLoading || Boolean(historyError)}
+                                    disabled={typing || historyLoading || Boolean(historyError) || Boolean(attachment)}
                                     className="shrink-0 text-[11px] font-medium text-text-2 hover:text-text bg-card hover:bg-card/80 border border-border-soft hover:border-accent/50 rounded-xl px-3.5 py-1.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95"
                                 >
                                     {cmd}
@@ -514,8 +533,19 @@ return (
                     )}
 
                     {/* Input Controls */}
+                    {attachment && (
+                        <div className="flex items-center gap-2 px-5 py-2 border-t border-border-soft bg-card text-sm" role="status">
+                            <IoDocumentTextOutline className="shrink-0 text-accent" aria-hidden="true" />
+                            <span className="min-w-0 flex-1 truncate" title={attachment.name}>{attachment.name}</span>
+                            <button type="button" onClick={() => { setAttachment(null); setAttachmentError(""); }}
+                                aria-label="Retirer le PDF joint" title="Retirer le PDF"
+                                className="shrink-0 p-1 rounded hover:bg-bg focus-visible:ring-2 focus-visible:ring-accent">✕</button>
+                        </div>
+                    )}
+                    {attachmentError && <p role="alert" className="px-5 py-2 text-sm text-text-2">{attachmentError}</p>}
                     <div className="flex items-end gap-2.5 px-5 py-3.5 border-t border-border-soft bg-bg-2/50">
                         <textarea
+                            ref={inputRef}
                             rows={1}
                             value={input}
                             onChange={(e) => {
@@ -530,12 +560,12 @@ return (
                                     e.target.style.height = "auto";
                                 }
                             }}
-                            placeholder={activeApp ? `Une question sur ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company} ?` : "Pose une question ou tape /help"}
+                            placeholder={attachment ? "Que veux-tu savoir sur ce PDF ? (facultatif)" : activeApp ? `Une question sur ${isContact ? activeApp.name : isOffer ? activeApp.title : activeApp.company} ?` : "Pose une question ou tape /help"}
                             className="flex-1 bg-bg border border-border-soft rounded-xl px-4 py-2.5 text-[13px] text-text placeholder-text-3 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all resize-none max-h-[120px] custom-scroll leading-relaxed"
                             aria-label="Votre message"
                         />
                         
-                        <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileUpload} />
+                        <input type="file" ref={fileInputRef} className="hidden" accept=".pdf,application/pdf" onChange={handleFileSelect} />
                         
                         <button 
                             onClick={() => fileInputRef.current?.click()}
@@ -550,7 +580,7 @@ return (
                         
                         <button 
                             onClick={() => sendMessage()}
-                            disabled={typing || historyLoading || Boolean(historyError)}
+                            disabled={typing || historyLoading || Boolean(historyError) || (!input.trim() && !attachment)}
                             aria-label="Envoyer le message" 
                             title="Envoyer"
                             className="shrink-0 w-10 h-10 flex items-center justify-center bg-accent text-bg rounded-xl hover:opacity-95 active:scale-95 transition-all font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent text-base mb-0.5"
