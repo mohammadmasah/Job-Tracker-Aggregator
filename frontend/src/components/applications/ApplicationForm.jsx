@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ContactCard from "../contacts/ContactCard";
 import { scrapeUrl } from "../../api/scraper";
 
@@ -20,26 +20,43 @@ export default function ApplicationForm({ onSubmit, onCancel, initial }) {
     const [contacts, setContacts] = useState([]);
     const [files, setFiles] = useState([]);
     const [scraping, setScraping] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
+    const submitting = useRef(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (submitting.current) return;
+        if (!company.trim() || !position.trim()) {
+            setSaveError("Renseigne l'entreprise et le poste.");
+            return;
+        }
+        submitting.current = true;
+        setSaving(true);
+        setSaveError("");
         const application = {
-            company, location, position, sector,
+            company: company.trim(), location, position: position.trim(), sector,
             salary, remote, type, status, notes, url,
             ...(date && { applied_at: date }),
         };
 
-        if (isEdit) {
-            onSubmit(application);
-            return;
+        try {
+            await onSubmit(isEdit ? application : { application, contacts, files });
+            if (!isEdit) {
+                setUrl(""); setCompany(""); setLocation(""); setPosition("");
+                setSector(""); setSalary(""); setRemote(false); setType("alternance");
+                setStatus("to_apply"); setDate(""); setNotes("");
+                setContacts([]); setFiles([]);
+            }
+        } catch (error) {
+            const detail = error.response?.data?.detail;
+            setSaveError(error.response?.status === 401
+                ? "Ta session a expiré. Reconnecte-toi pour enregistrer ta candidature."
+                : typeof detail === "string" ? detail : "L'enregistrement a échoué. Tes informations sont conservées, réessaie.");
+        } finally {
+            submitting.current = false;
+            setSaving(false);
         }
-
-        onSubmit({ application, contacts, files });
-
-        setUrl(""); setCompany(""); setLocation(""); setPosition("");
-        setSector(""); setSalary(""); setRemote(false); setType("alternance");
-        setStatus("to_apply"); setDate(""); setNotes("");
-        setContacts([]); setFiles([]);
     };
 
     // Contacts
@@ -129,11 +146,11 @@ export default function ApplicationForm({ onSubmit, onCancel, initial }) {
                         </div>
 
                         <div className="grid grid-flow-col gap-5">
-                            <input type="text" placeholder="Entreprise" value={company} onChange={(e) => setCompany(e.target.value)} className={input} />
+                            <input type="text" required placeholder="Entreprise" value={company} onChange={(e) => setCompany(e.target.value)} className={input} />
                             <input type="text" placeholder="Localisation" value={location} onChange={(e) => setLocation(e.target.value)} className={input} />
                         </div>
 
-                        <input type="text" placeholder="Poste" value={position} onChange={(e) => setPosition(e.target.value)} className={input} />
+                        <input type="text" required placeholder="Poste" value={position} onChange={(e) => setPosition(e.target.value)} className={input} />
 
                         <div className="grid grid-cols-2 gap-5">
                             <input type="text" placeholder="Secteur" value={sector} onChange={(e) => setSector(e.target.value)} className={input} />
@@ -244,12 +261,14 @@ export default function ApplicationForm({ onSubmit, onCancel, initial }) {
                     >
                         Annuler
                     </button>
+                    {saveError && <p role="alert" className="text-sm text-red-500">{saveError}</p>}
                     <button
                         type="submit"
                         form="app-form"
+                        disabled={saving || scraping}
                         className="px-5 py-2 text-[11px] font-semibold tracking-wider text-bg bg-accent hover:bg-accent-2 uppercase font-mono rounded-[4px] transition-colors"
                     >
-                        {isEdit ? "Enregistrer" : "Créer la candidature"}
+                        {saving ? "Enregistrement…" : isEdit ? "Enregistrer" : "Créer la candidature"}
                     </button>
                 </div>
             </footer>

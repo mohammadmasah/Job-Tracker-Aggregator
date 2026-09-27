@@ -48,7 +48,7 @@ export default function QuickApply({ offer, onClose, onCreated }) {
             const appId = res.data.id;
             for (const c of contacts) {
                 if (!c.name.trim()) continue;
-                const cr = await createContact({ name: c.name, application_id: appId });
+                const cr = await createContact({ name: c.name, application_ids: [appId] });
                 for (const info of c.infos.filter((i) => i.trim()))
                     await createContactMethod(cr.data.id, { type: detectType(info), value: info });
             }

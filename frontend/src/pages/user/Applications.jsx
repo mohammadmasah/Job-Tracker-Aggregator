@@ -45,7 +45,7 @@ export default function Applications() {
         const res = await createApplication(data.application);
         const applicationId = res.data.id;
         for (const contact of data.contacts) {
-            const contactRes = await createContact({ name: contact.name, notes: contact.notes, application_id: applicationId });
+            const contactRes = await createContact({ name: contact.name, notes: contact.notes, application_ids: [applicationId] });
             for (const info of contact.infos.filter((i) => i.trim())) {
                 await createContactMethod(contactRes.data.id, { type: detectType(info), value: info });
             }

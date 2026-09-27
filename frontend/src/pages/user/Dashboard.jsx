@@ -32,7 +32,7 @@ export default function Dashboard() {
             const contactRes = await createContact({
                 name: contact.name,
                 notes: contact.notes,
-                application_id: applicationId
+                application_ids: [applicationId]
             });
             const contactId = contactRes.data.id;
 

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create
 export const createApplication = (data) => {
-    return axios.post("/api/applications", { withCredentials: true }, data);
+    return axios.post("/api/applications", data, { withCredentials: true });
 }
 
 // Get
@@ -34,5 +34,5 @@ export const deleteApplication = (id) => {
 
 // Update
 export const updateApplication = (id, data) => {
-    return axios.patch(`/api/applications/${id}`, { withCredentials: true }, data)
+    return axios.patch(`/api/applications/${id}`, data, { withCredentials: true })
 }
