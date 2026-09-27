@@ -11,6 +11,7 @@ def get_llm_model():
         model = os.getenv("OLLAMA_MODEL", "llama3.2"),
         base_url=ollama_url,
         num_predict=1024,
+        num_ctx=8192,
         keep_alive="15m",
         client_kwargs={"timeout": 90.0},
         temperature = 0.7
