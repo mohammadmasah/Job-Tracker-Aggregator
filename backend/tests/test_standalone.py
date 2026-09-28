@@ -1,7 +1,11 @@
 import tempfile
 import time
 import unittest
+import io
+import json
+from unittest.mock import Mock, patch
 from pathlib import Path
+from app.core.ai_config import DEFAULT_MODEL
 from app.core.local_cache import LocalCache
 from app.services.local_runtime import LocalRuntime
 
@@ -27,3 +31,29 @@ class StandaloneTests(unittest.TestCase):
             self.assertIsNone(runtime.executable())
             self.assertEqual(list(Path(directory).iterdir()), [])
             runtime.stop()
+
+    def test_existing_model_starts_without_network_download(self):
+        with tempfile.TemporaryDirectory() as directory:
+            executable = Path(directory) / 'runtime' / 'bin' / 'ollama'
+            executable.parent.mkdir(parents=True)
+            executable.touch()
+            runtime = LocalRuntime(directory)
+            runtime.process = Mock()
+            runtime.process.poll.return_value = None
+            runtime.lock.acquire()
+            response = io.BytesIO(json.dumps({'models': [{'name': DEFAULT_MODEL}]}).encode())
+            with patch.dict('os.environ', {'OLLAMA_BASE_URL': 'http://127.0.0.1:11435', 'OLLAMA_MODEL': DEFAULT_MODEL}), \
+                 patch.object(runtime, 'executable', return_value=executable), \
+                 patch('urllib.request.urlopen', return_value=response) as request:
+                runtime.prepare()
+            self.assertEqual(runtime.state['phase'], 'ready')
+            request.assert_called_once_with('http://127.0.0.1:11435/api/tags', timeout=2)
+
+    def test_executable_search_ignores_library_directory(self):
+        with tempfile.TemporaryDirectory() as directory, patch('platform.system', return_value='Linux'):
+            root = Path(directory) / 'runtime'
+            (root / 'lib' / 'ollama').mkdir(parents=True)
+            (root / 'bin').mkdir()
+            executable = root / 'bin' / 'ollama'
+            executable.touch()
+            self.assertEqual(LocalRuntime(directory).executable(), executable)

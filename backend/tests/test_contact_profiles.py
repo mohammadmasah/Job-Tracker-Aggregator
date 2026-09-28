@@ -35,4 +35,4 @@ class ContactProfileTests(unittest.TestCase):
     def test_persian_and_english_labels(self):
         self.assertIn("Email :", answer_contact_profile("Show me all details of Mohammad", self.snapshot))
         self.contact["name"] = "محمد"
-        self.assertEqual(answer_contact_profile("تمام مشخصات محمد را بده", self.snapshot), "**محمد**\n- ایمیل : mohammad@example.com")
+        self.assertEqual(answer_contact_profile("تمام مشخصات محمد را بده", self.snapshot), "**محمد**\n- Email : mohammad@example.com")

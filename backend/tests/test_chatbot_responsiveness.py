@@ -33,7 +33,7 @@ class ChatbotResponsivenessTests(unittest.IsolatedAsyncioTestCase):
 
     def test_model_has_output_and_transport_limits(self):
         model = get_llm_model()
-        self.assertEqual(model.num_predict, 1024)
+        self.assertEqual(model.num_predict, 512)
         self.assertEqual(model.client_kwargs["timeout"], 90.0)
 
 

@@ -10,9 +10,9 @@ import certifi
 import subprocess
 import tarfile
 import threading
-import time
 import urllib.request
 import zipfile
+from app.core.ai_config import DEFAULT_MODEL
 
 VERSION = 'v0.34.4'
 ASSETS = {
@@ -41,7 +41,7 @@ class LocalRuntime:
 
     def executable(self):
         name = 'ollama.exe' if platform.system() == 'Windows' else 'ollama'
-        return next((self.directory / 'runtime').rglob(name), None)
+        return next((path for path in (self.directory / 'runtime').rglob(name) if path.is_file()), None)
 
     def install(self):
         asset, digest = ASSETS[platform.system()]
@@ -100,7 +100,8 @@ class LocalRuntime:
             base = os.environ['OLLAMA_BASE_URL']
             if not self.process or self.process.poll() is not None:
                 self.update('starting', "Démarrage de l'IA locale…")
-                env = dict(os.environ, OLLAMA_HOST=base, OLLAMA_MODELS=str(self.directory / 'models'))
+                env = dict(os.environ, OLLAMA_HOST=base, OLLAMA_MODELS=str(self.directory / 'models'),
+                           OLLAMA_NUM_PARALLEL='1', OLLAMA_MAX_LOADED_MODELS='1')
                 self.log = (self.directory / 'ollama.log').open('a', encoding='utf-8')
                 self.process = subprocess.Popen([str(executable), 'serve'], env=env, stdout=self.log, stderr=self.log,
                                                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
@@ -110,14 +111,19 @@ class LocalRuntime:
                 if self.process.poll() is not None:
                     raise RuntimeError("Le moteur IA n'a pas démarré. Consulte ollama.log.")
                 try:
-                    with urllib.request.urlopen(f'{base}/api/tags', timeout=2):
+                    with urllib.request.urlopen(f'{base}/api/tags', timeout=2) as response:
+                        installed = json.load(response).get('models', [])
                         break
                 except OSError:
                     continue
             else:
                 raise RuntimeError("Le moteur IA ne répond pas.")
-            self.update('model', 'Téléchargement du modèle llama3.2 (environ 2 Go)…')
-            request = urllib.request.Request(f'{base}/api/pull', data=json.dumps({'name': 'llama3.2', 'stream': True}).encode(), headers={'Content-Type': 'application/json'})
+            model = os.getenv('OLLAMA_MODEL', DEFAULT_MODEL)
+            if any(item.get('name') == model for item in installed):
+                self.update('ready', f'L’IA locale est prête ({model}).', 100)
+                return
+            self.update('model', f'Téléchargement du modèle léger {model} (environ 1,4 Go)…')
+            request = urllib.request.Request(f'{base}/api/pull', data=json.dumps({'name': model, 'stream': True}).encode(), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(request, timeout=600) as response:
                 for line in response:
                     data = json.loads(line)

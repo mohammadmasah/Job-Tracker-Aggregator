@@ -13,11 +13,19 @@ Sur Mac, ouvre `TrackIt.app`. Sur Windows, conserve le dossier `_internal` à c�
 
 1. Arrête l'édition Docker si elle utilise déjà les ports 3000 ou 8000. Si `localhost:3000` affiche tes anciennes données alors que TrackIt ne démarre pas, c'est la version Docker qui répond, pas l'archive téléchargée. Les nouvelles archives ne réinitialisent jamais automatiquement une base existante.
 2. Lance TrackIt et crée ton compte local. Chaque installation démarre avec une base vide, sans les données du développeur.
-3. Pour le chatbot, ouvre **Installation locale · IA** et choisis **Activer l'IA locale**. TrackIt télécharge une version vérifiée d'Ollama dans son propre dossier, puis `llama3.2`. Prévois jusqu'à 3,5 Go de téléchargement et au moins 8 Go libres ; le temps et les performances dépendent du matériel. Aucun installateur externe n'est lancé, aucun droit administrateur n'est demandé.
+3. Pour le chatbot, ouvre **Installation locale · IA** et choisis **Activer l'IA locale**. TrackIt télécharge une version vérifiée d'Ollama dans son propre dossier, puis `qwen3:1.7b`. Prévois jusqu'à 3 Go de téléchargement et au moins 6 Go libres ; le temps et les performances dépendent du matériel. Aucun installateur externe n'est lancé, aucun droit administrateur n'est demandé.
 4. Les candidatures et contacts fonctionnent sans IA. Après le téléchargement, le chat fonctionne localement. Les offres en ligne nécessitent Internet ; les fournisseurs demandant des clés API ne sont pas préconfigurés. L'envoi d'e-mails nécessite une configuration SMTP ; dans l'édition locale, les tentatives de connexion bloquent temporairement le compte pendant 15 minutes plutôt que d'exiger un e-mail.
 5. Pour fermer le service, utilise **Installation locale · IA → Arrêter TrackIt**. Fermer un onglet ou se déconnecter ne ferme pas le service.
 
 L'extension Chrome reste optionnelle et se charge séparément depuis son dossier, comme documenté dans `job-tracker-extension/README.md`.
+
+## IA légère et langues
+
+Le modèle par défaut est [Qwen3 1.7B](https://ollama.com/library/qwen3:1.7b), environ 1,4 Go, exécuté par Ollama avec le mode réflexion désactivé. Le moteur privé charge un seul modèle à la fois ; le modèle est déchargé après deux minutes d'inactivité. Cela réduit la charge, sans garantir une vitesse identique sur tous les ordinateurs. Le moteur Ollama reste nécessaire et se prépare automatiquement depuis l'application.
+
+Après une mise à jour depuis une ancienne bêta, arrête TrackIt, remplace l'application, puis active l'IA dans **Installation locale · IA** pour préparer le nouveau modèle. Les candidatures, documents et conversations existants restent conservés. Les anciens modèles ne sont pas supprimés automatiquement. Un modèle déjà préparé est réutilisé sans téléchargement au prochain lancement.
+
+Les réponses sont limitées au français et à l'anglais ; les demandes dans une autre langue sont traitées en français. Le texte généré est vérifié par phrase avant affichage et enregistrement. Si une langue non autorisée est détectée, une courte invitation en français remplace la suite. Les noms du répertoire, adresses et blocs de code peuvent conserver leur écriture d'origine. La détection automatique peut se tromper, surtout sur les fragments très courts.
 
 ## Données et sauvegarde
 

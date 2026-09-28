@@ -32,8 +32,7 @@ def answer_contact_profile(question, snapshot):
     labels = {
         "fr": {"email": "Email", "phone": "Téléphone", "linkedin": "LinkedIn", "other": "Coordonnée", "notes": "Notes", "applications": "Candidatures liées"},
         "en": {"email": "Email", "phone": "Phone", "linkedin": "LinkedIn", "other": "Contact", "notes": "Notes", "applications": "Linked applications"},
-        "fa": {"email": "ایمیل", "phone": "تلفن", "linkedin": "لینکدین", "other": "راه ارتباطی", "notes": "یادداشت", "applications": "درخواست‌های مرتبط"},
-    }[language]
+    }["en" if language == "en" else "fr"]
     contact = contacts[0]
     lines = [f"**{contact['name']}**"]
     for method in contact.get("methods", []):

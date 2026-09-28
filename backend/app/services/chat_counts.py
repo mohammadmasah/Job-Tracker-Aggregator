@@ -15,13 +15,13 @@ def answer_count_question(question, summary):
         noun, verb = fa.groups()
         if noun in {"کاندید", "کاندیدا", "درخواست کاری", "درخواست کار", "درخواست"}:
             key = "submitted_applications" if verb in {"کردم", "ارسال کردم"} else "total_applications"
-            label = "درخواست کاری"
+            label = "candidature(s)"
         else:
-            key, label = {"مخاطب": ("total_contacts", "مخاطب"), "کانتکت": ("total_contacts", "مخاطب"),
-                          "فرصت شغلی": ("total_job_offers", "فرصت شغلی"), "سند": ("total_documents", "سند"),
-                          "فایل": ("total_documents", "فایل")}[noun]
-        count = str(summary[key]).translate(str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹"))
-        return f"تا الان {count} {label} ثبت کرده‌ای."
+            key, label = {"مخاطب": ("total_contacts", "contact(s)"), "کانتکت": ("total_contacts", "contact(s)"),
+                          "فرصت شغلی": ("total_job_offers", "offre(s)"), "سند": ("total_documents", "document(s)"),
+                          "فایل": ("total_documents", "document(s)")}[noun]
+        count = summary[key]
+        return f"Tu as {count} {label} au total."
     fr = re.fullmatch(r"combien (?:de |d')?(candidatures|contacts|offres|documents)(?: (?:j'ai|ai-je|ai je|enregistrees|enregistres|au total|ai-je enregistre|ai-je enregistrees))?", text)
     en = re.fullmatch(r"how many (applications|contacts|offers|documents)(?: (?:do i have|have i saved))?", text)
     match = fr or en

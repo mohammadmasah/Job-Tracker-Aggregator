@@ -46,7 +46,7 @@ export default function LocalInstallation() {
         </section>
         <section className="rounded-xl border border-border-soft bg-panel p-5 space-y-3">
             <h2 className="font-bold">Poulpie · IA locale</h2>
-            <p className="text-text-2">Active l'assistant pour télécharger automatiquement son moteur et son modèle. Prévois une connexion Internet, environ 3,5 Go de téléchargement et au moins 8 Go d'espace libre. Après préparation, le chat fonctionne localement.</p>
+            <p className="text-text-2">Active l'assistant pour télécharger automatiquement son moteur et Qwen3 1.7B, un modèle léger d’environ 1,4 Go. Prévois une connexion Internet, environ 3 Go de téléchargement et au moins 6 Go d'espace libre. Après préparation, le chat fonctionne localement.</p>
             <p role="status">{runtime?.message || 'Chargement…'}</p>
             {working && <progress className="w-full accent-blue-500" value={runtime.progress || undefined} max="100" aria-label="Préparation de l’IA" />}
             {runtime && ['idle', 'error'].includes(runtime.phase) && <button disabled={sending} onClick={activate} className="rounded-lg bg-accent px-4 py-2 font-semibold text-white disabled:opacity-50">{sending ? 'Préparation…' : "Activer l’IA locale"}</button>}

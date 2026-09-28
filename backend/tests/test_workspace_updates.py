@@ -26,7 +26,7 @@ class WorkspaceUpdateTests(unittest.TestCase):
         history = [AIMessage(content="", additional_kwargs={SNAPSHOT_KEY: json.dumps(current)})]
         notice, _ = describe_updates(records_from_snapshot(self.snapshot([2])), history, "سلام")
         self.assertIn("Contact 2", notice)
-        self.assertIn("مخاطب", notice)
+        self.assertIn("contact(s)", notice)
         self.assertNotIn("Contact 1", notice)
 
     def test_deletions_alone_are_silent(self):

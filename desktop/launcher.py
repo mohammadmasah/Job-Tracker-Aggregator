@@ -10,6 +10,7 @@ import sys
 import threading
 import time
 import webbrowser
+from app.core.ai_config import DEFAULT_MODEL
 
 
 def data_directory():
@@ -36,7 +37,7 @@ def prepare_environment(directory):
     os.environ.update(TRACKIT_STANDALONE='1', TRACKIT_DATA_DIR=str(directory),
                       DATABASE_URL='sqlite:///' + (directory / 'trackit.db').as_posix(),
                       SECRET_KEY=secret.read_text().strip(), PYTHON_DOTENV_DISABLED='1',
-                      OLLAMA_BASE_URL='http://127.0.0.1:11435', OLLAMA_MODEL='llama3.2')
+                      OLLAMA_BASE_URL='http://127.0.0.1:11435', OLLAMA_MODEL=DEFAULT_MODEL)
     os.chdir(directory)
 
 

@@ -47,7 +47,7 @@ TrackIt est né d'un besoin concret : automatiser et structurer une recherche d'
 | Contacts | Association contact ↔ candidature (table de liaison dédiée) |
 | Documents | Upload et analyse de CV (endpoint `/analyse-cv/`) |
 | Offres | Scraping WeLoveDevs, intégration API Adzuna, La Bonne Alternance |
-| Chatbot IA | LangChain + Ollama (`llama3.2`), historique de conversation, contexte DB en temps réel |
+| Chatbot IA | LangChain + Ollama (`qwen3:1.7b`), historique de conversation, contexte DB en temps réel |
 | Notifications | Envoi d'e-mails via SMTP (relances, réinitialisation de mot de passe) |
 | Performance | Cache et files via Redis, rate limiting via `slowapi` |
 | Extension navigateur | Capture d'offres en un clic (Manifest V3) |
@@ -68,7 +68,7 @@ TrackIt suit une architecture conteneurisée en services indépendants, orchestr
             ┌───────────────┐               ┌───────────────┐
             │  Redis         │               │  Ollama        │
             │  (cache/rate   │               │  (LLM local -   │
-            │  limiting)     │               │  llama3.2)     │
+            │  limiting)     │               │  qwen3:1.7b)     │
             │  (port 6379)   │               │  (port 11434)  │
             └───────────────┘               └───────────────┘
 
@@ -104,7 +104,7 @@ Chaque service tourne dans son propre conteneur (`trackit_db`, `trackit_redis`, 
 - Docker & Docker Compose
 - PostgreSQL 15 (Alpine)
 - Redis 7 (Alpine)
-- Ollama (modèle local `llama3.2`)
+- Ollama (modèle local `qwen3:1.7b`)
 
 **Extension navigateur**
 - Chrome Extension Manifest V3
@@ -182,7 +182,7 @@ Consulte [le guide de la version téléchargeable](desktop/README.md) pour les t
 
 5. (Optionnel) Charger l'extension Chrome en mode développeur : `chrome://extensions` → *Mode développeur* → *Charger l'extension non empaquetée* → sélectionner le dossier `job-tracker-extension/`.
 
-> ⚠️ Le premier démarrage du conteneur `ollama` peut nécessiter le téléchargement du modèle `llama3.2` (`docker exec -it trackit_ollama ollama pull llama3.2`).
+> ⚠️ Le premier démarrage du conteneur `ollama` peut nécessiter le téléchargement du modèle `qwen3:1.7b` (`docker exec -it trackit_ollama ollama pull qwen3:1.7b`).
 
 ## Variables d'environnement
 
@@ -195,7 +195,7 @@ Ollama utilise le CPU sur cette configuration et peut prendre plusieurs minutes.
 brew install ollama
 docker compose stop ollama
 brew services start ollama
-ollama pull llama3.2
+ollama pull qwen3:1.7b
 docker compose -f docker-compose.yml -f compose.macos.yaml up -d --build
 ```
 

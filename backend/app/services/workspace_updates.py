@@ -32,13 +32,12 @@ def describe_updates(records, history, question):
     # The first observed snapshot establishes a baseline, not a list of "new" records.
     if previous is None:
         return "", current
-    language = "fa" if re.search(r"[\u0600-\u06ff]", question) else (
+    language = "fr" if re.search(r"[\u0600-\u06ff]", question) else (
         "en" if re.search(r"\b(what|how|show|give|hello|hi|please|my)\b", question.lower()) else "fr"
     )
     labels = {
         "fr": ("candidature(s)", "contact(s)", "offre(s)", "document(s)", "coordonnée(s)"),
         "en": ("application(s)", "contact(s)", "job offer(s)", "document(s)", "contact detail(s)"),
-        "fa": ("درخواست کاری", "مخاطب", "فرصت شغلی", "سند", "راه ارتباطی"),
     }[language]
     additions = []
     for key, label in zip(CATEGORIES, labels):
@@ -56,8 +55,8 @@ def describe_updates(records, history, question):
         additions.append(f"{len(added)} {label}{details}")
     if not additions:
         return "", current
-    heading = {"fr": "Nouveaux ajouts depuis notre dernier échange", "en": "New since our last exchange", "fa": "موارد جدید از گفت‌وگوی قبلی"}[language]
-    return f"{heading} : {'، ' .join(additions) if language == 'fa' else ', '.join(additions)}.\n\n", current
+    heading = {"fr": "Nouveaux ajouts depuis notre dernier échange", "en": "New since our last exchange"}[language]
+    return f"{heading} : {', '.join(additions)}.\n\n", current
 
 
 def with_workspace_updates(chain, snapshot):

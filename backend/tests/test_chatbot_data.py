@@ -74,8 +74,8 @@ class ChatbotDataTests(unittest.TestCase):
     def test_simple_counts_are_exact_and_filtered_questions_use_model(self):
         summary = {"total_applications": 8, "submitted_applications": 5, "total_contacts": 2,
                    "total_job_offers": 3, "total_documents": 1}
-        self.assertEqual(answer_count_question("چند تا کاندید کردم؟", summary), "تا الان ۵ درخواست کاری ثبت کرده‌ای.")
-        self.assertEqual(answer_count_question("چند مخاطب دارم؟", summary), "تا الان ۲ مخاطب ثبت کرده‌ای.")
+        self.assertEqual(answer_count_question("چند تا کاندید کردم؟", summary), "Tu as 5 candidature(s) au total.")
+        self.assertEqual(answer_count_question("چند مخاطب دارم؟", summary), "Tu as 2 contact(s) au total.")
         self.assertIn("8", answer_count_question("Combien de candidatures ai-je ?", summary))
         self.assertIn("2", answer_count_question("How many contacts do I have?", summary))
         self.assertIsNone(answer_count_question("Combien de candidatures chez Google ?", summary))
