@@ -96,7 +96,7 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                 </div>
             </div>
 
-            <DeleteButton label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
+            <DeleteButton compact label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
         </div>
     );
 }

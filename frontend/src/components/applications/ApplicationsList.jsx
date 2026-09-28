@@ -227,7 +227,7 @@ function AppLine({ app, active, onClick, fav, onDelete }) {
                 {relance && <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-[3px]" style={{ color: RELANCE_COLOR, border: `1px solid ${RELANCE_COLOR}66` }}>Relance</span>}
             </div>
         </button>
-        <DeleteButton label={`la candidature « ${app.position} — ${app.company} » et ses documents`} onDelete={onDelete} />
+        <DeleteButton compact label={`la candidature « ${app.position} — ${app.company} » et ses documents`} onDelete={onDelete} />
         </div>
     );
 }

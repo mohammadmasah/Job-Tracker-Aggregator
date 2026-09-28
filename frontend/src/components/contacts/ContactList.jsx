@@ -393,7 +393,7 @@ function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, on
                                     <div className="text-[9px] uppercase tracking-wide text-text-3">{methodLabel[m.type] || "Autre"}</div>
                                     <div className="text-[13px] text-text truncate">{m.value}</div>
                                 </div>
-                                <DeleteButton disabled={busy} label={`la coordonnée « ${m.value} »`} onDelete={() => removeMethod(m.id)} />
+                                <DeleteButton compact disabled={busy} label={`la coordonnée « ${m.value} »`} onDelete={() => removeMethod(m.id)} />
                             </div>
                         ))}
                         <div className="flex items-center gap-2 mt-1">

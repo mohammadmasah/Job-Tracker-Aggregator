@@ -75,7 +75,7 @@ export default function ApplicationRow({ application, onDelete, onSelect, favori
             </span>
 
             {/* Supprimer */}
-            <DeleteButton label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
+            <DeleteButton compact label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
         </div>
     );
 }

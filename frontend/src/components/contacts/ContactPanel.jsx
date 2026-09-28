@@ -97,7 +97,7 @@ export default function ContactPanel({ contact, company, applications = [], onCl
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border-soft bg-bg-2">
                     <span className="text-[11px] text-text-2 uppercase tracking-wider">Contact</span>
                     <div className="flex gap-3 text-text-2 text-[16px]">
-                        <DeleteButton disabled={saving} label={`le contact « ${contact.name} » et ses coordonnées`} onDelete={async () => {
+                        <DeleteButton compact disabled={saving} label={`le contact « ${contact.name} » et ses coordonnées`} onDelete={async () => {
                             await deleteContact(contact.id);
                             await onUpdated?.();
                             onClose?.();
