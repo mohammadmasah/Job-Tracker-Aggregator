@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import { useApplications } from "../../hooks/useApplications";
 import ApplicationForm from "../../components/applications/ApplicationForm";
 import ApplicationsList from "../../components/applications/ApplicationsList";
@@ -15,7 +14,6 @@ const detectType = (v) =>
 export default function Applications() {
     const { applications, loading, removeApplication, fetchApplications } = useApplications();
     const [isAddFormOpen, setIsAddFormOpen] = useState(false);
-    const [initialSelectedId, setInitialSelectedId] = useState(null);
 
     // Favoris (localStorage)
     const [favorites, setFavorites] = useState(() => {
@@ -29,17 +27,6 @@ export default function Applications() {
             return next;
         });
     };
-
-    // Ouverture auto via ?open=<id> (lien depuis un contact)
-    const [searchParams, setSearchParams] = useSearchParams();
-    useEffect(() => {
-        const openId = searchParams.get("open");
-        if (openId && applications.length > 0) {
-            setInitialSelectedId(Number(openId));
-            searchParams.delete("open");
-            setSearchParams(searchParams, { replace: true });
-        }
-    }, [applications, searchParams]);
 
     const handleCreate = async (data) => {
         const res = await createApplication(data.application);
@@ -77,7 +64,6 @@ export default function Applications() {
                     onDelete={removeApplication}
                     favorites={favorites}
                     onToggleFavorite={toggleFavorite}
-                    initialSelectedId={initialSelectedId}
                 />
             </div>
 

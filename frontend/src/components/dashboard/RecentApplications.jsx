@@ -30,7 +30,7 @@ export default function RecentApplications({ applications = [] }) {
                     {recentApplications.map((application) => {
                         const status = STATUS_META[application.status] || { label: application.status || "À définir", color: "var(--text-3)" };
                         return (
-                            <Link key={application.id} to="/applications" className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-3.5 transition-colors hover:bg-card">
+                            <Link key={application.id} to={`/applications?open=${application.id}`} className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-3.5 transition-colors hover:bg-card">
                                 <span className="size-2.5 rounded-full" style={{ backgroundColor: status.color }} />
                                 <span className="min-w-0">
                                     <span className="flex items-center gap-2">

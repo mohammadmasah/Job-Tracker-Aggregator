@@ -28,7 +28,7 @@ export default function FollowUpList({ applications = [] }) {
                     {followUps.map((application) => (
                         <Link
                             key={application.id}
-                            to="/applications"
+                            to={`/applications?open=${application.id}`}
                             className="group flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-card"
                         >
                             <span className="size-2 shrink-0 rounded-full bg-c4" />

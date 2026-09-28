@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { STATUS_META } from "../../constants/status";
 
 const STAGES = [
@@ -34,11 +35,11 @@ export default function ApplicationsPipeline({ applications = [] }) {
                 {STAGES.map((status) => {
                     const meta = STATUS_META[status];
                     return (
-                        <div key={status} className="min-h-28 bg-card p-3">
+                        <Link key={status} to={`/applications?status=${status}`} className="min-h-28 bg-card p-3 transition-colors hover:bg-panel focus-visible:outline-2 focus-visible:outline-accent">
                             <span className="mb-6 block h-1 w-7" style={{ backgroundColor: meta.color }} />
                             <span className="block text-2xl font-bold tabular-nums text-text">{counts[status] || 0}</span>
                             <span className="mt-1 block text-[10px] uppercase tracking-wide text-text-3">{meta.label}</span>
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

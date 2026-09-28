@@ -1,30 +1,36 @@
+import { useSearchParams } from "react-router-dom";
+import { matchesApplicationFilter } from "../../utils/applicationFilters";
 import { useState, useMemo, useEffect } from "react";
 import {
-    IoSearchOutline, IoLocationOutline, IoWalletOutline, IoBusinessOutline,
-    IoBriefcaseOutline, IoGlobeOutline, IoStar, IoStarOutline,
-    IoGridOutline, IoListOutline, IoChevronForward, IoFilterOutline, IoChevronDown,
-    IoClose, IoCalendarOutline, IoOpenOutline, IoLayersOutline,
+    IoSearchOutline, IoStar, IoGridOutline, IoListOutline,
+    IoChevronForward, IoFilterOutline, IoChevronDown, IoLayersOutline,
 } from "react-icons/io5";
-import { STATUS_META, STATUS_ORDER, STATUS_OPTIONS, RELANCE_COLOR, needsRelance } from "../../constants/status";
-import { updateApplication } from "../../api/application";
+import { STATUS_META, STATUS_ORDER, RELANCE_COLOR, needsRelance } from "../../constants/status";
 import ApplicationDetail from "./ApplicationDetail";
 import { activeApplicationStore } from "../../stores/activeApplication";
 import ApplicationCard from "./ApplicationCard";
-import ApplicationRow from "./ApplicationRow";
 
-const TYPE_LABELS = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd: "CDD" };
 
-export default function ApplicationsList({ applications = [], onRefresh, onDelete, favorites, onToggleFavorite, initialSelectedId = null }) {
+export default function ApplicationsList({ applications = [], onRefresh, onDelete, favorites, onToggleFavorite }) {
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("recent");
-    const [statusFilter, setStatusFilter] = useState("all");
-    const [selectedId, setSelectedId] = useState(null);
-    useEffect(() => { if (initialSelectedId) setSelectedId(initialSelectedId); }, [initialSelectedId]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const statusFilter = STATUS_ORDER.includes(searchParams.get("status")) ? searchParams.get("status") : "all";
+    const selectedId = Number(searchParams.get("open")) || null;
+    const filter = searchParams.get("filter") || "";
+    const updateParam = (key, value) => setSearchParams((previous) => {
+        const next = new URLSearchParams(previous);
+        if (value && value !== "all") next.set(key, value);
+        else next.delete(key);
+        return next;
+    });
+    const setSelectedId = (id) => updateParam("open", id);
+    const setStatusFilter = (status) => { setCollapsed({}); updateParam("status", status); };
     const [view, setView] = useState(() => localStorage.getItem("app-view") || "list");
     const [collapsed, setCollapsed] = useState({});
-    const [defaultsSet, setDefaultsSet] = useState(false);
-    const [showFilters, setShowFilters] = useState(false);
-    const [relanceOnly, setRelanceOnly] = useState(false);
+    const [showFilters, setShowFilters] = useState(statusFilter !== "all" || Boolean(filter));
+    const relanceOnly = filter === "follow-up";
+    const setRelanceOnly = () => { setCollapsed({}); updateParam("filter", relanceOnly ? "" : "follow-up"); };
     const [favOnly, setFavOnly] = useState(false);
 
     const isFav = (id) => favorites?.includes?.(id);
@@ -36,9 +42,10 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
         const q = search.toLowerCase();
         let r = applications.filter((a) =>
             (statusFilter === "all" || a.status === statusFilter) &&
+            matchesApplicationFilter(a, filter) &&
             (!q || (a.company || "").toLowerCase().includes(q) || (a.position || "").toLowerCase().includes(q)) &&
             (!relanceOnly || needsRelance(a)) &&
-            (!favOnly || isFav(a.id))
+            (!favOnly || favorites?.includes(a.id))
         );
         return [...r].sort((a, b) => {
             if (sortBy === "recent") return new Date(b.applied_at || 0) - new Date(a.applied_at || 0);
@@ -46,11 +53,11 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
             if (sortBy === "company") return (a.company || "").localeCompare(b.company || "");
             return 0;
         });
-    }, [applications, search, sortBy, statusFilter, relanceOnly, favOnly, favorites]);
+    }, [applications, search, sortBy, statusFilter, relanceOnly, favOnly, favorites, filter]);
 
     const relances = useMemo(() => sorted.filter(needsRelance), [sorted]);
     const selected = applications.find((a) => a.id === selectedId) || null;
-    const showDetailMobile = Boolean(selectedId);
+    const showDetailMobile = Boolean(selected);
 
     // Focus Poulpie sur la candidature ouverte (halo accent), sinon en attente
     useEffect(() => {
@@ -59,7 +66,7 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
         return () => activeApplicationStore.clear();
     }, [selected]);
 
-    const openApp = (a) => setSelectedId((cur) => (cur === a.id ? null : a.id));
+    const openApp = (a) => setSelectedId(selectedId === a.id ? null : a.id);
 
     // Sections : relance (toujours en haut) + par statut
     const sections = useMemo(() => {
@@ -73,16 +80,6 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
     }, [sorted, relances]);
 
     const sectionKeys = useMemo(() => sections.map((s) => s.key), [sections]);
-
-    // Replier toutes les sections par défaut (une fois, au premier rendu avec données)
-    useEffect(() => {
-        if (!defaultsSet && sectionKeys.length > 0) {
-            const next = {};
-            sectionKeys.forEach((k) => (next[k] = true));
-            setCollapsed(next);
-            setDefaultsSet(true);
-        }
-    }, [sectionKeys, defaultsSet]);
 
     const allCollapsed = sectionKeys.length > 0 && sectionKeys.every((k) => collapsed[k]);
     const toggleAll = () => {
@@ -129,6 +126,11 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                         </div>
                     </div>
 
+                    {filter && filter !== "follow-up" && (
+                        <button onClick={() => updateParam("filter", "")} className="text-left text-xs text-accent">
+                            {filter === "week" ? "Ces 7 derniers jours" : "Réponse reçue"} × Effacer
+                        </button>
+                    )}
                     {showFilters && (
                         <div className="flex items-center gap-2 flex-wrap">
                             <button onClick={() => setRelanceOnly((v) => !v)} className="text-[10px] uppercase tracking-wide px-2.5 py-1.5 rounded-[5px] border transition-colors"

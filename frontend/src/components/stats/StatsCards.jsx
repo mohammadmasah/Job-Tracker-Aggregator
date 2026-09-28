@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
     IoBriefcaseOutline,
     IoPeopleOutline,
@@ -11,6 +12,8 @@ import {
 } from "react-icons/io5";
 import { useStats } from "../../hooks/useStats";
 import { useStatCards } from "../../hooks/useStatCards";
+
+const DESTINATIONS = { total: "/applications", contactsCount: "/contacts", responseRate: "/applications?filter=responded", thisWeek: "/applications?filter=week", toFollowUp: "/applications?filter=follow-up", weeklyRate: "/applications" };
 
 const ICONS = {
     IoBriefcaseOutline,
@@ -64,7 +67,8 @@ export default function StatsCards({ applications = [], contacts = [] }) {
                 const trend = stats[`${card.key}_trend`] || card.trend || null;
 
                 return (
-                    <div
+                    <Link
+                        to={DESTINATIONS[card.key]}
                         key={card.key}
                         className="bg-panel border border-border-soft rounded-[10px] p-6 min-h-[160px] flex flex-col justify-between hover:border-border transition-colors"
                     >
@@ -90,7 +94,7 @@ export default function StatsCards({ applications = [], contacts = [] }) {
                                 {card.label}
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 );
             })}
         </div>

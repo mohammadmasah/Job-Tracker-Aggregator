@@ -1,13 +1,5 @@
+import { matchesApplicationFilter } from "../utils/applicationFilters";
 import { useMemo } from "react";
-
-// Génère une date factice de candidature (entre aujourd'hui et il y a ~40 jours)
-// déterministe par id pour ne pas changer à chaque rendu.
-function fakeAppliedAt(id) {
-    const daysAgo = (id * 7 + 3) % 40; // pseudo-aléatoire stable
-    const d = new Date();
-    d.setDate(d.getDate() - daysAgo);
-    return d;
-}
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -19,20 +11,20 @@ export function useStats(applications = [], contacts = []) {
         const now = new Date();
         const total = applications.length;
 
-        // appliedAt factice par candidature
+        // Dates réelles des candidatures
         const withDates = applications.map((a) => ({
             ...a,
-            _appliedAt: a.applied_at ? new Date(a.applied_at) : fakeAppliedAt(a.id),
+            _appliedAt: a.applied_at ? new Date(a.applied_at) : null,
         }));
 
         // Candidatures cette semaine (7 derniers jours)
         const thisWeek = withDates.filter(
-            (a) => (now - a._appliedAt) / DAY <= 7
+            (a) => matchesApplicationFilter(a, "week", now.getTime())
         ).length;
 
         // À relancer : postulé (status "applied") depuis +7 jours sans réponse
         const toFollowUp = withDates.filter(
-            (a) => a.status === "applied" && (now - a._appliedAt) / DAY > 7
+            (a) => matchesApplicationFilter(a, "follow-up")
         ).length;
 
         // Taux de réponse : % de candidatures ayant dépassé "postulé"
@@ -46,8 +38,9 @@ export function useStats(applications = [], contacts = []) {
 
         // Rythme hebdo : moyenne de candidatures/semaine sur la période couverte
         let weeklyRate = 0;
-        if (withDates.length > 0) {
-            const oldest = Math.min(...withDates.map((a) => a._appliedAt.getTime()));
+        const dated = withDates.filter((a) => a._appliedAt && !Number.isNaN(a._appliedAt.getTime()));
+        if (dated.length > 0) {
+            const oldest = Math.min(...dated.map((a) => a._appliedAt.getTime()));
             const weeks = Math.max(1, (now.getTime() - oldest) / (DAY * 7));
             weeklyRate = (total / weeks).toFixed(1);
         }
