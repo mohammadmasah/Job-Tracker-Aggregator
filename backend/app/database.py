@@ -21,7 +21,15 @@ postgres_url = os.getenv(
     "DATABASE_URL",
     "postgresql://dawid:pizza123@localhost:5432/job_aggregator"
 ) 
-engine = create_engine(postgres_url)
+connect_args = {"check_same_thread": False, "timeout": 30} if postgres_url.startswith("sqlite:") else {}
+engine = create_engine(postgres_url, connect_args=connect_args)
+if postgres_url.startswith("sqlite:"):
+    from sqlalchemy import event
+
+    @event.listens_for(engine, "connect")
+    def configure_sqlite(connection, _):
+        connection.execute("PRAGMA foreign_keys=ON")
+        connection.execute("PRAGMA journal_mode=WAL")
 
 
 # Create a db and session

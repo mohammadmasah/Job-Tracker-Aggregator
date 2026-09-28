@@ -5,3 +5,12 @@ node_modules/
 .env
 *.db
 .DS_Store
+
+# Standalone build outputs and local data
+/desktop/build/
+/desktop/dist/
+/desktop/vendor/
+/desktop/artifacts/
+/frontend/dist/
+*.db-wal
+*.db-shm

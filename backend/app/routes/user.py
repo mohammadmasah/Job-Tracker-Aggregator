@@ -1,3 +1,4 @@
+import os
 import secrets
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, BackgroundTasks
@@ -58,7 +59,7 @@ def login(
     if redis_client.get(lock_key):
         raise HTTPException(
             status_code=403,
-            detail="Votre compte est bloqué suite à 3 tentatives échouées. Consultez votre e-mail pour réinitialiser votre mot de passe."
+            detail=("Trop de tentatives. Réessaie dans 15 minutes." if os.getenv("TRACKIT_STANDALONE") == "1" else "Votre compte est bloqué suite à 3 tentatives échouées. Consultez votre e-mail pour réinitialiser votre mot de passe.")
         )
 
     user = session.exec(select(User).where(User.email == email)).first()
@@ -67,6 +68,10 @@ def login(
         attempts = redis_client.incr(attempts_key)
 
         if attempts >= 3:
+            if os.getenv("TRACKIT_STANDALONE") == "1":
+                redis_client.setex(lock_key, 900, "locked")
+                redis_client.delete(attempts_key)
+                raise HTTPException(403, "Trop de tentatives. Réessaie dans 15 minutes.")
             redis_client.set(lock_key, "locked")
             redis_client.delete(attempts_key)
 

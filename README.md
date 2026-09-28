@@ -145,6 +145,12 @@ Chaque service tourne dans son propre conteneur (`trackit_db`, `trackit_redis`, 
 └── start.sh
 ```
 
+## Application à télécharger et édition développeur
+
+Deux modes sont disponibles dans le code : l'édition **Docker** pour le développement, et la construction **autonome** pour Windows, macOS et Linux. L'édition autonome embarque le serveur et l'interface web, utilise SQLite et conserve les données sur l'ordinateur. L'IA s'active depuis l'application sans installer Ollama manuellement.
+
+Consulte [le guide de la version téléchargeable](desktop/README.md) pour les téléchargements, prérequis système, stockage local et instructions de publication. Les exécutables ne sont téléchargeables qu'après une construction réussie dans [GitHub Releases](https://github.com/mohammadmasah/Job-Tracker-Aggregator/releases).
+
 ## Accès au projet
 
 ### Démo en ligne

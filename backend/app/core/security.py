@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 
 from ..models.user import User
 
-SECRET_KEY = "SUPER_SECRET_KEY_FOR_JWT_SIGNING"
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY", "SUPER_SECRET_KEY_FOR_JWT_SIGNING")
 ALGORITHM = "HS256"
 
 

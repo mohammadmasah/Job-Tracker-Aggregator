@@ -1,5 +1,5 @@
 export async function saveLocalChat(command, signal) {
-    const response = await fetch("http://localhost:8000/chatbot/local/", {
+    const response = await fetch("/chatbot/local/", {
         method: "POST", credentials: "include", signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ command: command.trim().toLowerCase() }),
@@ -13,7 +13,7 @@ export async function saveLocalChat(command, signal) {
 }
 
 export async function fetchChatHistory(signal) {
-    const response = await fetch("http://localhost:8000/chatbot/history/", {
+    const response = await fetch("/chatbot/history/", {
         credentials: "include", signal,
     });
     if (!response.ok) {
@@ -57,7 +57,7 @@ export async function readChatStream(response, onDelta) {
 
 export async function requestChatStream(path, body, onDelta, signal) {
     const isFile = body instanceof FormData;
-    const response = await fetch(`http://localhost:8000${path}`, {
+    const response = await fetch(`${path}`, {
         method: "POST",
         credentials: "include",
         headers: isFile ? undefined : { "Content-Type": "application/json" },

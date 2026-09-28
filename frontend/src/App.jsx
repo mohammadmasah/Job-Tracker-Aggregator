@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LocalInstallation from "./pages/user/LocalInstallation";
 import Layout from "./components/Layout";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -36,6 +37,7 @@ export default function App() {
                     <Route path="/contacts" element={<Contacts />} />
 
                     <Route path="/settings" element={<SettingsLayout />}>
+                        {import.meta.env.VITE_STANDALONE === "1" && <Route path="local" element={<LocalInstallation />} />}
                         <Route path="statistiques" element={<SettingsStatistiques />} />
                         <Route path="notifications" element={<SettingsNotifications />} />
                     </Route>
