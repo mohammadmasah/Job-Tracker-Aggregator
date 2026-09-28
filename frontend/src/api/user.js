@@ -10,3 +10,5 @@ export const register = (data) => {
 export const login = (data) => {
     return axios.post("/api/user/login", data)
 }
+// Logout — le serveur supprime le cookie HttpOnly.
+export const logout = () => axios.post("/api/user/logout", {}, { withCredentials: true });

@@ -148,6 +148,7 @@ def get_user(admin: User = Depends(require_admin), session: Session = Depends(ge
     return session.exec(select(User)).all()
 
 @router.post("/logout")
-def logout(response: Response, current_user : User = Depends(get_current_user)):
-    response.delete_cookie("access_token")
+def logout(response: Response):
+    # Clear expired or invalid sessions too; logging out is idempotent.
+    response.delete_cookie("access_token", path="/", httponly=True, samesite="lax")
     return {"message": "Disconnected"}

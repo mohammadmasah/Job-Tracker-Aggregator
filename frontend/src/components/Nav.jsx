@@ -1,10 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import Logo from "./Logo";
+import { logout } from "../api/user";
 
 export default function Nav() {
     const location = useLocation();
+    const logoutPending = useRef(false);
+    const [loggingOut, setLoggingOut] = useState(false);
+    const [logoutError, setLogoutError] = useState("");
+
+    const handleLogout = async () => {
+        if (logoutPending.current) return;
+        logoutPending.current = true;
+        setLoggingOut(true);
+        setLogoutError("");
+        try {
+            await logout();
+            // Reload to discard authenticated component state and chat caches.
+            window.location.replace("/login");
+        } catch {
+            setLogoutError("Déconnexion impossible. Vérifie ta connexion et réessaie.");
+            logoutPending.current = false;
+            setLoggingOut(false);
+        }
+    };
     const isSettings = location.pathname.startsWith("/settings");
 
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -84,7 +104,7 @@ export default function Nav() {
                     <button type="button" onClick={closeMobileNav} aria-label="Fermer la navigation" className="ml-auto flex size-9 items-center justify-center rounded-[6px] text-text-2 transition-colors hover:bg-card hover:text-text md:hidden"><IoCloseOutline className="text-[20px]" /></button>
                 </div>
 
-                <nav className="flex flex-col gap-1 px-3 pt-6">
+                <nav className="min-h-0 overflow-y-auto flex flex-col gap-1 px-3 pt-6">
                     <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-3">Espace de travail</p>
                     <NavLink to="/" end className={linkClass} onClick={closeMobileNav}><IoGridOutline className="text-[16px]" />Tableau de bord</NavLink>
                     <NavLink to="/applications" className={linkClass} onClick={closeMobileNav}><IoBriefcaseOutline className="text-[16px]" />Candidatures</NavLink>
@@ -103,7 +123,7 @@ export default function Nav() {
                 </nav>
 
                {/* ESPACE PERSONNEL — carte stylée */}
-                <div className="mt-auto p-3">
+                <div className="mt-auto shrink-0 p-3">
                     <div className="bg-card border border-border-soft rounded-[6px] overflow-hidden shadow-sm">
                         <label className="group cursor-pointer flex items-center gap-2.5 px-3 py-2.5 hover:bg-bg/40 transition-colors">
                             <span className="w-7 h-7 rounded-[6px] border border-dashed border-border group-hover:border-accent flex items-center justify-center text-text-3 group-hover:text-accent transition-colors text-[14px] shrink-0">
@@ -115,6 +135,13 @@ export default function Nav() {
                             <input type="file" aria-label="Téléverser un document" className="hidden" onChange={handleFileUpload} disabled={uploading} />
                         </label>
                     </div>
+
+                    <button type="button" onClick={handleLogout} disabled={loggingOut}
+                        className="mt-3 flex w-full items-center gap-3 rounded-md border border-border-soft px-3 py-2.5 text-left text-xs text-text-2 transition-colors hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50">
+                        <IoLogOutOutline className="text-lg" aria-hidden="true" />
+                        {loggingOut ? "Déconnexion…" : "Déconnexion"}
+                    </button>
+                    {logoutError && <p role="alert" className="mt-2 text-xs text-red-500">{logoutError}</p>}
 
                     {/* Logo */}
                     <div className="pt-3 flex justify-center">
