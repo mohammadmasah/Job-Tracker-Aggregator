@@ -111,6 +111,8 @@ def delete_contact(id: int, session: Session = Depends(get_session)):
     contact = session.get(Contact, id)
     if not contact:
         raise HTTPException(404, "Contact not found")
+    for method in list(contact.methods):
+        session.delete(method)
     session.delete(contact)
     session.commit()
     return {"message": "Contact deleted"}

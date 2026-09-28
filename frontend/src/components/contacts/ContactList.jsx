@@ -1,10 +1,11 @@
+import DeleteButton from "../common/DeleteButton";
 import { useMemo, useState, useRef, useEffect } from "react";
 import {
     IoMailOutline, IoCallOutline, IoLogoLinkedin, IoLinkOutline,
     IoSearchOutline, IoBusinessOutline, IoPersonOutline, IoAddOutline,
-    IoPencil, IoTrashOutline, IoBriefcaseOutline, IoArrowBack, IoOpenOutline, IoArrowForward, IoClose, IoCloseOutline,
+    IoPencil, IoArrowBack, IoClose, IoCloseOutline,
 } from "react-icons/io5";
-import { METHOD_COLORS, STATUS_META } from "../../constants/status";
+import { METHOD_COLORS } from "../../constants/status";
 import { updateContact, deleteContact, linkApplication, unlinkApplication } from "../../api/contacts";
 import { createContactMethod, deleteContactMethod } from "../../api/contactMethod";
 import { activeApplicationStore } from "../../stores/activeApplication";
@@ -51,7 +52,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
         const q = search.toLowerCase();
         return [...contacts]
             .filter((c) => {
-                const company = appsOf(c)[0]?.company || "";
+                const company = applications.find((app) => c.application_ids?.includes(app.id))?.company || "";
                 if (q && !c.name.toLowerCase().includes(q) && !company.toLowerCase().includes(q)) return false;
                 const linkedCount = (c.application_ids || []).length;
                 if (linkFilter === "linked" && linkedCount === 0) return false;
@@ -238,7 +239,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                         apps={appsOf(selected)}
                         allApplications={applications}
                         onRefresh={onUpdated}
-                        onDeleted={() => { setSelectedId(null); onUpdated(); }}
+                        onDeleted={async () => { setSelectedId(null); await onUpdated(); }}
                         onBack={() => setSelectedId(null)}
                     />
                 )}
@@ -312,9 +313,8 @@ function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, on
     const handleDelete = async () => {
         setBusy(true);
         try {
-            for (const m of methods) await deleteContactMethod(m.id);
             await deleteContact(contact.id);
-            onDeleted();
+            await onDeleted();
         } finally { setBusy(false); }
     };
 
@@ -365,14 +365,7 @@ function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, on
                     </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                    <button
-                        onClick={handleDelete}
-                        disabled={busy}
-                        className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide px-3 py-2 rounded-[5px] transition-colors disabled:opacity-50"
-                        style={{ color: "#f43f5e", border: "1px solid #f43f5e66" }}
-                    >
-                        <IoTrashOutline className="text-[13px]" />Supprimer
-                    </button>
+                    <DeleteButton disabled={busy} label={`le contact « ${contact.name} » et ses coordonnées`} onDelete={handleDelete} />
                     {/* Fermer / désélectionner le contact */}
                     <button
                         onClick={onBack}
@@ -400,9 +393,7 @@ function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, on
                                     <div className="text-[9px] uppercase tracking-wide text-text-3">{methodLabel[m.type] || "Autre"}</div>
                                     <div className="text-[13px] text-text truncate">{m.value}</div>
                                 </div>
-                                <button onClick={() => removeMethod(m.id)} className="text-text-3 hover:text-[#f43f5e] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" title="Supprimer">
-                                    <IoTrashOutline className="text-[14px]" />
-                                </button>
+                                <DeleteButton disabled={busy} label={`la coordonnée « ${m.value} »`} onDelete={() => removeMethod(m.id)} />
                             </div>
                         ))}
                         <div className="flex items-center gap-2 mt-1">
@@ -491,15 +482,6 @@ function ContactDetail({ contact, apps = [], allApplications = [], onRefresh, on
                     <p className="text-[12px] text-text-3">Les notes par contact ne sont pas encore disponibles.</p>
                 </section>
             </div>
-        </div>
-    );
-}
-
-function DetailChip({ label, children, accent }) {
-    return (
-        <div className="bg-bg border border-border-soft rounded-[5px] px-2.5 py-1.5">
-            <div className="text-[8px] uppercase tracking-wider text-text-3">{label}</div>
-            <div className="text-[11px] truncate" style={{ color: accent || "var(--text)" }}>{children}</div>
         </div>
     );
 }

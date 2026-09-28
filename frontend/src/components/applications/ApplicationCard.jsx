@@ -1,3 +1,4 @@
+import DeleteButton from "../common/DeleteButton";
 import {
     IoLocationOutline,
     IoGlobeOutline,
@@ -95,13 +96,7 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                 </div>
             </div>
 
-            <button
-                onClick={(e) => { e.stopPropagation(); onDelete(application.id); }}
-                className="absolute bottom-2 right-2 w-5 h-5 flex items-center justify-center rounded-[4px] text-[11px] text-text-3 hover:text-white hover:bg-[var(--c4)] opacity-0 group-hover:opacity-100 transition-all"
-                title="Supprimer"
-            >
-                ✕
-            </button>
+            <DeleteButton label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
         </div>
     );
 }

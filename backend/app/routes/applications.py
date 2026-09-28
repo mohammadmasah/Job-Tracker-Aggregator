@@ -1,3 +1,6 @@
+import logging
+from pathlib import Path
+
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 
@@ -62,8 +65,20 @@ def delete_application(id: int, session: Session = Depends(get_session)):
     application = session.get(Application, id)
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
+    document_paths = [document.path for document in application.documents]
+    for document in list(application.documents):
+        session.delete(document)
     session.delete(application)
     session.commit()
+    # Only remove files owned by the upload directory, after the DB commit.
+    upload_root = Path("uploads").resolve()
+    for stored_path in document_paths:
+        path = Path(stored_path).resolve()
+        if path.is_relative_to(upload_root):
+            try:
+                path.unlink(missing_ok=True)
+            except OSError:
+                logging.getLogger(__name__).exception("Could not remove attachment for deleted application %s", id)
     return {"message": "Application deleted"}
 
 

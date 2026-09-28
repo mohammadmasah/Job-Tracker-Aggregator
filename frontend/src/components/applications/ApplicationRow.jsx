@@ -1,8 +1,8 @@
+import DeleteButton from "../common/DeleteButton";
 import {
     IoGlobeOutline,
     IoStar,
     IoStarOutline,
-    IoTrashOutline,
 } from "react-icons/io5";
 import { STATUS_META, needsRelance, daysSince, RELANCE_COLOR } from "../../constants/status";
 
@@ -75,13 +75,7 @@ export default function ApplicationRow({ application, onDelete, onSelect, favori
             </span>
 
             {/* Supprimer */}
-            <button
-                onClick={(e) => { e.stopPropagation(); onDelete(application.id); }}
-                className="shrink-0 text-text-3 hover:text-[var(--c4)] opacity-0 group-hover:opacity-100 transition-all"
-                title="Supprimer"
-            >
-                <IoTrashOutline className="text-[14px]" />
-            </button>
+            <DeleteButton label={`la candidature « ${application.position} — ${application.company} » et ses documents`} onDelete={() => onDelete(application.id)} />
         </div>
     );
 }

@@ -17,7 +17,11 @@ export function useApplications() {
     };
 
     useEffect(() => {
-        fetchApplications();
+        let active = true;
+        getApplications().then((res) => { if (active) setApplications(res.data); })
+            .catch((error) => console.error("Erreur de chargement", error))
+            .finally(() => { if (active) setLoading(false); });
+        return () => { active = false; };
     }, []);
 
     const addApplication = async (data) => {
@@ -27,7 +31,7 @@ export function useApplications() {
 
     const removeApplication = async (id) => {
         await deleteApplication(id);
-        fetchApplications();
+        setApplications((previous) => previous.filter((application) => application.id !== id));
     }
 
     return { applications, loading, addApplication, removeApplication, fetchApplications };

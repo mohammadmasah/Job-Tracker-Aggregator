@@ -1,3 +1,4 @@
+import DeleteButton from "../common/DeleteButton";
 import { useSearchParams } from "react-router-dom";
 import { matchesApplicationFilter } from "../../utils/applicationFilters";
 import { useState, useMemo, useEffect } from "react";
@@ -172,7 +173,7 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                                         </div>
                                     ) : (
                                         sec.items.map((a) => (
-                                            <AppLine key={a.id} app={a} active={selectedId === a.id} onClick={() => openApp(a)} fav={isFav(a.id)} />
+                                            <AppLine key={a.id} onDelete={() => onDelete(a.id)} app={a} active={selectedId === a.id} onClick={() => openApp(a)} fav={isFav(a.id)} />
                                         ))
                                     )
                                 )}
@@ -189,7 +190,9 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                 ) : (
                     <div className="h-full overflow-y-auto custom-scroll">
                         <ApplicationDetail
+                            key={selected.id}
                             app={selected}
+                            onDelete={onDelete}
                             onClose={() => setSelectedId(null)}
                             onRefresh={onRefresh}
                             favorite={isFav(selected.id)}
@@ -203,10 +206,11 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
 }
 
 // Ligne compacte pour la vue liste — infos utiles au scan rapide
-function AppLine({ app, active, onClick, fav }) {
+function AppLine({ app, active, onClick, fav, onDelete }) {
     const s = STATUS_META[app.status] || {};
     const relance = needsRelance(app);
     return (
+        <div className="flex items-center gap-2 pr-3 border-b border-border-soft/40">
         <button onClick={onClick}
             className="w-full text-left px-5 py-3 border-b border-border-soft/40 transition-colors hover:bg-card/50 flex items-center gap-3"
             style={active ? { backgroundColor: "var(--card)", boxShadow: "inset 3px 0 0 0 var(--accent)" } : { boxShadow: `inset 3px 0 0 0 ${relance ? RELANCE_COLOR : "transparent"}` }}>
@@ -223,6 +227,8 @@ function AppLine({ app, active, onClick, fav }) {
                 {relance && <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-[3px]" style={{ color: RELANCE_COLOR, border: `1px solid ${RELANCE_COLOR}66` }}>Relance</span>}
             </div>
         </button>
+        <DeleteButton label={`la candidature « ${app.position} — ${app.company} » et ses documents`} onDelete={onDelete} />
+        </div>
     );
 }
 

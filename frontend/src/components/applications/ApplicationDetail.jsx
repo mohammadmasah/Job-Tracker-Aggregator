@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import DeleteButton from "../common/DeleteButton";
+import { useState } from "react";
 import {
-    IoClose, IoBriefcaseOutline, IoLocationOutline, IoWalletOutline,
-    IoBusinessOutline, IoCalendarOutline, IoOpenOutline, IoStar, IoStarOutline,
+    IoClose, IoBriefcaseOutline,
+    IoOpenOutline, IoStar, IoStarOutline,
 } from "react-icons/io5";
 import { STATUS_META, STATUS_OPTIONS, RELANCE_COLOR, needsRelance } from "../../constants/status";
-import { updateApplication } from "../../api/application";
+import { updateApplication, deleteApplication } from "../../api/application";
 
-const TYPE_LABELS_D = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd: "CDD" };
 
 // Détail candidature — même format compact que OfferDetail, + statut changeable.
-export default function ApplicationDetailPanel({ app, onClose, onRefresh, favorite, onToggleFavorite }) {
+export default function ApplicationDetailPanel({ app, onClose, onRefresh, onDelete, favorite, onToggleFavorite }) {
     const s = STATUS_META[app.status] || {};
     const relance = needsRelance(app);
     const date = app.applied_at ? new Date(app.applied_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null;
@@ -56,6 +56,13 @@ export default function ApplicationDetailPanel({ app, onClose, onRefresh, favori
                 </div>
             </div>
 
+            <div className="mb-4">
+                <DeleteButton label={`la candidature « ${app.position} — ${app.company} » et ses documents`} onDelete={async () => {
+                    if (onDelete) await onDelete(app.id);
+                    else { await deleteApplication(app.id); await onRefresh?.(); }
+                    onClose?.();
+                }} />
+            </div>
             {/* Statut changeable + relance */}
             <div className="flex items-center gap-2 mb-6 flex-wrap">
                 <select value={app.status} onChange={changeStatus}
@@ -100,18 +107,14 @@ export default function ApplicationDetailPanel({ app, onClose, onRefresh, favori
     );
 }
 
-function BadgeD({ icon: Icon, color, children }) {
-    return (
-        <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-[5px]" style={{ backgroundColor: "var(--card)", color: "var(--text-2)", border: "1px solid var(--border-soft)" }}>
-            <Icon className="text-[13px]" style={{ color }} />{children}
-        </span>
-    );
-}
-
 // --- Champs éditables (auto-save au blur) ---
 function EditableText({ value, onSave, placeholder, className = "" }) {
     const [v, setV] = useState(value ?? "");
-    useEffect(() => setV(value ?? ""), [value]);
+    const [previousValue, setPreviousValue] = useState(value);
+    if (value !== previousValue) {
+        setPreviousValue(value);
+        setV(value ?? "");
+    }
     return (
         <input
             value={v}
@@ -126,7 +129,11 @@ function EditableText({ value, onSave, placeholder, className = "" }) {
 
 function EditField({ label, value, onSave, accent, full }) {
     const [v, setV] = useState(value ?? "");
-    useEffect(() => setV(value ?? ""), [value]);
+    const [previousValue, setPreviousValue] = useState(value);
+    if (value !== previousValue) {
+        setPreviousValue(value);
+        setV(value ?? "");
+    }
     return (
         <div className={full ? "col-span-2" : ""}>
             <label className="text-[9px] uppercase tracking-wider text-text-3 block mb-1">{label}</label>
@@ -144,7 +151,11 @@ function EditField({ label, value, onSave, accent, full }) {
 
 function EditableArea({ value, onSave, placeholder }) {
     const [v, setV] = useState(value ?? "");
-    useEffect(() => setV(value ?? ""), [value]);
+    const [previousValue, setPreviousValue] = useState(value);
+    if (value !== previousValue) {
+        setPreviousValue(value);
+        setV(value ?? "");
+    }
     return (
         <textarea
             value={v}

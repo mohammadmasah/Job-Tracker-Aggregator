@@ -6,7 +6,7 @@ import { getContacts } from "../../api/contacts";
 import { useApplications } from "../../hooks/useApplications";
 
 export default function Contacts() {
-    const { applications } = useApplications();
+    const { applications, fetchApplications } = useApplications();
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);   // ← état du modal
@@ -24,7 +24,11 @@ export default function Contacts() {
     };
 
     useEffect(() => {
-        fetchContacts();
+        let active = true;
+        getContacts().then((res) => { if (active) setContacts(res.data); })
+            .catch((error) => console.error("Erreur chargement contacts", error))
+            .finally(() => { if (active) setLoading(false); });
+        return () => { active = false; };
     }, []);
 
     if (loading) {
@@ -41,7 +45,7 @@ export default function Contacts() {
 
             {/* MAÎTRE-DÉTAIL */}
             <div className="flex-1 min-h-0">
-                <ContactList contacts={contacts} applications={applications} onUpdated={fetchContacts} />
+                <ContactList contacts={contacts} applications={applications} onUpdated={async () => { await Promise.all([fetchContacts(), fetchApplications()]); }} />
             </div>
 
             {/* MODAL de création */}
