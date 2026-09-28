@@ -37,8 +37,9 @@
       <span>Enregistrer dans le Dashboard</span>
     </button>
 
-    <div id="status" class="mt-3 text-center text-xs font-medium text-slate-500 min-h-[16px] leading-relaxed break-words"></div>
+    <div id="status" role="status" aria-live="polite" class="mt-3 text-center text-xs font-medium text-slate-500 min-h-[16px] leading-relaxed break-words"></div>
 
+    <a id="loginLink" href="http://localhost:3000/login" target="_blank" rel="noopener noreferrer" hidden>Se connecter à Job Tracker</a>
   </div>
 
   <script src="popup.js"></script>

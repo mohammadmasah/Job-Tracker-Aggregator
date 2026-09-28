@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Job Tracker Companion",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Enregistrez en un clic vos offres d'emploi depuis HelloWork, Welcome to the Jungle, JobTeaser, Indeed, WeLoveDevs, La Bonne Alternance et LinkedIn dans votre dashboard.",
   "permissions": [
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
+    "http://localhost/*",
     "https://*.hellowork.com/*",
     "https://www.welcometothejungle.com/*",
     "https://*.jobteaser.com/*",
@@ -16,7 +17,6 @@
     "*://*.labonnealternance.apprentissage.beta.gouv.fr/*",
     "https://www.linkedin.com/jobs/*",
     "https://*.linkedin.com/jobs/*"
-    
   ],
   "action": {
     "default_popup": "popup.html"
@@ -32,7 +32,6 @@
         "*://*.labonnealternance.apprentissage.beta.gouv.fr/*",
         "https://www.linkedin.com/jobs/*",
         "https://*.linkedin.com/jobs/*"
-        
       ],
       "js": [
         "content.js"
