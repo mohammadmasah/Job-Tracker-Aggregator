@@ -1,6 +1,7 @@
 """Persistent TTL key/value storage for standalone login throttling (no Redis)."""
 import sqlite3
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -11,8 +12,14 @@ class LocalCache:
         with self.connect() as db:
             db.execute('CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, value TEXT, expires REAL)')
 
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.path, timeout=15)
+        connection = sqlite3.connect(self.path, timeout=15)
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
 
     def get(self, key):
         with self.connect() as db:

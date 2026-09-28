@@ -3,6 +3,7 @@ import time
 import unittest
 import io
 import json
+import sqlite3
 from unittest.mock import Mock, patch
 from pathlib import Path
 from app.core.ai_config import DEFAULT_MODEL
@@ -11,6 +12,21 @@ from app.services.local_runtime import LocalRuntime
 
 
 class StandaloneTests(unittest.TestCase):
+    def test_cache_closes_connections_even_after_rollback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = LocalCache(Path(directory) / 'cache.db')
+            with cache.connect() as connection:
+                connection.execute('SELECT 1')
+            with self.assertRaises(sqlite3.ProgrammingError):
+                connection.execute('SELECT 1')
+            with self.assertRaises(ValueError):
+                with cache.connect() as connection:
+                    connection.execute("INSERT INTO cache VALUES ('test', 'value', NULL)")
+                    raise ValueError('rollback')
+            self.assertIsNone(cache.get('test'))
+            with self.assertRaises(sqlite3.ProgrammingError):
+                connection.execute('SELECT 1')
+
     def test_local_cache_survives_restart_and_expires(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'cache.db'
