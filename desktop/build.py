@@ -11,7 +11,7 @@ if not (ROOT / 'frontend/dist/index.html').is_file():
 command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir',
            '--name', 'TrackIt', '--distpath', 'desktop/dist', '--workpath', 'desktop/build',
            '--specpath', 'desktop/build', '--paths', 'backend',
-           '--add-data', f'frontend/dist{os.pathsep}web',
+           '--add-data', f'{ROOT / "frontend" / "dist"}{os.pathsep}web',
            '--collect-submodules', 'app', '--collect-submodules', 'uvicorn',
            '--collect-all', 'langchain_core', '--collect-all', 'langchain_ollama',
            '--collect-all', 'langsmith', '--collect-all', 'pypdfium2',
