@@ -162,14 +162,14 @@ Consulte [le guide de la version téléchargeable](desktop/README.md) pour les t
 
 **Prérequis**
 - Docker et Docker Compose installés
-- Ports disponibles : `3000`, `8000`, `5432`, `6379`, `11434`
+- Ports disponibles : `3000`, `8000`, `5433`, `6379`, `11434`
 
 **Étapes**
 
 1. Cloner le dépôt et se placer à la racine du projet.
 2. Copier le fichier d'exemple d'environnement et renseigner vos propres valeurs (voir [Variables d'environnement](#variables-denvironnement)) :
    ```bash
-   cp .env.example .env
+   cp backend/.env.example backend/.env
    ```
 3. Lancer l'ensemble des services :
    ```bash
