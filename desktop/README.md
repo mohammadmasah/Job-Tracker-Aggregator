@@ -11,7 +11,7 @@ Sur Mac, ouvre `TrackIt.app`. Sur Windows, conserve le dossier `_internal` à c�
 
 ## Premier lancement
 
-1. Arrête l'édition Docker si elle utilise déjà les ports 3000 ou 8000.
+1. Arrête l'édition Docker si elle utilise déjà les ports 3000 ou 8000. Si `localhost:3000` affiche tes anciennes données alors que TrackIt ne démarre pas, c'est la version Docker qui répond, pas l'archive téléchargée. Les nouvelles archives ne réinitialisent jamais automatiquement une base existante.
 2. Lance TrackIt et crée ton compte local. Chaque installation démarre avec une base vide, sans les données du développeur.
 3. Pour le chatbot, ouvre **Installation locale · IA** et choisis **Activer l'IA locale**. TrackIt télécharge une version vérifiée d'Ollama dans son propre dossier, puis `llama3.2`. Prévois jusqu'à 3,5 Go de téléchargement et au moins 8 Go libres ; le temps et les performances dépendent du matériel. Aucun installateur externe n'est lancé, aucun droit administrateur n'est demandé.
 4. Les candidatures et contacts fonctionnent sans IA. Après le téléchargement, le chat fonctionne localement. Les offres en ligne nécessitent Internet ; les fournisseurs demandant des clés API ne sont pas préconfigurés. L'envoi d'e-mails nécessite une configuration SMTP ; dans l'édition locale, les tentatives de connexion bloquent temporairement le compte pendant 15 minutes plutôt que d'exiger un e-mail.

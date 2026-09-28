@@ -44,6 +44,9 @@ def run(executable):
             assert b'<html' in request('/applications')
             request('/api/user/register', {'name': 'Test', 'lastname': 'Local', 'email': 'local@example.invalid', 'password': 'Smoke-Test-123!'})
             request('/api/user/login', {'email': 'local@example.invalid', 'password': 'Smoke-Test-123!'})
+            for path in ['/api/applications', '/api/contacts', '/api/documents']:
+                assert json.loads(request(path)) == [], f'Fresh installation contains data: {path}'
+            assert json.loads(request('/chatbot/history/'))['messages'] == []
             request('/api/applications', {'company': 'Test local', 'position': 'Développeur'})
             assert len(json.loads(request('/api/applications'))) == 1
             assert json.loads(request('/api/local/runtime'))['phase'] == 'idle'

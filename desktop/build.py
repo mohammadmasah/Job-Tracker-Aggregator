@@ -12,6 +12,7 @@ command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--one
            '--name', 'TrackIt', '--distpath', 'desktop/dist', '--workpath', 'desktop/build',
            '--specpath', 'desktop/build', '--paths', 'backend',
            '--add-data', f'{ROOT / "frontend" / "dist"}{os.pathsep}web',
+           '--exclude-module', 'app.seed', '--exclude-module', 'app.seed_load_test',
            '--collect-submodules', 'app', '--collect-submodules', 'uvicorn',
            '--collect-all', 'langchain_core', '--collect-all', 'langchain_ollama',
            '--collect-all', 'langsmith', '--collect-all', 'pypdfium2',
