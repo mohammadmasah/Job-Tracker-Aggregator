@@ -1,6 +1,12 @@
 name: Standalone downloads
 on:
   workflow_dispatch:
+    inputs:
+      verify_release:
+        description: 'Existing release tag to verify without rebuilding (leave empty for a full build)'
+        required: false
+        default: ''
+        type: string
   push:
     tags: ['v*']
     paths:
@@ -10,6 +16,7 @@ permissions:
   contents: read
 jobs:
   build:
+    if: github.event.inputs.verify_release == ''
     strategy:
       fail-fast: false
       matrix:
@@ -59,6 +66,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           path: downloads
@@ -68,4 +76,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" downloads/* --title "TrackIt $TAG" --generate-notes --prerelease
+        run: python desktop/publish.py "$TAG" downloads
+
+  verify-release:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.verify_release != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s desktop -p test_publish.py
+      - name: Verify published downloads using the same publication logic
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.verify_release }}
+        run: python desktop/publish.py "$TAG" downloads
