@@ -59,3 +59,4 @@ xxhash==3.8.1
 zstandard==0.25.0
 langdetect==1.0.9
 six==1.17.0
+XlsxWriter==3.2.9

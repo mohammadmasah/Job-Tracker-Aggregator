@@ -44,6 +44,7 @@ TrackIt est né d'un besoin concret : automatiser et structurer une recherche d'
 |---|---|
 | Authentification | JWT + hashing `bcrypt`/`passlib`, endpoints protégés via dépendances FastAPI |
 | Candidatures | CRUD complet, statuts personnalisés, tableau de bord avec statistiques (`recharts`) |
+| Export Excel | Export `.xlsx` de toutes les candidatures ou d’un statut : synthèse, liste triée et coordonnées des contacts, sans descriptions ni notes |
 | Contacts | Association contact ↔ candidature (table de liaison dédiée) |
 | Documents | Upload et analyse de CV (endpoint `/analyse-cv/`) |
 | Offres | Scraping WeLoveDevs, intégration API Adzuna, La Bonne Alternance |

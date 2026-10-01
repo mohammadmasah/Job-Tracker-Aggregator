@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useApplications } from "../../hooks/useApplications";
 import ApplicationForm from "../../components/applications/ApplicationForm";
 import ApplicationsList from "../../components/applications/ApplicationsList";
+import ExportApplications from "../../components/applications/ExportApplications";
 import PageHeader from "../../components/layout/PageHeader";
 import { createApplication } from "../../api/application";
 import { createContact } from "../../api/contacts";
@@ -53,7 +54,7 @@ export default function Applications() {
             <PageHeader
                 title="Mes candidatures"
                 description={`${applications.length} candidature${applications.length > 1 ? "s" : ""} suivie${applications.length > 1 ? "s" : ""}.`}
-                actions={<button onClick={() => setIsAddFormOpen(true)} className="min-h-10 rounded-[5px] bg-accent px-4 text-[11px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-accent-2">Nouvelle candidature</button>}
+                actions={<div className="flex flex-wrap items-center gap-2"><ExportApplications applications={applications} /><button onClick={() => setIsAddFormOpen(true)} className="min-h-10 rounded-[5px] bg-accent px-4 text-[11px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-accent-2">Nouvelle candidature</button></div>}
             />
 
             {/* MAÎTRE-DÉTAIL */}

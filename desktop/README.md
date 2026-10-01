@@ -29,6 +29,8 @@ Les réponses sont limitées au français et à l'anglais ; les demandes dans un
 
 ## Données et sauvegarde
 
+Dans **Mes candidatures → Exporter Excel**, choisis toutes les candidatures ou un statut, puis **Télécharger le fichier Excel**. Le fichier contient une synthèse des effectifs par statut et une liste détaillée avec les entreprises, postes, dates et coordonnées des contacts liés. Les descriptions et notes sont exclues. Ce choix est indépendant des filtres de recherche affichés ; les données sont relues au téléchargement. L’export est disponible sans activer l’IA.
+
 - macOS : `~/Library/Application Support/TrackIt`
 - Windows : `%LOCALAPPDATA%\TrackIt`
 - Linux : `~/.local/share/TrackIt` (ou `$XDG_DATA_HOME/TrackIt`)

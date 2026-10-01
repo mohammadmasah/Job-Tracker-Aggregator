@@ -9,6 +9,8 @@ import tempfile
 import time
 import urllib.request
 import http.cookiejar
+from io import BytesIO
+from zipfile import ZipFile
 
 
 def free_port():
@@ -49,6 +51,9 @@ def run(executable):
             assert json.loads(request('/chatbot/history/'))['messages'] == []
             request('/api/applications', {'company': 'Test local', 'position': 'Développeur'})
             assert len(json.loads(request('/api/applications'))) == 1
+            with ZipFile(BytesIO(request('/api/applications/export.xlsx'))) as workbook:
+                assert 'xl/worksheets/sheet2.xml' in workbook.namelist()
+                assert b'Test local' in workbook.read('xl/sharedStrings.xml')
             assert json.loads(request('/api/local/runtime'))['phase'] == 'idle'
             request('/api/local/quit', {}, 'POST')
             process.wait(timeout=30)
@@ -63,7 +68,7 @@ def run(executable):
         finally:
             process.terminate()
             process.wait(timeout=20)
-        print('Standalone smoke passed: UI, registration, login, CRUD, restart persistence, logout')
+        print('Standalone smoke passed: UI, registration, login, CRUD, XLSX export, restart persistence, logout')
 
 
 if __name__ == '__main__':

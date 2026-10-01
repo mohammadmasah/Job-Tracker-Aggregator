@@ -1,12 +1,17 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import Response
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from ..database import get_session
 from ..models import Application, ApplicationCreate, ApplicationUpdate, ApplicationRead
 from ..api.deps import get_current_user
+from ..models.contact import Contact
+from ..services.application_export import export_applications, STATUSES
 
 router = APIRouter(prefix="/api/applications", dependencies=[Depends(get_current_user)], tags=["applications"])
 
@@ -46,6 +51,21 @@ def get_by_status(status: str, session: Session = Depends(get_session)):
         select(Application).where(Application.status == status)
     ).all()
     return applications
+
+
+# Excel export (before the dynamic ID route)
+@router.get('/export.xlsx')
+def download_applications(status: str | None = None, session: Session = Depends(get_session)):
+    if status is not None and status not in STATUSES:
+        raise HTTPException(status_code=422, detail='Statut de candidature invalide')
+    query = select(Application).options(selectinload(Application.contacts).selectinload(Contact.methods))
+    if status:
+        query = query.where(Application.status == status)
+    now = datetime.now()
+    content = export_applications(session.exec(query).all(), status=status, generated_at=now)
+    filename = f'trackit-candidatures-{status or "toutes"}-{now:%Y-%m-%d}.xlsx'
+    return Response(content, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    headers={'Content-Disposition': f'attachment; filename="{filename}"', 'Cache-Control': 'no-store'})
 
 
 # By id

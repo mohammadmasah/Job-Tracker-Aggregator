@@ -11,6 +11,13 @@ export const getApplications = () => {
     return axios.get("/api/applications", { withCredentials: true });
 }
 
+export const exportApplications = (status = 'all') => axios.get('/api/applications/export.xlsx', {
+    withCredentials: true,
+    responseType: 'blob',
+    timeout: 60_000,
+    params: status === 'all' ? {} : { status },
+});
+
 // By id
 export const getApplicationById = (id) => {
     return axios.get(`/api/applications/${id}`, { withCredentials: true });
