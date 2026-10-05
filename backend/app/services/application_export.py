@@ -47,35 +47,42 @@ def export_applications(applications, status=None, generated_at=None):
     with xlsxwriter.Workbook(output, {'in_memory': True, 'strings_to_formulas': False,
                                      'strings_to_urls': False}) as book:
         book.set_properties({'title': 'TrackIt — Mes candidatures', 'author': 'TrackIt'})
-        base = {'font_name': 'Calibri', 'font_size': 11, 'font_color': '#0F172A', 'valign': 'top'}
+        base = {'font_name': 'Calibri', 'font_size': 12, 'font_color': '#0F172A', 'valign': 'vcenter'}
+        cell = {**base, 'text_wrap': True, 'border': 1, 'border_color': '#CBD5E1', 'indent': 1}
         normal = book.add_format({**base, 'text_wrap': True})
         title = book.add_format({**base, 'font_size': 22, 'bold': True, 'font_color': '#FFFFFF', 'bg_color': '#0F172A'})
-        muted = book.add_format({**base, 'font_size': 10, 'font_color': '#64748B'})
-        header = book.add_format({**base, 'bold': True, 'bg_color': '#1E293B', 'font_color': '#FFFFFF', 'text_wrap': True})
-        number = book.add_format({**base, 'num_format': '#,##0', 'align': 'right'})
-        date = book.add_format({**base, 'num_format': 'dd/mm/yyyy'})
-        total = book.add_format({**base, 'bold': True, 'bg_color': '#E2E8F0', 'num_format': '#,##0'})
-        status_formats = {key: book.add_format({**base, 'bold': True, 'bg_color': colors[1], 'font_color': colors[2]})
+        muted = book.add_format({**base, 'font_size': 11, 'font_color': '#475569'})
+        header = book.add_format({**cell, 'font_size': 12, 'bold': True, 'bg_color': '#1E293B', 'font_color': '#FFFFFF'})
+        number = book.add_format({**cell, 'font_size': 16, 'bold': True, 'num_format': '#,##0', 'align': 'center', 'indent': 0})
+        total = book.add_format({**cell, 'font_size': 14, 'bold': True, 'bg_color': '#0F172A', 'font_color': '#FFFFFF', 'num_format': '#,##0'})
+        total_number = book.add_format({**cell, 'font_size': 18, 'bold': True, 'bg_color': '#0F172A', 'font_color': '#FFFFFF', 'num_format': '#,##0', 'align': 'center', 'indent': 0})
+        body_formats = [book.add_format({**cell, 'bg_color': color}) for color in ('#FFFFFF', '#F1F5F9')]
+        company_formats = [book.add_format({**cell, 'bold': True, 'bg_color': color}) for color in ('#FFFFFF', '#F1F5F9')]
+        date_formats = [book.add_format({**cell, 'num_format': 'dd/mm/yyyy', 'align': 'center', 'indent': 0, 'bg_color': color}) for color in ('#FFFFFF', '#F1F5F9')]
+        status_formats = {key: book.add_format({**cell, 'bold': True, 'bg_color': colors[1], 'font_color': colors[2]})
                           for key, colors in STATUSES.items()}
         summary = book.add_worksheet('Synthèse')
         detail = book.add_worksheet('Candidatures')
         scope = STATUSES[status][0] if status else 'Toutes les candidatures'
         for sheet in (summary, detail):
             sheet.hide_gridlines(2)
-            sheet.set_default_row(23)
+            sheet.set_default_row(28)
+            sheet.set_zoom(110)
             sheet.set_tab_color('#0F766E')
-        summary.set_column('A:A', 27)
+        summary.set_column('A:A', 33)
         summary.set_column('B:B', 16)
         summary.set_column('C:D', 23)
         summary.merge_range('A1:D2', 'TrackIt · Mes candidatures', title)
         summary.merge_range('A4:D4', scope, normal)
         summary.merge_range('A5:D5', f'Export du {generated_at:%d/%m/%Y à %H:%M}', muted)
         summary.write_row('A7', ['Statut', 'Nombre'], header)
+        summary.set_row(6, 34)
         counts = Counter(app.status for app in applications)
         statuses = list(STATUSES)
         if any(key not in STATUSES for key in counts):
             statuses.append('unknown')
         for row, key in enumerate(statuses, start=7):
+            summary.set_row(row, 36)
             label = STATUSES.get(key, ('Autre statut',))[0]
             summary.write_string(row, 0, label, status_formats.get(key, normal))
             value = counts.get(key, 0) if key != 'unknown' else sum(v for k, v in counts.items() if k not in STATUSES)
@@ -85,7 +92,8 @@ def export_applications(applications, status=None, generated_at=None):
                 summary.write_number(row, 1, 0, number)
         total_row = 7 + len(statuses)
         summary.write_string(total_row, 0, 'Total des candidatures', total)
-        summary.write_formula(total_row, 1, f'=SUM(B8:B{total_row})', total, len(applications))
+        summary.write_formula(total_row, 1, f'=SUM(B8:B{total_row})', total_number, len(applications))
+        summary.set_row(total_row, 44)
         summary.merge_range(total_row + 3, 0, total_row + 3, 3, 'Une ligne par candidature dans l’onglet Candidatures.', muted)
         summary.merge_range(total_row + 4, 0, total_row + 4, 3, 'Les descriptions et notes ne sont pas incluses.', muted)
         summary.freeze_panes(7, 0)
@@ -98,7 +106,7 @@ def export_applications(applications, status=None, generated_at=None):
         detail.merge_range('G4:O4', 'Coordonnées des contacts liés · Descriptions et notes exclues', muted)
         for col, (_, width) in enumerate(COLUMNS):
             detail.set_column(col, col, width, normal)
-        detail.set_row(5, 32)
+        detail.set_row(5, 44)
         if applications:
             detail.add_table(5, 0, 5 + len(applications), len(COLUMNS) - 1, {
                 'name': 'Candidatures', 'style': 'Table Style Medium 2',
@@ -107,6 +115,7 @@ def export_applications(applications, status=None, generated_at=None):
             detail.write_row(5, 0, [name for name, _ in COLUMNS], header)
             detail.merge_range('A7:F7', 'Aucune candidature pour cette sélection.', muted)
         for row, app in enumerate(applications, start=6):
+            stripe = (row - 6) % 2
             values = [STATUSES.get(app.status, ('Autre statut',))[0], app.company, app.position,
                       app.applied_at.date() if app.applied_at else None,
                       TYPES.get((app.type or '').lower(), app.type or ''), app.location or '',
@@ -114,17 +123,20 @@ def export_applications(applications, status=None, generated_at=None):
                       *contact_details(app.contacts), app.url or '']
             for col, value in enumerate(values):
                 if col == 3 and value:
-                    detail.write_datetime(row, col, value, date)
+                    detail.write_datetime(row, col, value, date_formats[stripe])
                 else:
-                    detail.write(row, col, value, status_formats.get(app.status, normal) if col == 0 else normal)
-            lines = max(sum(max(1, math.ceil(len(line) / (COLUMNS[col][1] - 3))) for line in str(value or '').split('\n'))
+                    style = status_formats.get(app.status, body_formats[stripe]) if col == 0 else company_formats[stripe] if col == 1 else body_formats[stripe]
+                    detail.write(row, col, value, style)
+            lines = max(sum(max(1, math.ceil(len(line) / ((COLUMNS[col][1] - 4) * 0.85))) for line in str(value or '').split('\n'))
                         for col, value in enumerate(values))
-            detail.set_row(row, min(409, max(32, lines * 16 + 8)))
+            detail.set_row(row, min(409, max(42, lines * 19 + 14)))
         detail.freeze_panes(6, 3)
         detail.set_landscape()
         detail.set_paper(8)  # A3 for the wide contact directory.
-        detail.fit_to_pages(1, 0)
+        # Preserve readable type when printing rather than shrinking 15 columns onto one page.
+        detail.set_print_scale(100)
         detail.repeat_rows(5)
+        detail.repeat_columns(0, 2)
         detail.print_area(0, 0, max(6, len(applications) + 5), len(COLUMNS) - 1)
         detail.set_footer('TrackIt · &P / &N')
     return output.getvalue()
