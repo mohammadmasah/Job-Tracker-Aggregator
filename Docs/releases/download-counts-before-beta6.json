@@ -1,0 +1,62 @@
+{
+  "reason": "Shared download URLs were refreshed with Beta 6 archives without moving their Git tags. GitHub resets the counters when assets are replaced. These are the counters captured before backup/download verification. Download counts are not unique or active users.",
+  "snapshots": [
+    {
+      "tag": "v0.1.0-beta.4",
+      "captured_at": "2026-10-06T13:47:33.800381+00:00",
+      "archives": [
+        {
+          "name": "TrackIt-linux-x64.tar.gz",
+          "download_count": 0,
+          "sha256": "sha256:9ee146d1f5c216961300579b39d8f4b45f3524d1d04fb4a6f0aa29cf870a49f1"
+        },
+        {
+          "name": "TrackIt-macos-arm64.zip",
+          "download_count": 2,
+          "sha256": "sha256:956b826d7aabf0f71dc6b2ff71e0fe40992e0d5d37e46cb12ed423afe07137de"
+        },
+        {
+          "name": "TrackIt-macos-x64.zip",
+          "download_count": 0,
+          "sha256": "sha256:0deaf7e859db445edce690148b69c70b2243ed9fc893348233b93b5e1ebc8c29"
+        },
+        {
+          "name": "TrackIt-windows-x64.zip",
+          "download_count": 0,
+          "sha256": "sha256:e6155aa39f9e0c6745b77fc0df6c6f5d5616abd8ab568ebf889757df0e3f4dad"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.5",
+      "captured_at": "2026-10-06T13:48:04.231583+00:00",
+      "archives": [
+        {
+          "name": "TrackIt-linux-x64.tar.gz",
+          "download_count": 0,
+          "sha256": "sha256:89aadc67272d6a991d4860f5a417eba77e4fee64ded732dae9f166f0a0a313a8"
+        },
+        {
+          "name": "TrackIt-macos-arm64.zip",
+          "download_count": 0,
+          "sha256": "sha256:1725e452a9ebeae2f17dbcac48d69e254c66332765f51faab05f324ab660d9f0"
+        },
+        {
+          "name": "TrackIt-macos-x64.zip",
+          "download_count": 0,
+          "sha256": "sha256:2bd76e8f614edf2b217b77bb27f350b89a342e2cce91f6880a5c37c350c40f65"
+        },
+        {
+          "name": "TrackIt-windows-x64.zip",
+          "download_count": 0,
+          "sha256": "sha256:7bba35fa1e24f98c7ae13867c89e2efc7f2071a56684088bc6e7866fb02c3641"
+        }
+      ]
+    }
+  ],
+  "known_internal_verification_downloads_per_new_archive": {
+    "v0.1.0-beta.4": 1,
+    "v0.1.0-beta.5": 1,
+    "v0.1.0-beta.6": 2
+  }
+}
