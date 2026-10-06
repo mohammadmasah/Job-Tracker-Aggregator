@@ -42,6 +42,9 @@ def prepare_environment(directory):
 
 
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == '--apply-update':
+        from app.services.app_update import apply_update
+        raise SystemExit(apply_update(sys.argv[2]))
     parser = argparse.ArgumentParser()
     parser.add_argument('--no-browser', action='store_true')
     parser.add_argument('--port', type=int, default=3000)
@@ -76,9 +79,11 @@ def main():
         create_db_and_tables()
         from app.standalone import configure
         from app.services.local_runtime import LocalRuntime
+        from app.services.app_update import AppUpdate
         stop = threading.Event()
         runtime = LocalRuntime(directory)
-        configure(app, web_root, runtime, stop)
+        updater = AppUpdate(directory, stop, sys.argv[1:])
+        configure(app, web_root, runtime, stop, updater)
         threads = []
         for sock in sockets:
             server = uvicorn.Server(uvicorn.Config(app, log_config=None, lifespan="off"))

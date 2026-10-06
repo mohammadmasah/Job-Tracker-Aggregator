@@ -6,6 +6,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
+sys.path.insert(0, str(ROOT / 'backend'))
+from app.core.version import APP_VERSION
+if os.getenv('GITHUB_REF_TYPE') == 'tag' and os.getenv('GITHUB_REF_NAME') != APP_VERSION:
+    raise SystemExit('The release tag must match backend/app/core/version.py')
 if not (ROOT / 'frontend/dist/index.html').is_file():
     raise SystemExit('Build the frontend first with VITE_STANDALONE=1 npm run build')
 command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir',

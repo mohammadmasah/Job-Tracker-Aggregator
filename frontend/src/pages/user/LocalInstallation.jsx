@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AppUpdate from '../../components/AppUpdate';
 
 export default function LocalInstallation() {
     const [runtime, setRuntime] = useState(null);
@@ -44,6 +45,7 @@ export default function LocalInstallation() {
             <h2 className="text-lg font-bold">Ton installation locale</h2>
             <p className="text-text-2">Tes candidatures, contacts et documents restent sur cet ordinateur. Aucun Docker ni logiciel de développement n'est nécessaire.</p>
         </section>
+        <AppUpdate />
         <section className="rounded-xl border border-border-soft bg-panel p-5 space-y-3">
             <h2 className="font-bold">Poulpie · IA locale</h2>
             <p className="text-text-2">Active l'assistant pour télécharger automatiquement son moteur et Qwen3 1.7B, un modèle léger d’environ 1,4 Go. Prévois une connexion Internet, environ 3 Go de téléchargement et au moins 6 Go d'espace libre. Après préparation, le chat fonctionne localement.</p>
