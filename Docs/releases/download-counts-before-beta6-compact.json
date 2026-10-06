@@ -1,0 +1,88 @@
+{
+  "reason": "Counters preserved before replacing Beta 6 and shared Beta 4/5 archives with the compact Excel build 6de967a. Counts include internal verification downloads and are not unique or active users.",
+  "snapshots": [
+    {
+      "tag": "v0.1.0-beta.6",
+      "captured_at": "2026-10-06T14:48:23.289581+00:00",
+      "archives": [
+        {
+          "name": "TrackIt-linux-x64.tar.gz",
+          "download_count": 2,
+          "sha256": "sha256:0c158e44a39a58ad3babf3e2a3d64a3d9bf1cdb5f2000dceb75d305335f9bd1b"
+        },
+        {
+          "name": "TrackIt-macos-arm64.zip",
+          "download_count": 6,
+          "sha256": "sha256:22385cc46205c8695046401ee3996c20d7eaa124f9faa0bb5eb63a873e4dcf6a"
+        },
+        {
+          "name": "TrackIt-macos-x64.zip",
+          "download_count": 2,
+          "sha256": "sha256:77c374aceaa736cd3aa9fa16e708e7181ff7d39784fbffc7bdcdb8b4ce9fdd1e"
+        },
+        {
+          "name": "TrackIt-windows-x64.zip",
+          "download_count": 2,
+          "sha256": "sha256:eba5ef302f3fbefa374114c7c48a994eda4b34c8a071c367ff178a1dd40d9cf3"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.4",
+      "captured_at": "2026-10-06T14:48:41.736565+00:00",
+      "archives": [
+        {
+          "name": "TrackIt-linux-x64.tar.gz",
+          "download_count": 1,
+          "sha256": "sha256:0c158e44a39a58ad3babf3e2a3d64a3d9bf1cdb5f2000dceb75d305335f9bd1b"
+        },
+        {
+          "name": "TrackIt-macos-arm64.zip",
+          "download_count": 1,
+          "sha256": "sha256:22385cc46205c8695046401ee3996c20d7eaa124f9faa0bb5eb63a873e4dcf6a"
+        },
+        {
+          "name": "TrackIt-macos-x64.zip",
+          "download_count": 1,
+          "sha256": "sha256:77c374aceaa736cd3aa9fa16e708e7181ff7d39784fbffc7bdcdb8b4ce9fdd1e"
+        },
+        {
+          "name": "TrackIt-windows-x64.zip",
+          "download_count": 1,
+          "sha256": "sha256:eba5ef302f3fbefa374114c7c48a994eda4b34c8a071c367ff178a1dd40d9cf3"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0-beta.5",
+      "captured_at": "2026-10-06T14:49:05.877001+00:00",
+      "archives": [
+        {
+          "name": "TrackIt-linux-x64.tar.gz",
+          "download_count": 1,
+          "sha256": "sha256:0c158e44a39a58ad3babf3e2a3d64a3d9bf1cdb5f2000dceb75d305335f9bd1b"
+        },
+        {
+          "name": "TrackIt-macos-arm64.zip",
+          "download_count": 1,
+          "sha256": "sha256:22385cc46205c8695046401ee3996c20d7eaa124f9faa0bb5eb63a873e4dcf6a"
+        },
+        {
+          "name": "TrackIt-macos-x64.zip",
+          "download_count": 1,
+          "sha256": "sha256:77c374aceaa736cd3aa9fa16e708e7181ff7d39784fbffc7bdcdb8b4ce9fdd1e"
+        },
+        {
+          "name": "TrackIt-windows-x64.zip",
+          "download_count": 1,
+          "sha256": "sha256:eba5ef302f3fbefa374114c7c48a994eda4b34c8a071c367ff178a1dd40d9cf3"
+        }
+      ]
+    }
+  ],
+  "known_internal_verification_downloads_per_replacement_archive": {
+    "v0.1.0-beta.6": 3,
+    "v0.1.0-beta.4": 1,
+    "v0.1.0-beta.5": 1
+  }
+}
