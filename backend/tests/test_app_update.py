@@ -22,18 +22,53 @@ class UpdateTests(unittest.TestCase):
         self.assertGreater(update.version_key('v0.1.0'), update.version_key('v0.1.0-beta.99'))
         self.assertIsNone(update.version_key('main'))
 
-    def test_select_only_newer_complete_official_release(self):
-        name = 'TrackIt-windows-x64.zip'
-        def release(tag, draft=False):
-            return {'tag_name': tag, 'draft': draft, 'assets': [
-                {'name': asset, 'browser_download_url': update.DOWNLOADS + tag + '/' + asset}
-                for asset in (name, name + '.sha256')]}
-        releases = [release('v0.1.0-beta.7'), release('v0.1.0-beta.8', True), release('v0.1.0-beta.5')]
-        self.assertEqual(update.select_release(releases, 'v0.1.0-beta.6', name)['version'], 'v0.1.0-beta.7')
-        releases[0]['assets'][0]['browser_download_url'] = 'https://example.com/file'
-        self.assertIsNone(update.select_release(releases, 'v0.1.0-beta.6', name))
-        releases[0]['assets'].pop()
-        self.assertIsNone(update.select_release(releases, 'v0.1.0-beta.6', name))
+    @staticmethod
+    def feed(*tags):
+        return ('<feed xmlns="http://www.w3.org/2005/Atom">' + ''.join(
+            f'<entry><link rel="alternate" href="https://github.com/{update.REPOSITORY}/releases/tag/{tag}"/></entry>'
+            for tag in tags) + '</feed>').encode()
+
+    def test_feed_orders_versions_and_rejects_foreign_links(self):
+        feed = self.feed('v0.1.0-beta.6', 'v0.1.0-beta.10', 'v0.1.0-beta.7', 'main')
+        candidates = update.release_candidates(feed, 'v0.1.0-beta.6', 'test.zip')
+        self.assertEqual([item['version'] for item in candidates], ['v0.1.0-beta.10', 'v0.1.0-beta.7'])
+        self.assertEqual(update.release_candidates(feed.replace(update.REPOSITORY.encode(), b'foreign/repo'), 'v0.1.0-beta.6', 'test.zip'), [])
+        with self.assertRaises(ValueError):
+            update.release_candidates(b'<html/>', 'v0.1.0-beta.6', 'test.zip')
+
+    def test_find_release_never_uses_rest_api_and_verifies_assets(self):
+        name = update.asset_name()
+        with patch.object(update, 'open_url', side_effect=[BytesIO(self.feed('v0.1.0-beta.7')), BytesIO(('0' * 64 + '  ' + name).encode()), BytesIO()]) as request:
+            release = update.find_release('v0.1.0-beta.6', name)
+        self.assertEqual(release['version'], 'v0.1.0-beta.7')
+        self.assertTrue(all('api.github.com' not in call.args[0] for call in request.call_args_list))
+        self.assertEqual(request.call_args_list[-1].kwargs, {'method': 'HEAD'})
+
+    def test_missing_future_assets_are_not_reported_as_up_to_date(self):
+        with patch.object(update, 'open_url', side_effect=[BytesIO(self.feed('v0.1.0-beta.7')), update.urllib.error.HTTPError('url', 404, 'missing', {}, None)]):
+            with self.assertRaisesRegex(ValueError, 'publication'):
+                update.find_release('v0.1.0-beta.6', update.asset_name())
+
+    def test_check_caches_success_and_failure_then_retries(self):
+        with tempfile.TemporaryDirectory() as temp:
+            manager = update.AppUpdate(temp, threading.Event(), [])
+            with patch.object(update, 'find_release', return_value=None) as request:
+                manager.check()
+                manager.check()
+                self.assertEqual(request.call_count, 1)
+                self.assertEqual(manager.state['phase'], 'current')
+            manager.next_check = 0
+            with patch.object(update, 'find_release', side_effect=update.urllib.error.HTTPError('url', 403, 'rate limit exceeded', {}, None)) as request:
+                with self.assertLogs(level='ERROR'):
+                    manager.check()
+                manager.check()
+                self.assertEqual(request.call_count, 1)
+                self.assertEqual(manager.state['phase'], 'error')
+                self.assertIn('temporairement', manager.state['message'])
+            manager.next_check = 0
+            with patch.object(update, 'find_release', return_value={'version': 'v0.1.0-beta.7'}) as request:
+                manager.check()
+                self.assertEqual(manager.state['phase'], 'available')
 
     def test_archive_rejects_traversal_and_external_symlink(self):
         with tempfile.TemporaryDirectory() as temp:

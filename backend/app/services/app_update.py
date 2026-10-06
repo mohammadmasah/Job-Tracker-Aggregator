@@ -18,13 +18,15 @@ import tempfile
 import threading
 import time
 import urllib.request
+import urllib.error
+from xml.etree import ElementTree
 import zipfile
 import certifi
 
 from app.core.version import APP_VERSION
 
 REPOSITORY = 'mohammadmasah/Job-Tracker-Aggregator'
-RELEASES = f'https://api.github.com/repos/{REPOSITORY}/releases?per_page=100'
+RELEASES = f'https://github.com/{REPOSITORY}/releases.atom'
 DOWNLOADS = f'https://github.com/{REPOSITORY}/releases/download/'
 MAX_ARCHIVE = 1024 * 1024 * 1024
 
@@ -59,27 +61,74 @@ def executable_in(bundle):
     return bundle / ('TrackIt.exe' if sys.platform == 'win32' else 'TrackIt')
 
 
-def open_url(url):
-    return urllib.request.urlopen(urllib.request.Request(url, headers={
-        'User-Agent': 'TrackIt/' + APP_VERSION, 'Accept': 'application/vnd.github+json'
-    }), timeout=30, context=ssl.create_default_context(cafile=certifi.where()))
+def open_url(url, method='GET'):
+    try:
+        return urllib.request.urlopen(urllib.request.Request(url, headers={
+            'User-Agent': 'TrackIt/' + APP_VERSION, 'Accept': '*/*'
+        }, method=method), timeout=30, context=ssl.create_default_context(cafile=certifi.where()))
+    except urllib.error.HTTPError as error:
+        error.close()
+        raise
 
 
-def select_release(releases, current, name):
-    candidates = []
-    for release in releases:
-        tag = release.get('tag_name', '')
-        key = version_key(tag)
-        assets = {item['name']: item for item in release.get('assets', [])}
-        if (release.get('draft') or key is None or key <= version_key(current)
-                or name not in assets or name + '.sha256' not in assets):
-            continue
-        expected = DOWNLOADS + tag + '/' + name
-        if (assets[name].get('browser_download_url') != expected
-                or assets[name + '.sha256'].get('browser_download_url') != expected + '.sha256'):
-            continue
-        candidates.append((key, {'version': tag, 'url': expected, 'name': name}))
-    return max(candidates, key=lambda item: item[0])[1] if candidates else None
+def release_candidates(content, current, name):
+    """Use the public release feed, not the IP-limited unauthenticated REST API."""
+    atom = '{http://www.w3.org/2005/Atom}'
+    feed = ElementTree.fromstring(content)
+    if feed.tag != atom + 'feed':
+        raise ValueError('La liste des versions reçue est invalide.')
+    prefix = f'https://github.com/{REPOSITORY}/releases/tag/'
+    tags = set()
+    for entry in feed.findall(atom + 'entry'):
+        for link in entry.findall(atom + 'link'):
+            url = link.get('href', '')
+            if link.get('rel') == 'alternate' and url.startswith(prefix):
+                tag = url[len(prefix):]
+                key = version_key(tag)
+                if key is not None and key > version_key(current):
+                    tags.add(tag)
+    return [{'version': tag, 'url': DOWNLOADS + tag + '/' + name, 'name': name}
+            for tag in sorted(tags, key=version_key, reverse=True)]
+
+
+def read_checksum(url, name):
+    with open_url(url + '.sha256') as response:
+        checksum = response.read(1024).decode().split()
+    if len(checksum) != 2 or not re.fullmatch('[a-fA-F0-9]{64}', checksum[0]) or checksum[1] != name:
+        raise ValueError('Empreinte de vérification invalide.')
+    return checksum[0].lower()
+
+
+def find_release(current, name):
+    with open_url(RELEASES) as response:
+        content = response.read(2 * 1024 * 1024 + 1)
+    if len(content) > 2 * 1024 * 1024:
+        raise ValueError('La liste des versions reçue est trop volumineuse.')
+    candidates = release_candidates(content, current, name)
+    for release in candidates:
+        try:
+            read_checksum(release['url'], name)
+            with open_url(release['url'], method='HEAD'):
+                pass
+            return release
+        except urllib.error.HTTPError as error:
+            if error.code != 404:
+                raise
+    if candidates:
+        raise ValueError('Une nouvelle version est en cours de publication. Réessaie dans quelques minutes.')
+    return None
+
+
+def update_error(error):
+    if isinstance(error, urllib.error.HTTPError):
+        if error.code in (403, 429):
+            return 'GitHub limite temporairement les connexions. Réessaie dans quelques minutes.'
+        return 'Le serveur de téléchargement est indisponible. Réessaie plus tard.'
+    if isinstance(error, (urllib.error.URLError, TimeoutError)):
+        return 'Impossible de contacter GitHub. Vérifie ta connexion Internet, puis réessaie.'
+    if isinstance(error, ElementTree.ParseError):
+        return 'La liste des versions reçue est invalide. Réessaie plus tard.'
+    return f'Mise à jour interrompue : {error}'
 
 
 def extract_archive(archive, destination):
@@ -123,6 +172,8 @@ class AppUpdate:
         self.lock = threading.Lock()
         self.release = None
         self.prepared = None
+        self.next_check = 0
+        self.check_result = None
         self.state = {'phase': 'idle', 'version': APP_VERSION,
                       'supported': bool(getattr(sys, 'frozen', False)),
                       'message': 'Vérifie si une nouvelle version est disponible.', 'progress': 0}
@@ -143,19 +194,27 @@ class AppUpdate:
                 action()
             except Exception as error:
                 logging.exception('Application update failed')
-                self.state.update(phase='error', message=f'Mise à jour interrompue : {error}', progress=0)
+                self.state.update(phase='error', message=update_error(error), progress=0)
             finally:
                 self.lock.release()
         threading.Thread(target=work, daemon=True).start()
 
     def check(self):
+        if self.check_result is not None and time.monotonic() < self.next_check:
+            self.state.update(self.check_result)
+            return
         self.state.update(phase='checking', message='Recherche de mises à jour…')
-        with open_url(RELEASES) as response:
-            releases = json.load(response)
-        self.release = select_release(releases, APP_VERSION, asset_name())
-        self.state.update(phase='available' if self.release else 'current',
-                          available_version=self.release['version'] if self.release else None,
-                          message=('Une nouvelle version est disponible.' if self.release else 'Tu utilises la dernière version.'))
+        try:
+            self.release = find_release(APP_VERSION, asset_name())
+            self.check_result = dict(phase='available' if self.release else 'current',
+                                     available_version=self.release['version'] if self.release else None,
+                                     message=('Une nouvelle version est disponible.' if self.release else 'Tu utilises la dernière version.'))
+        except Exception as error:
+            logging.exception('Update check failed')
+            self.release = None
+            self.check_result = dict(phase='error', available_version=None, message=update_error(error))
+        self.next_check = time.monotonic() + 60
+        self.state.update(self.check_result)
 
     def download(self):
         if not self.release:
@@ -183,10 +242,7 @@ class AppUpdate:
                 raise ValueError('Prévois au moins 3 Go d’espace libre pour la mise à jour.')
             self.state.update(phase='downloading', message='Téléchargement de la mise à jour…', progress=0)
             release = dict(self.release)
-            with open_url(release['url'] + '.sha256') as response:
-                checksum = response.read(1024).decode().split()
-            if len(checksum) != 2 or not re.fullmatch('[a-fA-F0-9]{64}', checksum[0]) or checksum[1] != release['name']:
-                raise ValueError('Empreinte de vérification invalide.')
+            checksum = read_checksum(release['url'], release['name'])
             archive = stage / release['name']
             digest, downloaded = hashlib.sha256(), 0
             with open_url(release['url']) as response, archive.open('wb') as output:
@@ -198,7 +254,7 @@ class AppUpdate:
                     output.write(chunk)
                     digest.update(chunk)
                     self.state['progress'] = min(99, round(downloaded * 100 / total)) if total else 0
-            if digest.hexdigest() != checksum[0].lower():
+            if digest.hexdigest() != checksum:
                 raise ValueError('Le fichier téléchargé est incomplet ou altéré. Réessaie.')
             self.state.update(phase='preparing', message='Vérification et préparation…', progress=100)
             extracted = stage / 'extracted'
