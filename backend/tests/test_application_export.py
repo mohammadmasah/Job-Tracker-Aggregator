@@ -68,6 +68,12 @@ class ApplicationExportTests(unittest.TestCase):
         self.engine.dispose()
 
     def test_complete_export_counts_contacts_and_no_descriptions(self):
+        long_url = 'https://example.com/offre?tracking=' + 'parametre-long-' * 250
+        with Session(self.engine) as session:
+            application = session.get(Application, 1)
+            application.url = long_url
+            session.add(application)
+            session.commit()
         response = self.client.get('/api/applications/export.xlsx')
         self.assertEqual(response.status_code, 200)
         self.assertIn('spreadsheetml.sheet', response.headers['content-type'])
@@ -77,6 +83,8 @@ class ApplicationExportTests(unittest.TestCase):
         self.assertEqual((summary['B8'], summary['B9'], summary['B11'], summary['B15']), ('13', '2', '5', '20'))
         rows = [cell for cell in detail.findall('.//s:row', NS) if int(cell.attrib['r']) >= 7]
         self.assertEqual(len(rows), 20)
+        self.assertTrue(all(row.get('ht') == '42' and row.get('customHeight') == '1' for row in rows))
+        self.assertIn(long_url, strings)
         self.assertEqual(cells['A7'], 'Postulé')
         self.assertEqual(cells['D7'], '46296')  # Native Excel date, not preformatted text.
         self.assertIn('Camille — camille@example.com\nCamille — recrutement@example.com', strings)

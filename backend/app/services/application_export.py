@@ -2,7 +2,6 @@
 from collections import Counter
 from datetime import datetime
 from io import BytesIO
-import math
 
 import xlsxwriter
 
@@ -127,9 +126,9 @@ def export_applications(applications, status=None, generated_at=None):
                 else:
                     style = status_formats.get(app.status, body_formats[stripe]) if col == 0 else company_formats[stripe] if col == 1 else body_formats[stripe]
                     detail.write(row, col, value, style)
-            lines = max(sum(max(1, math.ceil(len(line) / ((COLUMNS[col][1] - 4) * 0.85))) for line in str(value or '').split('\n'))
-                        for col, value in enumerate(values))
-            detail.set_row(row, min(409, max(42, lines * 19 + 14)))
+            # Reserve two readable lines for every application. Long URLs or contact
+            # lists must not expand the entire row; full values remain in the cells.
+            detail.set_row(row, 42)
         detail.freeze_panes(6, 3)
         detail.set_landscape()
         detail.set_paper(8)  # A3 for the wide contact directory.
