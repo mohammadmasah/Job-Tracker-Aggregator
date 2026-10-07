@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import ContactList from "../../components/contacts/ContactList";
 import ContactForm from "../../components/contacts/ContactForm";
 import PageHeader from "../../components/layout/PageHeader";
@@ -6,6 +7,7 @@ import { getContacts } from "../../api/contacts";
 import { useApplications } from "../../hooks/useApplications";
 
 export default function Contacts() {
+    const [params] = useSearchParams();
     const { applications, fetchApplications } = useApplications();
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,6 +50,7 @@ export default function Contacts() {
             {/* MODAL de création */}
             {isFormOpen && (
                 <ContactForm
+                    initialApplicationIds={applications.some((app) => app.id === Number(params.get("application"))) ? [Number(params.get("application"))] : []}
                     applications={applications}
                     onClose={() => setIsFormOpen(false)}
                     onCreated={fetchContacts}

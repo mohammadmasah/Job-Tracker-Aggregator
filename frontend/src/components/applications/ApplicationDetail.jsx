@@ -1,3 +1,4 @@
+import ApplicationContacts from "./ApplicationContacts";
 import DeleteButton from "../common/DeleteButton";
 import { useState } from "react";
 import {
@@ -9,7 +10,7 @@ import { updateApplication, deleteApplication } from "../../api/application";
 
 
 // Détail candidature — même format compact que OfferDetail, + statut changeable.
-export default function ApplicationDetailPanel({ app, onClose, onRefresh, onDelete, favorite, onToggleFavorite }) {
+export default function ApplicationDetailPanel({ app, applications = [], onClose, onRefresh, onDelete, favorite, onToggleFavorite }) {
     const s = STATUS_META[app.status] || {};
     const relance = needsRelance(app);
     const date = app.applied_at ? new Date(app.applied_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null;
@@ -84,6 +85,8 @@ export default function ApplicationDetailPanel({ app, onClose, onRefresh, onDele
                 <EditField label="Offre (URL)" value={app.url} onSave={(v) => saveField("url", v)} full />
                 {date && <div className="col-span-2 text-[10px] text-text-3">Postulé le {date}</div>}
             </div>
+
+            <ApplicationContacts app={app} applications={applications} />
 
             {/* Description éditable */}
             <div className="mb-6">

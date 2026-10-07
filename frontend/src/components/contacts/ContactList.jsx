@@ -5,6 +5,8 @@ import {
 } from "react-icons/io5";
 import { METHOD_COLORS } from "../../constants/status";
 import { activeApplicationStore } from "../../stores/activeApplication";
+import { Link, useSearchParams } from "react-router-dom";
+import { companyContacts } from "../../utils/companyContacts";
 import ContactDetail from "./ContactDetail";
 
 function getInitials(name) {
@@ -34,7 +36,16 @@ const METHOD_FILTERS = [
 
 export default function ContactList({ contacts, applications, onUpdated }) {
     const [search, setSearch] = useState("");
-    const [selectedId, setSelectedId] = useState(null);
+    const [params, setParams] = useSearchParams();
+    const selectedId = Number(params.get("open")) || null;
+    const contextApp = applications.find((app) => app.id === Number(params.get("application")));
+    const scopedContacts = useMemo(() => contextApp ? companyContacts(contacts, contextApp, applications) : contacts, [contacts, contextApp, applications]);
+    const setSelectedId = (value) => setParams((previous) => {
+        const next = new URLSearchParams(previous);
+        const id = typeof value === "function" ? value(Number(previous.get("open")) || null) : value;
+        if (id) next.set("open", String(id)); else next.delete("open");
+        return next;
+    });
     const [linkFilter, setLinkFilter] = useState("all"); // all | linked | free
     const [methodFilter, setMethodFilter] = useState("all");
     const listRef = useRef(null);
@@ -44,9 +55,9 @@ export default function ContactList({ contacts, applications, onUpdated }) {
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();
-        return [...contacts]
+        return [...scopedContacts]
             .filter((c) => {
-                const company = applications.find((app) => c.application_ids?.includes(app.id))?.company || "";
+                const company = applications.filter((app) => c.application_ids?.includes(app.id)).map((app) => app.company).join(" ");
                 if (q && !c.name.toLowerCase().includes(q) && !company.toLowerCase().includes(q)) return false;
                 const linkedCount = (c.application_ids || []).length;
                 if (linkFilter === "linked" && linkedCount === 0) return false;
@@ -61,7 +72,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
                 return true;
             })
             .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }));
-    }, [contacts, search, applications, linkFilter, methodFilter]);
+    }, [scopedContacts, search, applications, linkFilter, methodFilter]);
 
     // Regroupement par première lettre
     const grouped = useMemo(() => {
@@ -74,7 +85,7 @@ export default function ContactList({ contacts, applications, onUpdated }) {
         return groups;
     }, [filtered]);
 
-    const selected = selectedId ? filtered.find((c) => c.id === selectedId) || null : null;
+    const selected = selectedId ? scopedContacts.find((c) => c.id === selectedId) || null : null;
 
     const presentLetters = new Set(Object.keys(grouped));
     const scrollToLetter = (letter) => {
@@ -99,6 +110,11 @@ export default function ContactList({ contacts, applications, onUpdated }) {
 
                 {/* Barre de recherche + filtres */}
                 <div className="px-4 py-4 border-b border-border-soft shrink-0 flex flex-col gap-3.5">
+                    {contextApp && <div className="rounded-lg border border-accent/25 bg-accent/5 p-3 text-xs">
+                        <p className="font-semibold text-text break-words">Contacts · {contextApp.company || "Cette candidature"}</p>
+                        <Link to={`/applications?open=${contextApp.id}`} className="block mt-2 text-accent hover:underline">← Retour à la candidature</Link>
+                        <button onClick={() => setParams((previous) => { const next = new URLSearchParams(previous); next.delete("application"); return next; })} className="mt-2 text-text-3 hover:text-text underline">Voir tous mes contacts</button>
+                    </div>}
                     <div className="flex items-center gap-2.5 bg-card border border-border-soft rounded-[6px] px-3.5 py-2.5 focus-within:border-accent transition-colors">
                         <IoSearchOutline className="text-text-3 text-[16px]" />
                         <input

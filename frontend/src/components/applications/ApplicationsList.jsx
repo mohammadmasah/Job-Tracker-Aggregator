@@ -191,7 +191,7 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                     <div className="h-full overflow-y-auto custom-scroll">
                         <ApplicationDetail
                             key={selected.id}
-                            app={selected}
+                            app={selected} applications={applications}
                             onDelete={onDelete}
                             onClose={() => setSelectedId(null)}
                             onRefresh={onRefresh}

@@ -11,10 +11,10 @@ function detectType(value) {
     return "other";
 }
 
-export default function ContactForm({ applications = [], onClose, onCreated }) {
+export default function ContactForm({ applications = [], initialApplicationIds = [], onClose, onCreated }) {
     const [name, setName] = useState("");
     const [notes, setNotes] = useState("");
-    const [applicationIds, setApplicationIds] = useState([]);   // plusieurs candidatures
+    const [applicationIds, setApplicationIds] = useState(initialApplicationIds);   // plusieurs candidatures
     const [infos, setInfos] = useState([""]);
     const [busy, setBusy] = useState(false);
 
