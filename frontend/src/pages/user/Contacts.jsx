@@ -12,14 +12,11 @@ export default function Contacts() {
     const [isFormOpen, setIsFormOpen] = useState(false);   // ← état du modal
 
     const fetchContacts = async () => {
-        setLoading(true);
         try {
             const res = await getContacts();
             setContacts(res.data);
         } catch (e) {
             console.error("Erreur chargement contacts", e);
-        } finally {
-            setLoading(false);
         }
     };
 
