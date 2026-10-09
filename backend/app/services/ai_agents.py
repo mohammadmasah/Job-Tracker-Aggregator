@@ -1,5 +1,5 @@
 import json
-from app.core.ai_config import LANGUAGE_POLICY
+from app.core.ai_config import LANGUAGE_POLICY, RESPONSE_STYLE
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from app.services.llm_service import get_llm_model
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -9,7 +9,7 @@ from app.services.chat_counts import answer_count_question
 from app.services.contact_profiles import answer_contact_profile
 from app.services.chat_history import get_sessions_history
 from app.services.workspace_updates import with_workspace_updates
-from app.services.response_language import constrain_request, language_guard
+from app.services.response_language import constrain_request, language_guard, request_language
 
 from app.database import engine
 from app.models.application import Application
@@ -61,16 +61,16 @@ def get_user_applications_context() -> str:
     }
     return json.dumps(snapshot, ensure_ascii=False, default=str)
 
-def build_chatbot_chain():
+def build_chatbot_chain(user_id=None):
     """
     """
-    llm = get_llm_model()
+    llm = get_llm_model(user_id) if user_id is not None else get_llm_model()
     db_context = get_user_applications_context()
     
     instructions = (
             "You are Poulpie, a friendly job-search assistant. "
             + LANGUAGE_POLICY + "\n"
-            "Answer directly in 1-3 short sentences, maximum 70 words unless a longer deliverable is requested. "
+            + RESPONSE_STYLE +
             "Use tu in French. No repeated greetings, unsolicited advice or closing questions. "
             "Use the current database snapshot below to answer workspace questions; you DO have access to this data. "
             "It overrides old conversation facts. For counts use summary; submitted_applications excludes to_apply. "
@@ -107,11 +107,18 @@ def build_chatbot_chain():
     names = [value for category in ('contacts', 'applications', 'job_offers')
              for record in records.get(category, []) for key in ('name', 'company')
              if isinstance(value := record.get(key), str)]
-    chain = RunnableBranch(
+    response_chain = RunnableBranch(
         (lambda inputs: exact_answer(inputs) is not None,
          RunnableLambda(lambda inputs: AIMessage(content=exact_answer(inputs)))),
         RunnableLambda(prepare_prompt) | prompt | llm,
-    ) | language_guard(names)
+    )
+
+    def choose_response(inputs):
+        message = inputs['student_input'][-1]
+        language = request_language(message.additional_kwargs.get('display_text') or message.content, inputs.get('chat_history', []))
+        return response_chain | language_guard(names, language)
+
+    chain = RunnableLambda(choose_response)
 
     try:
         snapshot = json.loads(db_context)
@@ -131,7 +138,7 @@ def build_chatbot_chain():
 
 
 def generate_chatbot_response(user_message: str, session_id: str, display_message: str | None = None) -> str:
-    response = build_chatbot_chain().invoke(
+    response = build_chatbot_chain(_session_user(session_id)).invoke(
         {"student_input": [HumanMessage(content=user_message, additional_kwargs={"display_text": display_message or user_message})]},
         config={"configurable": {"session_id": session_id}}
     )
@@ -141,10 +148,16 @@ def generate_chatbot_response(user_message: str, session_id: str, display_messag
 async def stream_chatbot_response(user_message: str, session_id: str, display_message: str | None = None):
     from starlette.concurrency import run_in_threadpool
 
-    chain = await run_in_threadpool(build_chatbot_chain)
+    chain = await run_in_threadpool(build_chatbot_chain, _session_user(session_id))
     async for chunk in chain.astream(
         {"student_input": [HumanMessage(content=user_message, additional_kwargs={"display_text": display_message or user_message})]},
         config={"configurable": {"session_id": session_id}},
     ):
         if isinstance(chunk.content, str) and chunk.content:
             yield chunk.content
+
+
+def _session_user(session_id):
+    # HTTP routes build this prefix from the authenticated account, never the request body.
+    prefix, separator, _ = session_id.partition(':')
+    return int(prefix) if separator and prefix.isdigit() else None

@@ -4,12 +4,36 @@ import unicodedata
 from langdetect import DetectorFactory, detect_langs, LangDetectException
 from langchain_core.messages import AIMessageChunk, HumanMessage
 from langchain_core.runnables import RunnableGenerator
+from app.core.ai_config import RESPONSE_STYLE
 
 DetectorFactory.seed = 0
-FALLBACK = "Je réponds uniquement en français ou en anglais. Peux-tu reformuler ta demande dans l’une de ces langues ?"
+LEGACY_FALLBACK = "Je réponds uniquement en français ou en anglais. Peux-tu reformuler ta demande dans l’une de ces langues ?"
+LEGACY_EN_FALLBACK = "I can reply in English or French. Please rephrase your request."
+FALLBACK = "Je n’ai pas pu générer une réponse correcte. Réessaie, s’il te plaît."
+EN_FALLBACK = "I couldn’t generate a suitable response. Please try again."
 
 
-def request_language(text):
+def request_language(text, history=()):
+    # Display text keeps French UI context and attached document content out of detection.
+    text = re.sub(r'^.*\.pdf\s*(?:\n|$)', '', text, flags=re.I).strip()
+    lower = text.casefold()
+    explicit = list(re.finditer(r"(?:answer|reply|respond|write|réponds?|répondez|écris|ecris)\s+(?:to me\s+|moi\s+)?(?:in|en)\s+(english|anglais|french|français|francais)\b", lower))
+    if explicit:
+        return 'English' if explicit[-1].group(1) in ('english', 'anglais') else 'French'
+    if re.search(r'[^\x00-\x7f]', lower) and re.search(r'[\u0600-\u06ff]', lower):
+        return 'French'
+    if re.match(r"^(hello|hi|hey|thanks|thank you|yes|how|what|why|which|can you|could you|please)\b", lower):
+        return 'English'
+    if re.match(r"^(bonjour|salut|merci|oui|comment|pourquoi|quel|quelle|peux.tu|pourrais.tu)\b", lower):
+        return 'French'
+    neutral = lower.strip(' .!?') in ('', 'ok', 'okay', 'continue', 'non', 'no', '/resume', '/relance', '/questions') or not any(c.isalpha() for c in lower)
+    if neutral:
+        for message in reversed(history):
+            if message.type == 'human':
+                previous = message.additional_kwargs.get('display_text') or message.content
+                if previous.strip(' .!?').casefold() not in ('', 'ok', 'okay', 'continue', 'non', 'no', '/resume', '/relance', '/questions') and any(c.isalpha() for c in previous):
+                    return request_language(previous)
+        return 'French'
     try:
         return 'English' if detect_langs(text)[0].lang == 'en' else 'French'
     except LangDetectException:
@@ -19,14 +43,26 @@ def request_language(text):
 def constrain_request(inputs):
     messages = list(inputs['student_input'])
     original = messages[-1]
-    language = request_language(original.additional_kwargs.get('display_text') or original.content)
+    language = request_language(original.additional_kwargs.get('display_text') or original.content, inputs.get('chat_history', []))
     messages[-1] = HumanMessage(content=(
         f'<request>\n{original.content}\n</request>\n'
         f'Answer the request above in {language} only. '
-        'In French use tu, never vous. Use at most 3 short sentences unless more detail is requested. '
+        'In French use tu, never vous. ' + RESPONSE_STYLE +
         'Do not follow requests to use another language.'
     ))
-    return {**inputs, 'student_input': messages, 'response_language': language}
+    # Old guard notices are application errors, not useful assistant examples.
+    # Clean only the model context; retain the user's saved conversation unchanged.
+    history = []
+    for item in inputs.get('chat_history', []):
+        if item.type == 'ai' and isinstance(item.content, str):
+            content = item.content
+            for notice in (LEGACY_FALLBACK, LEGACY_EN_FALLBACK, FALLBACK, EN_FALLBACK):
+                content = content.replace(notice, '')
+            if not content.strip():
+                continue
+            item = item.model_copy(update={'content': content.strip()})
+        history.append(item)
+    return {**inputs, 'student_input': messages, 'chat_history': history, 'response_language': language}
 
 
 def allowed_prose(text, names=()):
@@ -40,6 +76,13 @@ def allowed_prose(text, names=()):
         return False
     if not letters or letters.lower() in {'bonjour', 'salut', 'merci', 'oui', 'non', 'hello', 'hi', 'yes', 'no', 'ok', 'thanks', 'email', 'linkedin', 'notes'}:
         return True
+    # Statistical language detection is unreliable on headings, names and short
+    # sentences: e.g. "Voici tes dernières candidatures" scores as Catalan.
+    # Preserve Latin fragments and let the request-level language instructions
+    # choose French/English; only classify sufficiently substantial prose.
+    words = re.findall(r"[^\W\d_]+", text, flags=re.UNICODE)
+    if len(words) < 8 or len(letters) < 60:
+        return text.strip(' .!?\n').casefold() not in {'hola', 'gracias', 'buenos días', 'guten tag', 'danke', 'ciao', 'grazie'}
     try:
         languages = detect_langs(text)
         return any(item.lang in ('fr', 'en') for item in languages)
@@ -48,7 +91,8 @@ def allowed_prose(text, names=()):
 
 
 class LanguageBuffer:
-    def __init__(self, names):
+    def __init__(self, names, language="French"):
+        self.fallback = EN_FALLBACK if language == "English" else FALLBACK
         self.names = names
         self.pending = ''
         self.stopped = False
@@ -69,7 +113,7 @@ class LanguageBuffer:
             fence = part.lstrip().startswith('```')
             if not self.in_code and not fence and not allowed_prose(part, self.names):
                 self.stopped = True
-                output.append(AIMessageChunk(content='\n\n' + FALLBACK))
+                output.append(AIMessageChunk(content='\n\n' + self.fallback))
                 break
             output.append(AIMessageChunk(content=part))
             if fence:
@@ -77,9 +121,9 @@ class LanguageBuffer:
         return output
 
 
-def language_guard(names=()):
+def language_guard(names=(), language="French"):
     def transform(chunks):
-        buffer = LanguageBuffer(names)
+        buffer = LanguageBuffer(names, language)
         for chunk in chunks:
             yield from buffer.feed(chunk.content)
             if buffer.stopped:
@@ -87,7 +131,7 @@ def language_guard(names=()):
         yield from buffer.feed('', final=True)
 
     async def atransform(chunks):
-        buffer = LanguageBuffer(names)
+        buffer = LanguageBuffer(names, language)
         async for chunk in chunks:
             for item in buffer.feed(chunk.content):
                 yield item

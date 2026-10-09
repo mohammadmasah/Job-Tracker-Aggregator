@@ -1,6 +1,6 @@
 """Report additions since the last successfully completed assistant response."""
 import json
-import re
+from app.services.response_language import request_language
 
 from langchain_core.messages import AIMessageChunk
 from langchain_core.runnables import RunnableGenerator
@@ -32,9 +32,7 @@ def describe_updates(records, history, question):
     # The first observed snapshot establishes a baseline, not a list of "new" records.
     if previous is None:
         return "", current
-    language = "fr" if re.search(r"[\u0600-\u06ff]", question) else (
-        "en" if re.search(r"\b(what|how|show|give|hello|hi|please|my)\b", question.lower()) else "fr"
-    )
+    language = 'en' if request_language(question, history) == 'English' else 'fr'
     labels = {
         "fr": ("candidature(s)", "contact(s)", "offre(s)", "document(s)", "coordonnée(s)"),
         "en": ("application(s)", "contact(s)", "job offer(s)", "document(s)", "contact detail(s)"),

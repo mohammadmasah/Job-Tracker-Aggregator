@@ -6,6 +6,7 @@ from contextlib import aclosing
 from fastapi.responses import StreamingResponse
 from httpx import TimeoutException
 
+from .ai_settings import AIError
 from .ai_agents import stream_chatbot_response
 
 logger = logging.getLogger(__name__)
@@ -22,10 +23,12 @@ def streaming_chat_response(message: str, session_id: str, display_message: str 
                     async for text in stream:
                         yield event({"type": "delta", "text": text})
             yield event({"type": "done"})
+        except AIError as error:
+            yield event({"type": "error", "message": str(error)})
         except (TimeoutError, TimeoutException):
             yield event({"type": "error", "message": "Poulpie met trop de temps à répondre. Réessaie."})
         except Exception:
-            logger.exception("Chat stream failed")
+            logger.warning("Chat stream failed")
             yield event({"type": "error", "message": "La réponse a été interrompue. Réessaie."})
 
     return StreamingResponse(

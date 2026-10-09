@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import axios from "axios";
 import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { requestChatStream, fetchChatHistory, saveLocalChat } from "../api/chatStream";
 import Poulpie from "./Poulpie";
@@ -90,6 +92,16 @@ function commandToPrompt(text, app) {
 }
 
 export default function ChatWidget() {
+    const [aiSettings, setAiSettings] = useState(null);
+    useEffect(() => {
+        let active = true;
+        const refresh = () => axios.get('/api/ai/settings').then(({ data }) => { if (active) setAiSettings(data); }).catch(() => { if (active) setAiSettings(null); });
+        refresh();
+        window.addEventListener('trackit-ai-changed', refresh);
+        window.addEventListener('focus', refresh);
+        return () => { active = false; window.removeEventListener('trackit-ai-changed', refresh); window.removeEventListener('focus', refresh); };
+    }, []);
+
     const [open, setOpen] = useState(false);
     const [closing, setClosing] = useState(false);
     const [messages, setMessages] = useState([WELCOME]);
@@ -369,9 +381,12 @@ return (
                             </div>
                             <div className="leading-tight">
                                 <h2 className="text-[15px] font-bold text-text tracking-tight">Poulpie</h2>
+                                <Link to="/settings/assistant" onClick={closeChat} className="block max-w-[235px] truncate text-[10px] text-accent hover:underline" title={aiSettings?.model}>
+                                    {aiSettings ? `${({ local: 'Local · Ollama', openai: 'OpenAI', gemini: 'Gemini', claude: 'Claude' })[aiSettings.provider]} · ${aiSettings.model}` : 'Choisir mon assistant IA'}
+                                </Link>
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                     <span className={`w-2.5 h-2.5 rounded-full ${typing ? "bg-accent animate-ping" : "bg-emerald-500"}`} />
-                                    <p className="text-[11px] text-text-2 font-medium">{typing ? "écrit…" : "en ligne"}</p>
+                                    <p className="text-[11px] text-text-2 font-medium">{typing ? "écrit…" : "ton assistant"}</p>
                                 </div>
                             </div>
                         </div>

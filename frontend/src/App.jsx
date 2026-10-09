@@ -1,3 +1,4 @@
+import AssistantSettings from "./pages/user/AssistantSettings";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LocalInstallation from "./pages/user/LocalInstallation";
 import Layout from "./components/Layout";
@@ -38,6 +39,7 @@ export default function App() {
 
                     <Route path="/settings" element={<SettingsLayout />}>
                         {import.meta.env.VITE_STANDALONE === "1" && <Route path="local" element={<LocalInstallation />} />}
+                        <Route path="assistant" element={<AssistantSettings />} />
                         <Route path="statistiques" element={<SettingsStatistiques />} />
                         <Route path="notifications" element={<SettingsNotifications />} />
                     </Route>

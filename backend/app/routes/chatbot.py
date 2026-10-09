@@ -1,3 +1,4 @@
+from app.services.ai_settings import AIError
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
@@ -41,11 +42,12 @@ async def chat_with_assistant(request: ChatRequest, user: User = Depends(get_cur
         )
         return {"response": bot_reply}
     
+    except AIError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from None
     except (TimeoutError, TimeoutException):
         raise HTTPException(status_code=504, detail="Le modèle met trop de temps à répondre. Réessaie.")
     except Exception as e:
-        print(f"ERROR: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Le service de chat est indisponible. Réessaie.") from None
 
 
 @router.get("/history/")

@@ -1,3 +1,4 @@
+from .ai_setting import AISelection, AIProvider
 from sqlalchemy.orm import configure_mappers
 from .chat_message import ChatMessage
 

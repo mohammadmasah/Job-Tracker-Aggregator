@@ -52,3 +52,16 @@ app.include_router(offers.router)
 app.include_router(weLoveDevs.router)
 app.include_router(adzuna.router)
 app.include_router(user_router)
+from app.routes.ai_settings import router as ai_settings_router
+app.include_router(ai_settings_router)
+
+# Validation errors must never echo a submitted API key back to the client.
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(RequestValidationError)
+async def validation_error(request, error):
+    if request.url.path.startswith('/api/ai/'):
+        return JSONResponse(status_code=422, content={'detail': 'Configuration invalide. Vérifie le service, le modèle et la clé API.'})
+    return await request_validation_exception_handler(request, error)

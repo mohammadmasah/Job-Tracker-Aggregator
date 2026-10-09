@@ -17,3 +17,8 @@
 **/.DS_Store
 **/.vscode
 **/.idea
+# Never copy runtime credentials or local environment into an image
+.private
+**/ai-credentials.key
+.env
+.env.*

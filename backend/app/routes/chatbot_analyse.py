@@ -1,3 +1,4 @@
+from app.services.ai_settings import AIError
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from app.services.ai_agents import generate_chatbot_response
 from app.services.chat_stream import streaming_chat_response
@@ -48,8 +49,9 @@ async def analyse_cv(
 
     except HTTPException:
         raise
+    except AIError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from None
     except (TimeoutError, TimeoutException):
         raise HTTPException(status_code=504, detail="Le modèle met trop de temps à répondre. Réessaie.")
     except Exception as e:
-        print(f"ERROR: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Le service de chat est indisponible. Réessaie.") from None

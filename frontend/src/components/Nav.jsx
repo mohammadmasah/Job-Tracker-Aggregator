@@ -114,6 +114,7 @@ export default function Nav() {
                     <div className="mt-5 border-t border-border-soft pt-4">
                         <NavLink to="/settings" end className={settingsParentClass} onClick={closeMobileNav}><IoSettingsOutline className="text-[16px]" />Paramètres</NavLink>
                     </div>
+                    <NavLink to="/settings/assistant" className={linkClass} onClick={closeMobileNav}><IoSettingsOutline className="text-[16px]" />Assistant IA</NavLink>
                     {import.meta.env.VITE_STANDALONE === "1" && <NavLink to="/settings/local" className={linkClass} onClick={closeMobileNav}><IoSettingsOutline className="text-[16px]" />Installation locale · IA</NavLink>}
                     {isSettings && (
                         <div className="ml-7 flex flex-col border-l border-border-soft pb-1">

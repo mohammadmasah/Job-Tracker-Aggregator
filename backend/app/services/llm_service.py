@@ -6,7 +6,14 @@ from app.core.ai_config import DEFAULT_MODEL
 
 load_dotenv()
 
-def get_llm_model():
+def get_llm_model(user_id=None):
+    if user_id is not None:
+        from app.services.ai_settings import active_credentials
+        from app.services.cloud_ai import cloud_model
+        selected = active_credentials(user_id)
+        if selected:
+            return cloud_model(*selected)
+
     ollama_url = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
     model = ChatOllama(
         model = os.getenv("OLLAMA_MODEL", DEFAULT_MODEL),

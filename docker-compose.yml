@@ -43,6 +43,9 @@ services:
       - OLLAMA_HOST=http://ollama:11434
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - TRACKIT_AI_KEY_DIR=/app/.private
+    volumes:
+      - ai_credentials:/app/.private
     depends_on:
       - db
       - redis
@@ -63,5 +66,6 @@ services:
       - backend
 
 volumes:
+  ai_credentials:
   postgres_data:
   ollama_data:

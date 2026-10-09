@@ -14,3 +14,7 @@ node_modules/
 /frontend/dist/
 *.db-wal
 *.db-shm
+
+# Server-side AI credential encryption material
+backend/.private/
+**/ai-credentials.key
