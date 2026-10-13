@@ -1,3 +1,4 @@
+import ApplicationDocuments from "../documents/ApplicationDocuments";
 import ApplicationContacts from "./ApplicationContacts";
 import DeleteButton from "../common/DeleteButton";
 import { useState } from "react";
@@ -87,6 +88,7 @@ export default function ApplicationDetailPanel({ app, applications = [], onClose
             </div>
 
             <ApplicationContacts app={app} applications={applications} />
+            <ApplicationDocuments key={app.id} application={app} />
 
             {/* Description éditable */}
             <div className="mb-6">

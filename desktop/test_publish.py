@@ -31,6 +31,20 @@ class PublishTests(unittest.TestCase):
                 publish('v1', directory)
                 self.assertEqual(gh.call_args.args[:3], ('release', 'create', 'v1'))
                 self.assertIn('--verify-tag', gh.call_args.args)
+                self.assertIn('--latest', gh.call_args.args)
+                self.assertNotIn('--prerelease', gh.call_args.args)
+
+    def test_beta_draft_remains_prerelease(self):
+        assets = [{'name': name + suffix, 'state': 'uploaded'} for name in ARCHIVES for suffix in ['', '.sha256']]
+        with patch('publish.gh', side_effect=[json.dumps({'assets': assets, 'isDraft': True}), '']) as gh:
+            publish('v1.1.0-beta.1', 'not-needed')
+            self.assertIn('--prerelease=true', gh.call_args.args)
+
+    def test_stable_draft_is_not_prerelease(self):
+        assets = [{'name': name + suffix, 'state': 'uploaded'} for name in ARCHIVES for suffix in ['', '.sha256']]
+        with patch('publish.gh', side_effect=[json.dumps({'assets': assets, 'isDraft': True}), '']) as gh:
+            publish('v1.0.0', 'not-needed')
+            self.assertIn('--prerelease=false', gh.call_args.args)
 
     def test_partial_pair_is_not_overwritten(self):
         with patch('publish.gh', return_value=json.dumps({'assets': [{'name': ARCHIVES[0], 'state': 'uploaded'}], 'isDraft': False})) as gh:

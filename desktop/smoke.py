@@ -50,7 +50,18 @@ def run(executable):
                 assert json.loads(request(path)) == [], f'Fresh installation contains data: {path}'
             assert json.loads(request('/chatbot/history/'))['messages'] == []
             request('/api/applications', {'company': 'Test local', 'position': 'Développeur'})
-            assert len(json.loads(request('/api/applications'))) == 1
+            applications = json.loads(request('/api/applications'))
+            assert len(applications) == 1
+            application_id = applications[0]['id']
+            boundary = 'TrackItSmokeBoundary'
+            file_content = b'TrackIt portable attachment smoke test'
+            multipart = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="cv.txt"\r\n'
+                         'Content-Type: text/plain\r\n\r\n').encode() + file_content + f'\r\n--{boundary}--\r\n'.encode()
+            with client.open(urllib.request.Request(base + f'/api/documents/{application_id}', data=multipart,
+                             headers={'Content-Type': f'multipart/form-data; boundary={boundary}'}), timeout=15) as response:
+                document = json.loads(response.read())
+            document_id = document['id']
+            assert request(f'/api/documents/{document_id}/download') == file_content
             with ZipFile(BytesIO(request('/api/applications/export.xlsx'))) as workbook:
                 assert 'xl/worksheets/sheet2.xml' in workbook.namelist()
                 assert b'Test local' in workbook.read('xl/sharedStrings.xml')
@@ -59,6 +70,9 @@ def run(executable):
             process.wait(timeout=30)
             process = start()
             assert len(json.loads(request('/api/applications'))) == 1
+            assert request(f'/api/documents/{document_id}/download') == file_content
+            request(f'/api/documents/{document_id}', method='DELETE')
+            assert json.loads(request('/api/documents')) == []
             request('/api/user/logout', {})
             try:
                 request('/api/applications')

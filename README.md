@@ -4,6 +4,16 @@
 
 TrackIt centralise vos candidatures, contacts, documents (CV) et offres d'emploi scrapées sur les principaux jobboards français, avec un assistant IA capable d'interroger votre base de données pour répondre à vos questions sur votre recherche.
 
+## Version 1.0 — choisis ton assistant IA
+
+L’application fonctionne sur ton ordinateur. Pour le chatbot, utilise **Ollama localement** ou connecte **ta propre clé API OpenAI, Gemini ou Claude** depuis **Paramètres → Assistant IA**. Tu peux changer de service et revenir au local en conservant tes conversations.
+
+Avec une API distante, les messages et le contexte utile sont transmis au fournisseur choisi après ton accord. Un abonnement à son chatbot ne garantit pas un accès API ; un quota ou une facturation distincte peut s’appliquer.
+
+- [Télécharger TrackIt pour Mac, Windows ou Linux](https://github.com/mohammadmasah/Job-Tracker-Aggregator/releases/latest)
+- [Guide de configuration de l’assistant](Docs/assistant-ai.md)
+- Pour les développeurs : le code source et l’installation Docker restent disponibles ci-dessous.
+
 ---
 
 ## Sommaire
@@ -35,7 +45,7 @@ TrackIt est né d'un besoin concret : automatiser et structurer une recherche d'
 - **Gestion des contacts** (recruteurs, RH) liés à chaque candidature.
 - **Scraping d'offres** depuis WeLoveDevs, La Bonne Alternance et Adzuna.
 - **Extension Chrome compagnon** pour enregistrer une offre en un clic depuis HelloWork, Welcome to the Jungle, JobTeaser, Indeed, WeLoveDevs, La Bonne Alternance ou LinkedIn.
-- **Assistant IA (chatbot)** basé sur LangChain + Ollama, qui lit la base PostgreSQL pour donner un contexte réel sur les candidatures de l'utilisateur.
+- **Assistant IA au choix** : Ollama en local, ou ta clé API personnelle OpenAI, Gemini ou Claude, avec le contexte de tes candidatures et contacts.
 - **Analyse de CV** via un pipeline PDF dédié (extraction de texte avec `pdfplumber`).
 
 ## Fonctionnalités
@@ -46,9 +56,9 @@ TrackIt est né d'un besoin concret : automatiser et structurer une recherche d'
 | Candidatures | CRUD complet, statuts personnalisés, tableau de bord avec statistiques (`recharts`) |
 | Export Excel | Export `.xlsx` de toutes les candidatures ou d’un statut : synthèse, liste triée et coordonnées des contacts, sans descriptions ni notes |
 | Contacts | Association contact ↔ candidature (table de liaison dédiée) |
-| Documents | Upload et analyse de CV (endpoint `/analyse-cv/`) |
+| Documents | Pièces jointes liées aux candidatures : CV, lettres, invitations ; téléchargement et suppression |
 | Offres | Scraping WeLoveDevs, intégration API Adzuna, La Bonne Alternance |
-| Chatbot IA | LangChain + Ollama (`qwen3:1.7b`), historique de conversation, contexte DB en temps réel |
+| Chatbot IA | Ollama local ou API personnelle OpenAI, Gemini et Claude ; historique conservé, réponses en français et en anglais |
 | Notifications | Envoi d'e-mails via SMTP (relances, réinitialisation de mot de passe) |
 | Performance | Cache et files via Redis, rate limiting via `slowapi` |
 | Extension navigateur | Capture d'offres en un clic (Manifest V3) |

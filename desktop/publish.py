@@ -38,13 +38,17 @@ def publish(tag, directory):
         if filename != name or expected != actual:
             raise ValueError(f'Invalid checksum: {name}')
         files += [str(archive), str(checksum)]
+    prerelease = '-' in tag.split('+', 1)[0]
     if release is None:
-        gh('release', 'create', tag, *files, '--verify-tag', '--title', f'TrackIt {tag}', '--generate-notes', '--prerelease')
+        notes = Path(__file__).resolve().parent.parent / 'Docs' / 'releases' / f'{tag}.md'
+        note_args = ['--notes-file', str(notes)] if notes.is_file() else ['--generate-notes']
+        release_args = ['--prerelease'] if prerelease else ['--latest']
+        gh('release', 'create', tag, *files, '--verify-tag', '--title', f'TrackIt {tag}', *note_args, *release_args)
     else:
         if files:
             gh('release', 'upload', tag, *files)
         if release['isDraft']:
-            gh('release', 'edit', tag, '--draft=false', '--prerelease')
+            gh('release', 'edit', tag, '--draft=false', f'--prerelease={str(prerelease).lower()}')
     print(f'Release {tag}: all four archive/checksum pairs published; existing assets and notes preserved.')
 
 

@@ -46,6 +46,7 @@ services:
       - TRACKIT_AI_KEY_DIR=/app/.private
     volumes:
       - ai_credentials:/app/.private
+      - documents_data:/app/uploads
     depends_on:
       - db
       - redis
@@ -66,6 +67,7 @@ services:
       - backend
 
 volumes:
+  documents_data:
   ai_credentials:
   postgres_data:
   ollama_data:

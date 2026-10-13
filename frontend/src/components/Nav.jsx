@@ -1,3 +1,4 @@
+import UploadDocument from "./documents/UploadDocument";
 import { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
@@ -47,25 +48,7 @@ export default function Nav() {
         : "text-text-2 hover:text-accent hover:bg-card border-transparent"
         }`;
 
-    const [uploading, setUploading] = useState(false);
-
-    const handleFileUpload = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setUploading(true);
-        try {
-            const formData = new FormData();
-            formData.append("file", file);
-            await fetch("http://localhost:8000/api/documents", {
-                method: "POST", body: formData, credentials: "include",
-            });
-        } catch (err) {
-            console.error("Échec de l'upload", err);
-        } finally {
-            setUploading(false);
-            e.target.value = "";
-        }
-    };
+    const [uploadOpen, setUploadOpen] = useState(false);
 
     return (
         <>
@@ -127,15 +110,14 @@ export default function Nav() {
                {/* ESPACE PERSONNEL — carte stylée */}
                 <div className="mt-auto shrink-0 p-3">
                     <div className="bg-card border border-border-soft rounded-[6px] overflow-hidden shadow-sm">
-                        <label className="group cursor-pointer flex items-center gap-2.5 px-3 py-2.5 hover:bg-bg/40 transition-colors">
+                        <button type="button" onClick={() => { closeMobileNav(); setUploadOpen(true); }} className="w-full text-left group cursor-pointer flex items-center gap-2.5 px-3 py-2.5 hover:bg-bg/40 transition-colors">
                             <span className="w-7 h-7 rounded-[6px] border border-dashed border-border group-hover:border-accent flex items-center justify-center text-text-3 group-hover:text-accent transition-colors text-[14px] shrink-0">
-                                {uploading ? "…" : "↑"}
+                                ↑
                             </span>
                             <span className="text-[11px] text-text-2 group-hover:text-text transition-colors font-mono truncate">
-                                {uploading ? "Envoi en cours…" : "Téléverser un document"}
+                                Téléverser un document
                             </span>
-                            <input type="file" aria-label="Téléverser un document" className="hidden" onChange={handleFileUpload} disabled={uploading} />
-                        </label>
+                        </button>
                     </div>
 
                     <button type="button" onClick={handleLogout} disabled={loggingOut}
@@ -152,6 +134,7 @@ export default function Nav() {
                 </div>
 
             </aside>
+            {uploadOpen && <UploadDocument onClose={() => setUploadOpen(false)} />}
         </>
     );
 }
