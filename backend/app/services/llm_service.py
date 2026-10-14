@@ -6,7 +6,7 @@ from app.core.ai_config import DEFAULT_MODEL
 
 load_dotenv()
 
-def get_llm_model(user_id=None):
+def get_llm_model(user_id=None, *, max_tokens=512, num_ctx=8192):
     if user_id is not None:
         from app.services.ai_settings import active_credentials
         from app.services.cloud_ai import cloud_model
@@ -18,8 +18,8 @@ def get_llm_model(user_id=None):
     model = ChatOllama(
         model = os.getenv("OLLAMA_MODEL", DEFAULT_MODEL),
         base_url=ollama_url,
-        num_predict=512,
-        num_ctx=8192,
+        num_predict=max_tokens,
+        num_ctx=num_ctx,
         keep_alive="2m",
         client_kwargs={"timeout": 90.0},
         num_thread=min(4, os.cpu_count() or 1),
