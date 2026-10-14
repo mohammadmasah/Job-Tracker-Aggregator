@@ -65,3 +65,6 @@ async def validation_error(request, error):
     if request.url.path.startswith('/api/ai/'):
         return JSONResponse(status_code=422, content={'detail': 'Configuration invalide. Vérifie le service, le modèle et la clé API.'})
     return await request_validation_exception_handler(request, error)
+
+from app.routes.interviews import router as interviews_router
+app.include_router(interviews_router)
