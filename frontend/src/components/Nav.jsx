@@ -1,7 +1,7 @@
 import UploadDocument from "./documents/UploadDocument";
 import { useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { IoBriefcaseOutline, IoCloseOutline, IoDocumentTextOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
+import { IoBriefcaseOutline, IoCloseOutline, IoChatbubblesOutline, IoGridOutline, IoMenuOutline, IoPeopleOutline, IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import Logo from "./Logo";
 import { logout } from "../api/user";
 
@@ -91,7 +91,7 @@ export default function Nav() {
                     <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-text-3">Espace de travail</p>
                     <NavLink to="/" end className={linkClass} onClick={closeMobileNav}><IoGridOutline className="text-[16px]" />Tableau de bord</NavLink>
                     <NavLink to="/applications" className={linkClass} onClick={closeMobileNav}><IoBriefcaseOutline className="text-[16px]" />Candidatures</NavLink>
-                    <NavLink to="/offers" className={linkClass} onClick={closeMobileNav}><IoDocumentTextOutline className="text-[16px]" />Offres</NavLink>
+                    <NavLink to="/interviews" className={linkClass} onClick={closeMobileNav}><IoChatbubblesOutline className="text-[16px]" />Préparer mon entretien</NavLink>
                     <NavLink to="/contacts" className={linkClass} onClick={closeMobileNav}><IoPeopleOutline className="text-[16px]" />Contacts</NavLink>
 
                     <div className="mt-5 border-t border-border-soft pt-4">

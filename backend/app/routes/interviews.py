@@ -196,3 +196,29 @@ def extract_cv(file: UploadFile = File(...), user: User = Depends(get_current_us
         raise HTTPException(400, 'Impossible de lire ce PDF. Essaie un fichier non protégé ou colle ton parcours.') from None
     finally:
         file.file.close()
+
+
+class SessionSettings(BaseModel):
+    profile: str = InputField('', max_length=8000)
+    language: Literal['fr', 'en'] = 'fr'
+    focus: Literal['mixed', 'hr', 'technical'] = 'mixed'
+    question_count: Literal[5, 8] = 5
+    revision: int = InputField(ge=0)
+
+
+@router.patch('/{id}')
+def configure(id: int, data: SessionSettings, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    from sqlalchemy import update
+    from datetime import datetime
+    row = owned(session, id, user.id)
+    if row.status != 'ready' or row.revision != data.revision:
+        raise HTTPException(409, 'La séance a déjà commencé ou a changé. Recharge-la.')
+    changes = data.model_dump(exclude={'revision'}) | {'revision': data.revision + 1, 'updated_at': datetime.utcnow()}
+    result = session.execute(update(InterviewSession).where(InterviewSession.id == id, InterviewSession.user_id == user.id,
+                             InterviewSession.revision == data.revision, InterviewSession.status == 'ready').values(**changes))
+    if result.rowcount != 1:
+        session.rollback()
+        raise HTTPException(409, 'La séance a changé. Recharge-la.')
+    session.commit()
+    session.expire_all()
+    return public(owned(session, id, user.id))

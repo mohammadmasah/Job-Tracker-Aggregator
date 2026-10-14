@@ -1,5 +1,7 @@
+import Interviews from "./pages/user/Interviews";
+import InterviewRoom from "./pages/user/InterviewRoom";
 import AssistantSettings from "./pages/user/AssistantSettings";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LocalInstallation from "./pages/user/LocalInstallation";
 import Layout from "./components/Layout";
 
@@ -33,7 +35,10 @@ export default function App() {
                     }
                 >
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/offers" element={<Offers />} />
+                    <Route path="/offers" element={<Navigate to="/interviews" replace />} />
+                    <Route path="/interviews" element={<Interviews />} />
+                    <Route path="/interviews/:id" element={<InterviewRoom />} />
+                    <Route path="/job-offers" element={<Offers />} />
                     <Route path="/applications" element={<Applications />} />
                     <Route path="/contacts" element={<Contacts />} />
 

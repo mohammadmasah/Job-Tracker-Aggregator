@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import ChatWidget from "./ChatWidget";
 
 export default function Layout() {
+    const { pathname } = useLocation();
+    const interviewPage = pathname === "/offers" || pathname.startsWith("/interviews");
     return (
         <div className="h-screen bg-bg flex overflow-hidden">
             <a className="skip-link" href="#main-content">Aller au contenu principal</a>
@@ -10,7 +12,7 @@ export default function Layout() {
             <main id="main-content" tabIndex="-1" className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-16 md:pt-0">
                 <Outlet />
             </main>
-            <ChatWidget />
+            {!interviewPage && <ChatWidget />}
         </div>
     );
 }

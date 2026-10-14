@@ -143,6 +143,39 @@ class InterviewTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
 
+    def test_settings_are_revision_checked_and_locked_after_start(self):
+        from unittest.mock import AsyncMock, patch
+        record = self.create()
+        settings = {'profile': 'Mon CV', 'language': 'en', 'focus': 'technical', 'question_count': 8, 'revision': 0}
+        response = self.client.patch(f'/api/interviews/{record["id"]}', json=settings)
+        self.assertEqual(response.status_code, 200, response.text)
+        record = response.json()
+        self.assertEqual(record['profile'], 'Mon CV')
+        self.assertEqual(record['revision'], 1)
+        self.assertEqual(self.client.patch(f'/api/interviews/{record["id"]}', json=settings).status_code, 409)
+        with patch('app.services.interview_coach.coach', new_callable=AsyncMock, return_value={'preparation': {}, 'question': 'Question'}):
+            record = self.action(record, 'start').json()
+        settings['revision'] = record['revision']
+        self.assertEqual(self.client.patch(f'/api/interviews/{record["id"]}', json=settings).status_code, 409)
+
+    def test_concurrent_generation_does_not_overwrite_newer_state(self):
+        from unittest.mock import patch
+        record = self.create()
+        async def competing(*args):
+            with Session(self.engine) as session:
+                row = session.get(InterviewSession, record['id'])
+                row.revision += 1
+                row.profile = 'Saved in another tab'
+                session.add(row)
+                session.commit()
+            return {'preparation': {}, 'question': 'Old result'}
+        with patch('app.services.interview_coach.coach', side_effect=competing):
+            self.assertEqual(self.action(record, 'start').status_code, 409)
+        saved = self.client.get(f'/api/interviews/{record["id"]}').json()
+        self.assertEqual(saved['profile'], 'Saved in another tab')
+        self.assertEqual(saved['turns'], [])
+
+
 class CoachTests(unittest.IsolatedAsyncioTestCase):
     async def test_provider_receives_only_selected_context_and_returns_structured_result(self):
         import json
