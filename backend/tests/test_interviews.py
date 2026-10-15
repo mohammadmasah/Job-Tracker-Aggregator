@@ -226,3 +226,11 @@ class CoachTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(AIError):
                 await coach(record, 'start')
         self.assertEqual(model.ainvoke.await_count, 2)
+
+    async def test_report_evidence_must_exist_and_reference_the_correct_answer(self):
+        from app.services.interview_coach import ground_report
+        answers = [{'number': 1, 'answer': 'J’ai développé un formulaire React.'}, {'number': 2, 'answer': 'Je teste la navigation au clavier.'}]
+        result = {'strengths': [{'point': 'Accessibilité', 'evidence': 'Je teste la navigation au clavier.', 'question': 1}], 'improvements': []}
+        self.assertEqual(ground_report(result, answers)['strengths'][0]['question'], 2)
+        with self.assertRaises(ValueError):
+            ground_report({'strengths': [], 'improvements': [{'point': 'Inventé', 'evidence': 'J’ai managé une équipe de dix personnes.', 'question': 1}]}, answers)

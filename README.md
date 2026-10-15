@@ -12,6 +12,7 @@ Avec une API distante, les messages et le contexte utile sont transmis au fourni
 
 - [Télécharger TrackIt pour Mac, Windows ou Linux](https://github.com/mohammadmasah/Job-Tracker-Aggregator/releases/latest)
 - [Guide de configuration de l’assistant](Docs/assistant-ai.md)
+- [Préparer un entretien et télécharger son bilan](Docs/interview-practice.md)
 - Pour les développeurs : le code source et l’installation Docker restent disponibles ci-dessous.
 
 ---
@@ -58,6 +59,7 @@ TrackIt est né d'un besoin concret : automatiser et structurer une recherche d'
 | Contacts | Association contact ↔ candidature (table de liaison dédiée) |
 | Documents | Pièces jointes liées aux candidatures : CV, lettres, invitations ; téléchargement et suppression |
 | Offres | Scraping WeLoveDevs, intégration API Adzuna, La Bonne Alternance |
+| Préparation aux entretiens | Espace dédié par poste, coach IA, séances sauvegardées et bilan PDF avec points forts et axes de progression |
 | Chatbot IA | Ollama local ou API personnelle OpenAI, Gemini et Claude ; historique conservé, réponses en français et en anglais |
 | Notifications | Envoi d'e-mails via SMTP (relances, réinitialisation de mot de passe) |
 | Performance | Cache et files via Redis, rate limiting via `slowapi` |

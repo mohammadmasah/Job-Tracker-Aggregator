@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import socket
 import subprocess
+import sqlite3
 import sys
 import tempfile
 import time
@@ -46,13 +47,17 @@ def run(executable):
             assert b'<html' in request('/applications')
             request('/api/user/register', {'name': 'Test', 'lastname': 'Local', 'email': 'local@example.invalid', 'password': 'Smoke-Test-123!'})
             request('/api/user/login', {'email': 'local@example.invalid', 'password': 'Smoke-Test-123!'})
-            for path in ['/api/applications', '/api/contacts', '/api/documents']:
+            for path in ['/api/applications', '/api/contacts', '/api/documents', '/api/interviews']:
                 assert json.loads(request(path)) == [], f'Fresh installation contains data: {path}'
             assert json.loads(request('/chatbot/history/'))['messages'] == []
             request('/api/applications', {'company': 'Test local', 'position': 'Développeur'})
             applications = json.loads(request('/api/applications'))
             assert len(applications) == 1
             application_id = applications[0]['id']
+            practice = json.loads(request('/api/interviews', {'source_kind': 'application', 'source_id': application_id}))
+            interview_id = practice['id']
+            assert practice['context']['company'] == 'Test local'
+            assert b'<html' in request(f'/interviews/{interview_id}')
             boundary = 'TrackItSmokeBoundary'
             file_content = b'TrackIt portable attachment smoke test'
             multipart = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="cv.txt"\r\n'
@@ -68,7 +73,20 @@ def run(executable):
             assert json.loads(request('/api/local/runtime'))['phase'] == 'idle'
             request('/api/local/quit', {}, 'POST')
             process.wait(timeout=30)
+            # Fixture only: populate a completed report while this disposable app
+            # is stopped, so packaging checks never require an AI key or model.
+            report = {'summary': 'Séance de test', 'strengths': [],
+                      'improvements': [{'point': 'Préciser', 'evidence': 'Un projet React', 'question': 1}],
+                      'next_steps': ['Préparer un exemple'], 'employer_questions': ['Quelle équipe ?']}
+            turns = [{'question': 'Ton projet ?', 'answer': 'Un projet React', 'feedback': {'strengths': [], 'improvements': ['Préciser']}}]
+            with sqlite3.connect(Path(directory) / 'trackit.db') as connection:
+                connection.execute("UPDATE interviewsession SET status = ?, report = ?, turns = ? WHERE id = ?",
+                                   ('completed', json.dumps(report), json.dumps(turns), interview_id))
             process = start()
+            assert json.loads(request(f'/api/interviews/{interview_id}'))['status'] == 'completed'
+            assert request(f'/api/interviews/{interview_id}/report.pdf').startswith(b'%PDF-')
+            request(f'/api/interviews/{interview_id}', method='DELETE')
+            assert json.loads(request('/api/interviews')) == []
             assert len(json.loads(request('/api/applications'))) == 1
             assert request(f'/api/documents/{document_id}/download') == file_content
             request(f'/api/documents/{document_id}', method='DELETE')
@@ -82,7 +100,7 @@ def run(executable):
         finally:
             process.terminate()
             process.wait(timeout=20)
-        print('Standalone smoke passed: UI, registration, login, CRUD, XLSX export, restart persistence, logout')
+        print('Standalone smoke passed: UI, registration, login, CRUD, XLSX export, interview PDF, restart persistence, logout')
 
 
 if __name__ == '__main__':

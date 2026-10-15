@@ -36,7 +36,7 @@ class FollowUp(BaseModel):
 
 class Evidence(BaseModel):
     point: ShortText
-    evidence: ShortText
+    evidence: ShortText = Field(description='A short VERBATIM excerpt copied from the candidate answer to the cited question, not a paraphrase.')
     question: int = Field(ge=1, le=8)
 
 
@@ -78,10 +78,27 @@ def decode(text, schema, names):
     return result
 
 
+def ground_report(result, answers):
+    """Bind every observation to actual candidate text, including on small models."""
+    def normalize(text):
+        return ' '.join(text.replace('’', "'").replace('“', '"').replace('”', '"').split()).casefold()
+    for key in ('strengths', 'improvements'):
+        for item in result[key]:
+            excerpt = normalize(item['evidence']).strip('"«» ')
+            matches = [answer for answer in answers if excerpt and excerpt in normalize(answer['answer'])]
+            match = next((answer for answer in matches if answer['number'] == item['question']), None)
+            if not match and len(matches) == 1:
+                match = matches[0]
+            if not match or len(excerpt) < min(15, len(normalize(match['answer']))):
+                raise ValueError('Evidence must quote an existing answer')
+            item['question'] = match['number']
+    return result
+
+
 async def coach(record, action, answer=''):
     schema = Opening if action == 'start' else Report if action == 'finish' else FollowUp
     language = 'French (use tu)' if record.language == 'fr' else 'English'
-    completed = [{'question': turn['question'], 'answer': turn['answer']} for turn in record.turns if turn.get('answer') is not None]
+    completed = [{'number': number, 'question': turn['question'], 'answer': turn['answer']} for number, turn in enumerate(record.turns, 1) if turn.get('answer') is not None]
     payload = {'job': readable(record.context), 'candidate_profile': record.profile,
                'previous_answers': completed, 'focus': record.focus,
                'current_question': record.turns[-1]['question'] if record.turns else None,
@@ -93,7 +110,7 @@ async def coach(record, action, answer=''):
     task = {
         'start': 'Summarize THIS role, identify its key expectations and give practical preparation tips. Ask exactly ONE opening interview question. Missing job details must be acknowledged, never invented.',
         'answer': 'Coach the latest candidate answer. Identify concrete strengths and improvements, then suggest a better phrasing without inventing experience. Use placeholders where facts are missing. Ask exactly ONE new relevant question; do not repeat a previous question. Adapt to previous answers.',
-        'finish': 'Produce a final coaching report ONLY from the completed answers. For each strength and improvement, cite a concrete observation from that answer and its 1-based question number. If no strength is evidenced, return an empty strengths list. Add practical next steps and questions to ask the employer. Never score employability, predict hiring or invent accomplishments.',
+        'finish': 'Produce a final coaching report ONLY from the completed answers. For each strength and improvement, copy a short exact quote from that answer as evidence and cite its explicit number. Never paraphrase the evidence field. Points must be supported by that quote, not assumed skills. If no strength is evidenced, return an empty strengths list. Add practical next steps and questions to ask the employer. Never score employability, predict hiring or invent accomplishments.',
     }[action]
     system = (f'You are Poulpie, an interview practice coach. Write all prose in {language}. '
               'Use plain text, not Markdown, inside JSON values. Be supportive, specific and concise. '
@@ -110,8 +127,8 @@ async def coach(record, action, answer=''):
         text = response.content if isinstance(response.content, str) else ''
         try:
             result = decode(text, schema, names)
-            if action == 'finish' and any(item['question'] > len(completed) for key in ('strengths', 'improvements') for item in result[key]):
-                raise ValueError('Nonexistent evidence reference')
+            if action == 'finish':
+                result = ground_report(result, completed)
             return result
         except (ValidationError, ValueError):
             if attempt:
