@@ -2,8 +2,8 @@ import { field, primary, secondary } from '../../components/interviews/interview
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { IoArrowBackOutline, IoArrowUpOutline, IoRefreshOutline, IoSparklesOutline } from 'react-icons/io5';
-import { configureInterview, getInterview, interviewError, practiceInterview } from '../../api/interviews';
+import { IoArrowBackOutline, IoArrowUpOutline, IoRefreshOutline, IoSparklesOutline, IoDownloadOutline } from 'react-icons/io5';
+import { configureInterview, downloadInterviewReport, getInterview, interviewError, practiceInterview } from '../../api/interviews';
 import { AssistantBadge, BusyCoach, CoachingList, JobContext } from '../../components/interviews/InterviewParts';
 import InterviewSetup from '../../components/interviews/InterviewSetup';
 import InterviewReport from '../../components/interviews/InterviewReport';
@@ -21,6 +21,7 @@ function Room({ id }) {
     const [busy, setBusy] = useState('');
     const [answer, setAnswer] = useState('');
     const [retry, setRetry] = useState(0);
+    const [downloading, setDownloading] = useState(false);
     const pending = useRef(false);
     const bottom = useRef(null);
     const answerInput = useRef(null);
@@ -53,6 +54,12 @@ function Room({ id }) {
             try { const saved = await getInterview(id); setRecord(saved.data); if (saved.data.answered > current.answered) setAnswer(''); } catch { /* Keep the visible session and draft answer for manual retry. */ }
         } finally { pending.current = false; setBusy(''); }
     };
+    const download = async () => {
+        setDownloading(true); setError('');
+        try { await downloadInterviewReport(id); }
+        catch { setError('Le PDF n’a pas pu être téléchargé. Réessaie ; ton bilan reste enregistré.'); }
+        finally { setDownloading(false); }
+    };
     if (loading) return <p role="status" className="p-8 text-sm text-text-3">Ouverture de la séance…</p>;
     if (!record) return <div className="space-y-4 p-8"><p role="alert" className="text-red-500">{error || 'Séance introuvable.'}</p><button className={secondary} onClick={() => { setLoading(true); setRetry(value => value + 1); }}>Réessayer</button><Link className="ml-4 text-accent underline" to="/interviews">Mes entraînements</Link></div>;
     const activeQuestion = record.status === 'practicing' && record.turns.at(-1)?.answer == null;
@@ -62,7 +69,7 @@ function Room({ id }) {
             <div className="min-w-0 space-y-5">
                 {error && <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-500"><p>{error}</p><div className="mt-2 flex flex-wrap gap-4"><button disabled={!!busy} onClick={() => setRetry(value => value + 1)} className="underline">Recharger la séance</button><Link to="/settings/assistant" className="underline">Vérifier mon assistant IA</Link></div></div>}
                 {record.status === 'ready' && <InterviewSetup key={record.revision} record={record} settings={settings} busy={!!busy} onStart={configuration => run('start', configuration)} />}
-                {record.status === 'completed' && <InterviewReport record={record} actions={<Link className={secondary} to="/interviews"><IoRefreshOutline />Préparer une autre séance</Link>} />}
+                {record.status === 'completed' && <InterviewReport record={record} actions={<><button onClick={download} disabled={downloading} className={primary}><IoDownloadOutline />{downloading ? "Préparation du PDF…" : "Télécharger mon bilan PDF"}</button><Link className={secondary} to="/interviews"><IoRefreshOutline />Préparer une autre séance</Link></>} />}
                 {!!record.turns.length && <section aria-label="Conversation d’entraînement" className="space-y-6">
                     {record.status === 'completed' && <h2 className="pt-3 text-lg font-bold">Revoir mes réponses</h2>}
                     {record.turns.map((turn, index) => <article id={`question-${index + 1}`} key={index} className="scroll-mt-6 space-y-4">

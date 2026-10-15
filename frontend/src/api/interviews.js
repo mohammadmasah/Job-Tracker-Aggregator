@@ -12,3 +12,12 @@ export const extractInterviewCV = file => {
     return axios.post('/api/interviews/extract-cv', data, config);
 };
 export const interviewError = error => typeof error.response?.data?.detail === 'string' ? error.response.data.detail : 'Connexion interrompue. Recharge la séance pour retrouver ton avancée, puis réessaie.';
+
+export const downloadInterviewReport = async id => {
+    const { data } = await axios.get(`/api/interviews/${id}/report.pdf`, { ...config, responseType: 'blob', timeout: 60_000 });
+    const url = URL.createObjectURL(data);
+    const link = document.createElement('a');
+    link.href = url; link.download = `trackit-entretien-${id}.pdf`;
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+};

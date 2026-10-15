@@ -176,6 +176,26 @@ class InterviewTests(unittest.TestCase):
         self.assertEqual(saved['turns'], [])
 
 
+    def test_pdf_requires_completed_owned_session(self):
+        from test_interview_pdf import sample_record
+        record = self.create()
+        path = f'/api/interviews/{record["id"]}/report.pdf'
+        self.assertEqual(self.client.get(path).status_code, 409)
+        with Session(self.engine) as session:
+            row = session.get(InterviewSession, record['id'])
+            sample = sample_record()
+            row.report, row.turns, row.status = sample.report, sample.turns, 'completed'
+            session.add(row)
+            session.commit()
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.content.startswith(b'%PDF-'))
+        self.assertEqual(response.headers['cache-control'], 'no-store')
+        self.assertIn('attachment;', response.headers['content-disposition'])
+        self.user_id = 2
+        self.assertEqual(self.client.get(path).status_code, 404)
+
+
 class CoachTests(unittest.IsolatedAsyncioTestCase):
     async def test_provider_receives_only_selected_context_and_returns_structured_result(self):
         import json

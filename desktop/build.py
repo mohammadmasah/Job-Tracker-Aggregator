@@ -20,7 +20,7 @@ command = [sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--one
            '--collect-submodules', 'app', '--collect-submodules', 'uvicorn',
            '--collect-all', 'langchain_core', '--collect-all', 'langchain_ollama',
            '--collect-all', 'langdetect', '--collect-all', 'langsmith', '--collect-all', 'pypdfium2',
-           '--collect-all', 'pdfminer', '--copy-metadata', 'sqlmodel',
+           '--collect-all', 'pdfminer', '--collect-all', 'reportlab', '--copy-metadata', 'sqlmodel',
            '--copy-metadata', 'ollama', '--copy-metadata', 'redis']
 if sys.platform in ('darwin', 'win32'):
     command += ['--windowed']

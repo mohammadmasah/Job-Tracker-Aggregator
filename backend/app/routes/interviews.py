@@ -222,3 +222,15 @@ def configure(id: int, data: SessionSettings, user: User = Depends(get_current_u
     session.commit()
     session.expire_all()
     return public(owned(session, id, user.id))
+
+
+@router.get('/{id}/report.pdf')
+def download_report(id: int, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    from app.services.interview_pdf import render_interview_pdf
+    row = owned(session, id, user.id)
+    if row.status != 'completed' or not row.report:
+        raise HTTPException(409, 'Génère le bilan avant de télécharger le PDF.')
+    return Response(render_interview_pdf(row), media_type='application/pdf', headers={
+        'Content-Disposition': f'attachment; filename="trackit-entretien-{id}.pdf"',
+        'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+    })
