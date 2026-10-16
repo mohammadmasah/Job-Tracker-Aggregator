@@ -1,5 +1,5 @@
 import DeleteButton from "../common/DeleteButton";
-import { IoLocationOutline, IoGlobeOutline, IoWalletOutline, IoBriefcaseOutline, IoArrowForwardOutline, IoStar, IoStarOutline } from "react-icons/io5";
+import { IoCalendarOutline, IoLocationOutline, IoGlobeOutline, IoWalletOutline, IoBriefcaseOutline, IoArrowForwardOutline, IoStar, IoStarOutline } from "react-icons/io5";
 import { STATUS_META, needsRelance } from "../../constants/status";
 
 const TYPE_LABELS = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd: "CDD" };
@@ -7,7 +7,7 @@ const TYPE_LABELS = { alternance: "Alternance", stage: "Stage", cdi: "CDI", cdd:
 export default function ApplicationCard({ application, onDelete, onSelect, favorite, onToggleFavorite }) {
     const status = STATUS_META[application.status] || { label: application.status, color: "var(--accent)" };
     const company = application.company || "Entreprise non renseignée";
-    const date = application.applied_at ? new Date(application.applied_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "Date non renseignée";
+    const date = application.applied_at ? new Date(application.applied_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "Date non renseignée";
     return (
         <article className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-soft bg-panel shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-center justify-between gap-3 border-b border-border-soft bg-card px-5 py-3">
@@ -32,6 +32,7 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                     <InfoLine icon={IoLocationOutline}>{application.location || "Lieu non renseigné"}</InfoLine>
                     <InfoLine icon={IoBriefcaseOutline}>{TYPE_LABELS[application.type] || application.type || "Contrat non renseigné"}</InfoLine>
                     <InfoLine icon={IoWalletOutline}>{application.salary || "Salaire non renseigné"}</InfoLine>
+                    <InfoLine icon={IoCalendarOutline}>{application.applied_at ? `Candidature du ${date}` : date}</InfoLine>
                 </div>
                 <div className="mt-4 flex min-h-7 flex-wrap gap-2">
                     {needsRelance(application) && <span className="rounded-md border border-border-soft bg-card px-2 py-1 text-xs font-semibold text-text">À relancer</span>}
@@ -39,11 +40,10 @@ export default function ApplicationCard({ application, onDelete, onSelect, favor
                 </div>
             </div>
             <footer className="flex items-center justify-between gap-2 border-t border-border-soft px-5 py-3">
-                <span className="text-xs text-text-2">{date}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center justify-center rounded-lg border border-border-soft bg-card p-1">
                     <DeleteButton compact label={`la candidature « ${application.position} — ${company} » et ses documents`} onDelete={() => onDelete(application.id)} />
-                <button type="button" onClick={onSelect} className="inline-flex items-center gap-2 rounded-lg bg-accent/10 px-3 py-2 text-sm font-semibold text-accent hover:bg-accent/20">Voir la fiche<IoArrowForwardOutline /></button>
                 </div>
+                <button type="button" onClick={onSelect} className="inline-flex items-center gap-2 rounded-lg bg-accent/10 px-3 py-2 text-sm font-semibold text-accent hover:bg-accent/20">Voir la fiche<IoArrowForwardOutline /></button>
             </footer>
         </article>
     );
