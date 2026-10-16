@@ -27,7 +27,7 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
     });
     const setSelectedId = (id) => updateParam("open", id);
     const setStatusFilter = (status) => { setCollapsed({}); updateParam("status", status); };
-    const [view, setView] = useState(() => localStorage.getItem("app-view") || "list");
+    const [view, setView] = useState(() => localStorage.getItem("app-view") === "list" ? "list" : "cards");
     const [collapsed, setCollapsed] = useState({});
     const [showFilters, setShowFilters] = useState(statusFilter !== "all" || Boolean(filter));
     const relanceOnly = filter === "follow-up";
