@@ -1,7 +1,7 @@
 import DeleteButton from "../common/DeleteButton";
 import { useSearchParams } from "react-router-dom";
 import { matchesApplicationFilter } from "../../utils/applicationFilters";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
     IoSearchOutline, IoStar, IoGridOutline, IoListOutline,
     IoBriefcaseOutline, IoChevronForward, IoFilterOutline, IoChevronDown, IoLayersOutline,
@@ -55,6 +55,22 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
             return 0;
         });
     }, [applications, search, sortBy, statusFilter, relanceOnly, favOnly, favorites, filter]);
+
+    const pageSize = 12;
+    const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize));
+    const criteria = JSON.stringify([search, sortBy, statusFilter, filter, favOnly]);
+    const [pagination, setPagination] = useState({ criteria, page: 1 });
+    const page = pagination.criteria === criteria ? Math.min(pagination.page, pageCount) : 1;
+    // Reset for new filters and clamp after deleting the last card on a page.
+    if (pagination.criteria !== criteria || pagination.page !== page) {
+        setPagination({ criteria, page });
+    }
+    const cards = sorted.slice((page - 1) * pageSize, page * pageSize);
+    const cardScroll = useRef(null);
+    const changePage = next => {
+        setPagination({ criteria, page: next });
+        cardScroll.current?.scrollTo({ top: 0 });
+    };
 
     const relances = useMemo(() => sorted.filter(needsRelance), [sorted]);
     const selected = applications.find((a) => a.id === selectedId) || null;
@@ -151,10 +167,10 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                 </div>
 
                 {/* Contenu : sections repliables */}
-                <div className="max-h-[72vh] overflow-y-auto custom-scroll">
+                <div ref={cardScroll} className="max-h-[72vh] overflow-y-auto custom-scroll">
                     {sections.length === 0 && <p className="text-sm text-text-2 p-5 text-center">Aucune candidature.</p>}
                     {view === "cards" ? <div className="grid grid-cols-1 gap-5 p-4 sm:grid-cols-2 lg:grid-cols-3 sm:p-5">
-                        {sorted.map(a => <ApplicationCard key={a.id} application={a} onSelect={() => openApp(a)} onDelete={onDelete} favorite={isFav(a.id)} onToggleFavorite={onToggleFavorite} />)}
+                        {cards.map(a => <ApplicationCard key={a.id} application={a} onSelect={() => openApp(a)} onDelete={onDelete} favorite={isFav(a.id)} onToggleFavorite={onToggleFavorite} />)}
                     </div> : sections.map((sec) => {
                         const isCol = collapsed[sec.key];
                         return (
@@ -171,7 +187,14 @@ export default function ApplicationsList({ applications = [], onRefresh, onDelet
                         );
                     })}
                 </div>
-
+                {view === "cards" && sorted.length > 0 && <nav aria-label="Pagination des candidatures" className="flex flex-wrap items-center justify-between gap-3 border-t border-border-soft bg-panel px-5 py-4">
+                    <p aria-live="polite" className="text-sm text-text-2">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, sorted.length)} sur {sorted.length}</p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                        <button type="button" disabled={page === 1} onClick={() => changePage(page - 1)} className="rounded-lg border border-border-soft px-3 py-2 text-sm text-text-2 hover:bg-card disabled:cursor-not-allowed disabled:opacity-40">Précédent</button>
+                        {Array.from({ length: pageCount }, (_, index) => index + 1).map(number => <button type="button" key={number} aria-label={`Page ${number}`} aria-current={number === page ? "page" : undefined} onClick={() => changePage(number)} className={`size-9 rounded-lg border text-sm ${number === page ? "border-accent bg-accent/10 font-bold text-accent" : "border-border-soft text-text-2 hover:bg-card"}`}>{number}</button>)}
+                        <button type="button" disabled={page === pageCount} onClick={() => changePage(page + 1)} className="rounded-lg border border-border-soft px-3 py-2 text-sm text-text-2 hover:bg-card disabled:cursor-not-allowed disabled:opacity-40">Suivant</button>
+                    </div>
+                </nav>}
             </div>
 
             {/* ---- DÉTAIL (droite) ---- */}
