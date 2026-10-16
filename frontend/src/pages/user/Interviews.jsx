@@ -6,6 +6,8 @@ import DeleteButton from '../../components/common/DeleteButton';
 import { createInterview, deleteInterview, interviewError, listInterviews, searchInterviewSources } from '../../api/interviews';
 import { dateLabel, secondary, statusLabel } from '../../components/interviews/interviewUi';
 
+const PAGE_SIZE = 12;
+
 export default function Interviews() {
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
@@ -25,7 +27,7 @@ export default function Interviews() {
     useEffect(() => {
         const controller = new AbortController();
         const timer = setTimeout(() => {
-            searchInterviewSources({ q: query, kind, offset }, controller.signal).then(({ data }) => { setResult(data); setError(''); })
+            searchInterviewSources({ q: query, kind, offset, limit: PAGE_SIZE }, controller.signal).then(({ data }) => { setResult(data); setError(''); })
                 .catch(err => { if (!controller.signal.aborted) setError(interviewError(err)); })
                 .finally(() => { if (!controller.signal.aborted) setLoading(false); });
         }, 200);
@@ -68,7 +70,14 @@ export default function Interviews() {
                         <span className="mt-auto flex items-center justify-between gap-2 pt-5 text-xs text-accent">{creating === `${source.kind}-${source.id}` ? 'Préparation…' : 'Préparer cette rencontre'}<IoArrowForwardOutline className="shrink-0 transition group-hover:translate-x-1" /></span>
                     </button>)}
                 </div>}
-                {(offset > 0 || offset + 30 < result.total) && <div className="mt-4 flex items-center justify-between"><button className={secondary} disabled={!offset || loading} onClick={() => { setLoading(true); setOffset(value => value - 30); }}>Précédent</button><span className="text-xs text-text-3">{offset + 1}–{Math.min(offset + 30, result.total)} / {result.total}</span><button className={secondary} disabled={offset + 30 >= result.total || loading} onClick={() => { setLoading(true); setOffset(value => value + 30); }}>Suivant</button></div>}
+                {result.total > 0 && <nav aria-label="Pagination des postes à préparer" className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-4">
+                    <span aria-live="polite" className="text-sm text-text-2">{offset + 1}–{Math.min(offset + PAGE_SIZE, result.total)} sur {result.total}</span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                        <button className={secondary} disabled={!offset || loading} onClick={() => { setLoading(true); setOffset(value => value - PAGE_SIZE); }}>Précédent</button>
+                        {Array.from({ length: Math.ceil(result.total / PAGE_SIZE) }, (_, index) => <button key={index} type="button" aria-label={`Page ${index + 1}`} aria-current={offset === index * PAGE_SIZE ? 'page' : undefined} disabled={loading} onClick={() => { setLoading(true); setOffset(index * PAGE_SIZE); }} className={`size-9 rounded-lg border text-sm disabled:opacity-50 ${offset === index * PAGE_SIZE ? 'border-accent bg-accent/10 font-bold text-accent' : 'border-border-soft text-text-2 hover:bg-card'}`}>{index + 1}</button>)}
+                        <button className={secondary} disabled={offset + PAGE_SIZE >= result.total || loading} onClick={() => { setLoading(true); setOffset(value => value + PAGE_SIZE); }}>Suivant</button>
+                    </div>
+                </nav>}
             </section>
             <section className="border-t border-border-soft pt-6" aria-labelledby="history-title"><h2 id="history-title" className="text-lg font-bold">Mes entraînements</h2><p className="mt-1 text-xs text-text-3">Reprends une séance ou retrouve un bilan. Tes échanges restent séparés du chatbot quotidien.</p>
                 {historyError && <p role="alert" className="mt-3 text-sm text-red-500">{historyError} <button onClick={() => setRetry(value => value + 1)} className="underline">Réessayer</button></p>}
