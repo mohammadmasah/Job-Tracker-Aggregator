@@ -50,7 +50,7 @@ export default function Applications() {
     }
 
     return (
-        <div className="h-full bg-bg font-mono flex flex-col">
+        <div className="min-h-full bg-bg text-text flex flex-col">
             <PageHeader
                 title="Mes candidatures"
                 description={`${applications.length} candidature${applications.length > 1 ? "s" : ""} suivie${applications.length > 1 ? "s" : ""}.`}
@@ -58,7 +58,7 @@ export default function Applications() {
             />
 
             {/* MAÎTRE-DÉTAIL */}
-            <div className="flex-1 min-h-0">
+            <div className="mx-auto w-full max-w-[1600px] p-5 sm:p-8">
                 <ApplicationsList
                     applications={applications}
                     onRefresh={fetchApplications}
