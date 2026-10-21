@@ -1,5 +1,6 @@
 """Exercise the built executable with an isolated data directory; no real data."""
 import json
+from contextlib import closing
 import os
 from pathlib import Path
 import socket
@@ -79,7 +80,7 @@ def run(executable):
                       'improvements': [{'point': 'Préciser', 'evidence': 'Un projet React', 'question': 1}],
                       'next_steps': ['Préparer un exemple'], 'employer_questions': ['Quelle équipe ?']}
             turns = [{'question': 'Ton projet ?', 'answer': 'Un projet React', 'feedback': {'strengths': [], 'improvements': ['Préciser']}}]
-            with sqlite3.connect(Path(directory) / 'trackit.db') as connection:
+            with closing(sqlite3.connect(Path(directory) / 'trackit.db')) as connection, connection:
                 connection.execute("UPDATE interviewsession SET status = ?, report = ?, turns = ? WHERE id = ?",
                                    ('completed', json.dumps(report), json.dumps(turns), interview_id))
             process = start()
