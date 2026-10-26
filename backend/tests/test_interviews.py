@@ -234,3 +234,26 @@ class CoachTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ground_report(result, answers)['strengths'][0]['question'], 2)
         with self.assertRaises(ValueError):
             ground_report({'strengths': [], 'improvements': [{'point': 'Inventé', 'evidence': 'J’ai managé une équipe de dix personnes.', 'question': 1}]}, answers)
+
+
+    async def test_eight_answer_report_retries_invalid_evidence_with_specific_guidance(self):
+        import json
+        from unittest.mock import AsyncMock, patch
+        from langchain_core.messages import AIMessage
+        from app.services.interview_coach import coach
+        answer = 'J’ai testé le formulaire au clavier et corrigé les erreurs.'
+        record = SimpleNamespace(user_id=1, language='fr', company='Exemple', position='Développeur', profile='', context={}, focus='technical',
+            turns=[{'question': f'Question {i}', 'answer': answer} for i in range(8)], question_count=8)
+        good = {'summary': 'Tu présentes une démarche concrète pour améliorer ton formulaire.', 'strengths': [],
+                'improvements': [{'point': 'Précise les résultats de tes corrections.', 'evidence': answer, 'question': 8}],
+                'next_steps': ['Prépare un exemple chiffré.'], 'employer_questions': ['Comment testez-vous les interfaces ?']}
+        bad = json.loads(json.dumps(good))
+        bad['improvements'][0]['evidence'] = 'Une citation entièrement inventée par le modèle.'
+        model = SimpleNamespace(ainvoke=AsyncMock(side_effect=[AIMessage(content=json.dumps(bad)), AIMessage(content=json.dumps(good))]))
+        with patch('app.services.interview_coach.get_llm_model', return_value=model) as factory, self.assertLogs('app.services.interview_coach', level='WARNING') as logs:
+            result = await coach(record, 'finish')
+        self.assertEqual(result, good)
+        self.assertEqual(factory.call_args.kwargs['max_tokens'], 8192)
+        self.assertIn('Copy an exact contiguous excerpt', model.ainvoke.call_args.args[0].to_messages()[0].content)
+        self.assertNotIn(answer, str(logs.output))
+        self.assertIn('reason=evidence', str(logs.output))

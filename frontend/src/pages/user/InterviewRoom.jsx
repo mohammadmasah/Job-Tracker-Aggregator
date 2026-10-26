@@ -24,6 +24,7 @@ function Room({ id }) {
     const [downloading, setDownloading] = useState(false);
     const pending = useRef(false);
     const bottom = useRef(null);
+    const feedbackTop = useRef(null);
     const answerInput = useRef(null);
     useEffect(() => {
         let active = true;
@@ -38,6 +39,9 @@ function Room({ id }) {
             answerInput.current?.focus({ preventScroll: true });
         }
     }, [record?.revision, record?.status]);
+    useEffect(() => {
+        if (error || record?.status === 'completed') feedbackTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [error, record?.status]);
     const run = async (action, configuration) => {
         if (pending.current) return;
         pending.current = true; setBusy(action); setError('');
@@ -66,7 +70,7 @@ function Room({ id }) {
     return <div className="min-h-full bg-bg text-text">
         <header className="border-b border-border-soft bg-panel px-5 py-5 sm:px-8"><div className="flex flex-wrap items-center justify-between gap-3"><Link to="/interviews" className="inline-flex items-center gap-2 text-xs text-text-3 hover:text-accent"><IoArrowBackOutline />Mes entraînements</Link><AssistantBadge settings={settings} /></div><div className="mt-5 flex flex-wrap items-end justify-between gap-4"><div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-widest text-accent">{record.company}</p><h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{record.position}</h1></div><p className="text-xs text-text-3">{record.language.toUpperCase()} · {record.answered}/{record.question_count} réponses enregistrées</p></div><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-bg" role="progressbar" aria-label="Réponses enregistrées" aria-valuenow={record.answered} aria-valuemin={0} aria-valuemax={record.question_count}><div className="h-full rounded-full bg-accent transition-all" style={{ width: `${100 * record.answered / record.question_count}%` }} /></div></header>
         <div className="mx-auto grid max-w-[1500px] gap-6 p-5 sm:p-8 xl:grid-cols-[minmax(0,1fr)_300px]">
-            <div className="min-w-0 space-y-5">
+            <div ref={feedbackTop} className="min-w-0 space-y-5 scroll-mt-5">
                 {error && <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-500"><p>{error}</p><div className="mt-2 flex flex-wrap gap-4"><button disabled={!!busy} onClick={() => setRetry(value => value + 1)} className="underline">Recharger la séance</button><Link to="/settings/assistant" className="underline">Vérifier mon assistant IA</Link></div></div>}
                 {record.status === 'ready' && <InterviewSetup key={record.revision} record={record} settings={settings} busy={!!busy} onStart={configuration => run('start', configuration)} />}
                 {record.status === 'completed' && <InterviewReport record={record} actions={<><button onClick={download} disabled={downloading} className={primary}><IoDownloadOutline />{downloading ? "Préparation du PDF…" : "Télécharger mon bilan PDF"}</button><Link className={secondary} to="/interviews"><IoRefreshOutline />Préparer une autre séance</Link></>} />}

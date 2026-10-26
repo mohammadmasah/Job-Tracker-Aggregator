@@ -183,7 +183,7 @@ class ProviderTests(unittest.IsolatedAsyncioTestCase):
                     return httpx.Response(200, text=''.join('data: '+json.dumps(event)+'\n\n' for event in events))
                 transport = httpx.MockTransport(handler)
                 with patch.object(cloud_ai.httpx, 'Client', side_effect=lambda **kw: real_sync(transport=transport, **kw)), patch.object(cloud_ai.httpx, 'AsyncClient', side_effect=lambda **kw: real_async(transport=transport, **kw)):
-                    chain = ChatPromptTemplate.from_messages([('system', 'French only'), ('human', '{text}')]) | cloud_ai.cloud_model(provider, 'test-model', 'secret-key')
+                    chain = ChatPromptTemplate.from_messages([('system', 'French only'), ('human', '{text}')]) | cloud_ai.cloud_model(provider, 'test-model', 'secret-key', max_tokens=8192)
                     self.assertEqual(chain.invoke({'text': 'hello'}).content, 'Bonjour. Salut !')
                     chunks = [chunk.content async for chunk in chain.astream({'text': 'hello'})]
                     self.assertEqual(chunks, ['Bonjour. ', 'Salut !'])
@@ -191,6 +191,9 @@ class ProviderTests(unittest.IsolatedAsyncioTestCase):
                     self.assertNotIn('secret-key', str(request.url))
                     self.assertNotIn('secret-key', request.content.decode())
                     self.assertEqual(request.url.scheme, 'https')
+                    body = json.loads(request.content)
+                    budget = body.get('max_output_tokens', body.get('max_tokens', body.get('generationConfig', {}).get('maxOutputTokens')))
+                    self.assertEqual(budget, 8192)
 
     async def test_http_errors_are_sanitized(self):
         real = httpx.Client
@@ -236,3 +239,13 @@ class ProviderTests(unittest.IsolatedAsyncioTestCase):
             self.assertNotIn('additional_kwargs', json.dumps(data))
         self.assertEqual(ai_agents._session_user('42:custom'), 42)
         self.assertIsNone(ai_agents._session_user('custom'))
+
+
+class GenerationBudgetTests(unittest.TestCase):
+    def test_cloud_budget_is_forwarded_without_reducing_chat_default(self):
+        from app.services.llm_service import get_llm_model
+        with patch('app.services.ai_settings.active_credentials', return_value=('gemini', 'test', 'secret')), patch('app.services.cloud_ai.cloud_model') as factory:
+            get_llm_model(1)
+            factory.assert_called_with('gemini', 'test', 'secret')
+            get_llm_model(1, max_tokens=8192)
+            factory.assert_called_with('gemini', 'test', 'secret', max_tokens=8192)

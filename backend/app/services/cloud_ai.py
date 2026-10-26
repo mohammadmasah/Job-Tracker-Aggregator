@@ -9,22 +9,22 @@ from langchain_core.runnables import RunnableGenerator
 from app.services.ai_settings import AIError
 
 
-def request_spec(provider, model, key, messages):
+def request_spec(provider, model, key, messages, *, max_tokens=2048):
     system = '\n'.join(str(m.content) for m in messages if m.type == 'system')
     turns = [{'role': 'assistant' if m.type == 'ai' else 'user', 'content': str(m.content)} for m in messages if m.type in ('human', 'ai')]
     if provider == 'openai':
         return 'https://api.openai.com/v1/responses', {'Authorization': f'Bearer {key}'}, {
-            'model': model, 'instructions': system, 'input': turns, 'stream': True, 'store': False, 'max_output_tokens': 2048,
+            'model': model, 'instructions': system, 'input': turns, 'stream': True, 'store': False, 'max_output_tokens': max_tokens,
         }
     if provider == 'claude':
         return 'https://api.anthropic.com/v1/messages', {'x-api-key': key, 'anthropic-version': '2023-06-01'}, {
-            'model': model, 'system': system, 'messages': turns, 'stream': True, 'max_tokens': 2048,
+            'model': model, 'system': system, 'messages': turns, 'stream': True, 'max_tokens': max_tokens,
         }
     if provider == 'gemini':
         return f'https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?alt=sse', {'x-goog-api-key': key}, {
             'systemInstruction': {'parts': [{'text': system}]},
             'contents': [{'role': 'model' if t['role'] == 'assistant' else 'user', 'parts': [{'text': t['content']}]} for t in turns],
-            'generationConfig': {'maxOutputTokens': 2048},
+            'generationConfig': {'maxOutputTokens': max_tokens},
         }
     raise AIError('Service IA inconnu.')
 
@@ -101,8 +101,8 @@ def sse_data(lines):
         yield '\n'.join(parts)
 
 
-def stream_text(provider, model, key, messages):
-    url, headers, payload = request_spec(provider, model, key, messages)
+def stream_text(provider, model, key, messages, *, max_tokens=2048):
+    url, headers, payload = request_spec(provider, model, key, messages, max_tokens=max_tokens)
     events = Events(provider)
     try:
         with httpx.Client(timeout=60, follow_redirects=False) as client:
@@ -119,8 +119,8 @@ def stream_text(provider, model, key, messages):
         raise AIError('Connexion au service IA impossible. Vérifie ta connexion Internet.') from None
 
 
-async def astream_text(provider, model, key, messages):
-    url, headers, payload = request_spec(provider, model, key, messages)
+async def astream_text(provider, model, key, messages, *, max_tokens=2048):
+    url, headers, payload = request_spec(provider, model, key, messages, max_tokens=max_tokens)
     events = Events(provider)
     try:
         async with httpx.AsyncClient(timeout=60, follow_redirects=False) as client:
@@ -146,15 +146,15 @@ async def astream_text(provider, model, key, messages):
         raise AIError('Connexion au service IA impossible. Vérifie ta connexion Internet.') from None
 
 
-def cloud_model(provider, model, key):
+def cloud_model(provider, model, key, *, max_tokens=2048):
     def transform(inputs):
         for prompt in inputs:
-            for text in stream_text(provider, model, key, prompt.to_messages()):
+            for text in stream_text(provider, model, key, prompt.to_messages(), max_tokens=max_tokens):
                 yield AIMessageChunk(content=text)
 
     async def atransform(inputs):
         async for prompt in inputs:
-            async for text in astream_text(provider, model, key, prompt.to_messages()):
+            async for text in astream_text(provider, model, key, prompt.to_messages(), max_tokens=max_tokens):
                 yield AIMessageChunk(content=text)
 
     return RunnableGenerator(transform, atransform=atransform)

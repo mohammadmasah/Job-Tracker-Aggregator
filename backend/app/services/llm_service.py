@@ -12,7 +12,7 @@ def get_llm_model(user_id=None, *, max_tokens=512, num_ctx=8192):
         from app.services.cloud_ai import cloud_model
         selected = active_credentials(user_id)
         if selected:
-            return cloud_model(*selected)
+            return cloud_model(*selected, max_tokens=max_tokens) if max_tokens > 2048 else cloud_model(*selected)
 
     ollama_url = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
     model = ChatOllama(
